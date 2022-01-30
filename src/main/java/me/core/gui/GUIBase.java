@@ -11,8 +11,9 @@ import org.bukkit.inventory.ItemStack;
 public abstract class GUIBase {
 
     protected final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
-    protected Inventory inventory;
     protected final Player player;
+    protected Inventory inventory;
+    protected GUIBase lastInventory;
 
     public GUIBase(Player player) {
         this.player = player;
@@ -36,6 +37,17 @@ public abstract class GUIBase {
         this.setInventory();
         this.player.openInventory(this.inventory);
         this.player.playSound(this.player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.7f, 1f);
+    }
+
+    public void setLastInventory(GUIBase lastInventory) {
+        this.lastInventory = lastInventory;
+    }
+
+    public void openLastInventory() {
+        if (this.lastInventory != null) {
+            if (this.lastInventory instanceof MultiplePageGUI) ((MultiplePageGUI) this.lastInventory).setPage(1);
+            this.lastInventory.openToPlayer();
+        }
     }
 
     public void setTitle(String translatable, String text) {
