@@ -37,7 +37,7 @@ public class AdminMailCommand extends PluginCommand {
                 }
             }
             player.sendMessage("§aTotal server mail count: " + plugin.getMailManager().getMailList().size());
-            player.sendMessage("§aPage " + page);
+            if (plugin.getMailManager().getMailList().size() > 10) player.sendMessage("§aPage " + page);
             for (int i = (page - 1) * 10; i < plugin.getMailManager().getMailList().size(); i++) {
                 Mail mail = plugin.getMailManager().getMailList().get(i);
                 TextComponent textComponent = new TextComponent(ChatColor.GRAY + "=====================" + ChatColor.YELLOW + (i + 1) + ChatColor.GRAY + "=====================\n");
