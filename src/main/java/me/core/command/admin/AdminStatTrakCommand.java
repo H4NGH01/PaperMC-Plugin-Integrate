@@ -37,6 +37,7 @@ public class AdminStatTrakCommand extends PluginCommand {
             }
             StatTrak statTrak = new StatTrak(stack);
             player.getInventory().setItemInMainHand(statTrak);
+            player.sendMessage(ChatColor.YELLOW + "Success applied StatTrak™ on item");
             return;
         }
         if (args[0].equalsIgnoreCase("take")) {
@@ -46,14 +47,15 @@ public class AdminStatTrakCommand extends PluginCommand {
             }
             ItemMeta meta = stack.getItemMeta();
             boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
-            meta.displayName(b ? ComponentUtil.translate(stack.translationKey()) : Component.text(NBTHelper.getTag(stack).l("CustomName")));
-            NBTHelper.removeTag(stack, "CustomName");
-            NBTHelper.removeTag(stack, "stattrak");
+            meta.displayName(b ? null : Component.text(NBTHelper.getTag(stack).l("CustomName")));
             List<Component> components = meta.lore();
             assert components != null;
             components.remove(0);
             meta.lore(components);
             stack.setItemMeta(meta);
+            NBTHelper.removeTag(stack, "CustomName");
+            NBTHelper.removeTag(stack, "stattrak");
+            player.sendMessage(ChatColor.YELLOW + "Success remove StatTrak™ on item");
             return;
         }
         player.sendMessage(ComponentUtil.translate(org.bukkit.ChatColor.RED, "command.unknown.argument"));
