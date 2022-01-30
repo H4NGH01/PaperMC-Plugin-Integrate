@@ -47,8 +47,8 @@ public class MailPlayerSelectorGUI extends MultiplePageGUI {
     }
 
     @Override
-    public String getGUIName() {
-        return "gui.mail.writer.player_selector";
+    public Component getGUIName() {
+        return Component.translatable("gui.mail.writer.player_selector");
     }
 
     public static @NotNull InventoryItem playerIcon(@NotNull OfflinePlayer p, boolean glow) {

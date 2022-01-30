@@ -47,8 +47,8 @@ public class MailBinGUI extends MultiplePageGUI {
     }
 
     @Override
-    public String getGUIName() {
-        return "gui.mail.bin";
+    public Component getGUIName() {
+        return Component.translatable("gui.mail.bin");
     }
 
     @Contract("_ -> new")

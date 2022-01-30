@@ -50,8 +50,8 @@ public class MailBoxGUI extends MultiplePageGUI {
     }
 
     @Override
-    public String getGUIName() {
-        return "gui.mail.box";
+    public Component getGUIName() {
+        return Component.translatable("gui.mail.box");
     }
 
     @Contract("_ -> new")

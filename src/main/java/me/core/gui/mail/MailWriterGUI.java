@@ -47,8 +47,8 @@ public class MailWriterGUI extends GUIBase {
     }
 
     @Override
-    public String getGUIName() {
-        return "gui.mail.writer.menu";
+    public Component getGUIName() {
+        return Component.translatable("gui.mail.writer.menu");
     }
 
     @Contract(" -> new")

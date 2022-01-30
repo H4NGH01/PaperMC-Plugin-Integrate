@@ -49,12 +49,12 @@ public class MailViewerGUI extends GUIBase {
         }
         this.inventory.setItem(48, MCServerItems.back);
 
-        this.setTitle(getGUIName(), mail.getMailID());
+        this.setTitle(getGUIName(), Component.text(mail.getMailID()));
     }
 
     @Override
-    public String getGUIName() {
-        return "gui.mail.viewer";
+    public Component getGUIName() {
+        return Component.translatable("gui.mail.viewer");
     }
 
     @Contract(" -> new")

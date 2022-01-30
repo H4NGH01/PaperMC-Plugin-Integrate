@@ -3,6 +3,7 @@ package me.core.gui;
 import me.core.MCServerPlugin;
 import me.core.item.MCServerItems;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -17,7 +18,7 @@ public abstract class GUIBase {
 
     public GUIBase(Player player) {
         this.player = player;
-        this.inventory = plugin.getServer().createInventory(null, 54, Component.translatable(getGUIName()));
+        this.inventory = plugin.getServer().createInventory(null, 54, getGUIName());
         for (int i = 0; i < 9; i++) {
             this.inventory.setItem(i, MCServerItems.board);
             this.inventory.setItem(i + 45, MCServerItems.board);
@@ -30,7 +31,7 @@ public abstract class GUIBase {
 
     public abstract void setInventory();
 
-    public abstract String getGUIName();
+    public abstract Component getGUIName();
 
     public void openToPlayer() {
         this.player.closeInventory();
@@ -50,9 +51,13 @@ public abstract class GUIBase {
         }
     }
 
-    public void setTitle(String translatable, String text) {
+    public void setTitle(Component... components) {
         ItemStack[] old = this.getContents();
-        this.inventory = plugin.getServer().createInventory(null, this.inventory.getSize(), Component.translatable(translatable).append(Component.text(text)));
+        TextComponent.Builder builder = Component.text();
+        for (Component component : components) {
+            builder.append(component);
+        }
+        this.inventory = plugin.getServer().createInventory(null, this.inventory.getSize(), builder.build());
         this.inventory.setContents(old);
     }
 

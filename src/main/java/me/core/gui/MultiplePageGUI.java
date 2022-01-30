@@ -1,6 +1,7 @@
 package me.core.gui;
 
 import me.core.item.MCServerItems;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -44,7 +45,7 @@ public abstract class MultiplePageGUI extends GUIBase {
     }
 
     protected void updateGUIName() {
-        this.setTitle(this.getGUIName(), " (" + this.getPage() + "/" + this.getMaxPage() + ")");
+        this.setTitle(this.getGUIName(), Component.text(" (" + this.getPage() + "/" + this.getMaxPage() + ")"));
     }
 
     public void next() {

@@ -50,8 +50,8 @@ public class MailSentGUI extends MultiplePageGUI {
     }
 
     @Override
-    public String getGUIName() {
-        return "gui.mail.sent";
+    public Component getGUIName() {
+        return Component.translatable("gui.mail.sent");
     }
 
     @Contract("_ -> new")
