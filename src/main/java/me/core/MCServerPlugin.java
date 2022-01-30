@@ -8,14 +8,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+
 public class MCServerPlugin extends JavaPlugin {
 
+    private static HashMap<Player, ServerPlayer> serverPlayerHashMap;
     private ConfigurationManager configManager;
     private CommandManager commandManager;
     private MailManager mailManager;
 
     @Override
     public void onEnable() {
+        serverPlayerHashMap = new HashMap<>();
         this.loadConfig();
         this.configManager = new ConfigurationManager();
         this.configManager.setup();
@@ -23,6 +27,9 @@ public class MCServerPlugin extends JavaPlugin {
         this.commandManager.setup();
         this.mailManager = new MailManager();
         this.registerEvents();
+        for (Player player : this.getServer().getOnlinePlayers()) {
+            serverPlayerHashMap.put(player, new ServerPlayer(player));
+        }
         this.log("Server Plugin Enable");
     }
 
@@ -33,6 +40,10 @@ public class MCServerPlugin extends JavaPlugin {
         }
         this.mailManager.save();
         this.configManager.savePlayerConfig();
+        for (Player player : this.getServer().getOnlinePlayers()) {
+            ServerPlayer sp = serverPlayerHashMap.get(player);
+            sp.save();
+        }
         this.log("Server Plugin Disable");
     }
 
@@ -45,6 +56,14 @@ public class MCServerPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ServerEventListener(), this);
         this.getServer().getPluginManager().registerEvents(new ServerGUIListener(), this);
         this.getServer().getPluginManager().registerEvents(new ServerChatBarListener(), this);
+    }
+
+    public static HashMap<Player, ServerPlayer> getServerPlayerHashMap() {
+        return serverPlayerHashMap;
+    }
+
+    public ServerPlayer getServerPlayer(Player player) {
+        return serverPlayerHashMap.get(player);
     }
 
     public ConfigurationManager getConfigManager() {
