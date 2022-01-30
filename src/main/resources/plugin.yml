@@ -1,0 +1,30 @@
+name: MCServerPlugin
+version: '${project.version}'
+main: me.core.MCServerPlugin
+api-version: 1.18
+authors: [ JJGP ]
+description: A Paper server plugin
+commands:
+  mail:
+    description: "Open your mailbox"
+    usage: "/mail"
+    aliases:
+      - mailbox
+  admin-mail:
+    description: "Manage mail commands"
+    usage: '/admin-mail'
+    aliases:
+      - a-mail
+    permission: admin.mail
+  admin-stattrak:
+    description: "Admin StatTrak commands"
+    usage: '/admin-stattrak'
+    aliases:
+      - a-stattrak
+      - a-st
+    permission: admin.stattrak
+permissions:
+  admin.mail:
+    default: op
+  admin.stattrak:
+    default: op
