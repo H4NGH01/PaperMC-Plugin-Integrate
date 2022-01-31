@@ -4,6 +4,7 @@ import me.core.MCServerPlugin;
 import me.core.command.PluginCommand;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -24,7 +25,7 @@ public class AdminMailCommand extends PluginCommand {
     @Override
     public void onCommand(Player player, String[] args) {
         if (args.length == 0) {
-            player.sendMessage("Usages:");
+            player.sendMessage(Component.translatable("command.usages"));
             player.sendMessage("/admin-mail list");
             player.sendMessage("/admin-mail clear");
             return;
@@ -35,20 +36,24 @@ public class AdminMailCommand extends PluginCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                 } catch (Exception ignored) {
-                    player.sendMessage("§c'" + args[1] + "' is not a number");
+                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1])));
                     return;
                 }
             }
-            player.sendMessage("§aTotal server mail count: " + plugin.getMailManager().getMailList().size());
-            if (plugin.getMailManager().getMailList().size() > 10) player.sendMessage("§aPage " + page);
+            player.sendMessage(Component.translatable("command.total_mail_count").args(Component.text(plugin.getMailManager().getMailList().size())));
+            if (plugin.getMailManager().getMailList().size() > 10) player.sendMessage(Component.translatable("command.page").args(Component.text(page)));
             for (int i = (page - 1) * 10; i < plugin.getMailManager().getMailList().size(); i++) {
                 Mail mail = plugin.getMailManager().getMailList().get(i);
                 TextComponent textComponent = new TextComponent(ChatColor.GRAY + "=====================" + ChatColor.YELLOW + (i + 1) + ChatColor.GRAY + "=====================\n");
                 textComponent.addExtra(ChatColor.GRAY + "Mail ID: " + ChatColor.YELLOW + mail.getMailID() + "\n");
                 textComponent.addExtra(ChatColor.GRAY + "Sender: " + ChatColor.YELLOW + (mail.getSender().startsWith("player@") ? plugin.getServer().getOfflinePlayer(UUID.fromString(mail.getSender().substring(7))).getName() : mail.getSender()) + "\n");
                 textComponent.addExtra(ChatColor.GRAY + "Addressee: " + ChatColor.YELLOW + plugin.getServer().getOfflinePlayer(mail.getAddressee()).getName() + "\n");
-                textComponent.addExtra(ChatColor.GRAY + "Title: " + ChatColor.YELLOW + new TranslatableComponent(mail.getTitle()) + "\n");
-                TextComponent text = new TextComponent(ChatColor.GRAY + "Text: [...]");
+                textComponent.addExtra(ChatColor.GRAY + "Title: ");
+                TranslatableComponent tc = new TranslatableComponent(mail.getTitle());
+                tc.setColor(ChatColor.YELLOW);
+                textComponent.addExtra(tc);
+                textComponent.addExtra("\n" + ChatColor.GRAY + "Text: ");
+                TextComponent text = new TextComponent(ChatColor.GRAY + "[...]");
                 ComponentBuilder cb = new ComponentBuilder();
                 if (mail.getText().equals("gui.mail.no_text")) {
                     cb.append(new TranslatableComponent(mail.getText()));
@@ -85,7 +90,7 @@ public class AdminMailCommand extends PluginCommand {
             return;
         }
         player.sendMessage(ComponentUtil.translate(org.bukkit.ChatColor.RED, "command.unknown.argument"));
-        player.sendMessage("Usages:");
+        player.sendMessage(Component.translatable("command.usages"));
         player.sendMessage("/admin-mail list");
         player.sendMessage("/admin-mail clear");
     }

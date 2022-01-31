@@ -2,7 +2,6 @@ package me.core.util.nbt;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
@@ -116,17 +115,4 @@ public class NBTHelper {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         return nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
     }
-
-    public static void addEnchantmentEffect(ItemStack stack) {
-        if (stack.getItemMeta().hasEnchants()) return;
-        net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
-        NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
-        assert tag != null;
-        NBTTagList tagList = new NBTTagList();
-        tagList.add(new NBTTagCompound());
-        tag.a("Enchantments", tagList);
-        nmsStack.c(tag);
-        stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
-    }
-
 }

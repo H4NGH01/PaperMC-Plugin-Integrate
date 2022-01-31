@@ -2,9 +2,7 @@ package me.core.item;
 
 import me.core.util.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
-import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +17,8 @@ public class MCServerItems {
     public final static InventoryItem back = newInventoryItem(Material.ARROW, Component.translatable("gui.back")).setTag("ItemTag", "gui.back");
     public final static InventoryItem close = newInventoryItem(Material.BARRIER, Component.translatable("gui.close")).setTag("ItemTag", "gui.close");
 
-    public static boolean isServerItem(ItemStack stack) {
-        net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
-        NBTTagCompound compound = (nmsStack.r()) ? nmsStack.s() : new NBTTagCompound();
-        assert compound != null;
-        return compound.p("serverItem") != null && compound.q("serverItem");
+    public static boolean isInventoryItem(ItemStack stack) {
+        return NBTHelper.hasTag(stack, "InventoryItem") && NBTHelper.getTag(stack).q("InventoryItem");
     }
 
     public static boolean equalItem(@NotNull ItemStack source, @NotNull ItemStack stack) {

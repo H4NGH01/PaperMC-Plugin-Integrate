@@ -9,10 +9,10 @@ import me.core.util.ComponentUtil;
 import me.core.util.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -91,8 +91,25 @@ public class MailGUIListener {
             return;
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.delete")) {
-            for (Mail mail : plugin.getMailManager().getReceivedMail(p)) {
-                mail.setDeleted();
+            if (e.isLeftClick()) {
+                List<Mail> mailList = new ArrayList<>();
+                int i = gui.getStartSlot();
+                for (ItemStack mailStack : gui.getContents()) {
+                    if (mailStack == null || mailStack.getType().equals(Material.AIR) || !mailStack.hasItemMeta() || !NBTHelper.hasTag(mailStack, "MailID")) continue;
+                    for (Mail mail : plugin.getMailManager().getMailList(p)) {
+                        if (mail.getMailID().equals(NBTHelper.getTag(mailStack).l("MailID")) && gui.isSelectedSlot(i)) mailList.add(mail);
+                    }
+                    i++;
+                }
+                for (Mail mail : mailList) {
+                    mail.setDeleted();
+                }
+                gui.unselectedAllSlot();
+            }
+            if (e.isRightClick()) {
+                for (Mail mail : plugin.getMailManager().getReceivedMail(p)) {
+                    mail.setDeleted();
+                }
             }
             gui.setPage(1);
             gui.update();
@@ -102,17 +119,18 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.mail")) {
             for (Mail mail : plugin.getMailManager().getMailList(p)) {
                 if (mail.getMailID().equals(NBTHelper.getTag(item).l("MailID"))) {
-                    if (!mail.isReceived()) {
-                        mail.setReceived();
-                        p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
-                    }
-                    if (e.getAction().equals(InventoryAction.PICKUP_HALF)) {
+                    if (e.isRightClick()) {
+                        if (!mail.isReceived()) mail.setReceived();
                         MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.ADDRESSEE);
                         mvg.setLastInventory(gui);
                         mvg.openToPlayer();
                         break;
+                    } else {
+                        gui.selectSlot(e.getSlot(), !gui.isSelectedSlot(e.getSlot()));
+                        gui.update();
                     }
-                    gui.update();
+                    p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
+                    return;
                 }
             }
         }
@@ -215,7 +233,7 @@ public class MailGUIListener {
                         mail.addAddressee(offlinePlayer);
                         p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.7f, 1f);
                     }
-                    e.getInventory().setItem(e.getSlot(), MailPlayerSelectorGUI.playerIcon(offlinePlayer, (mail.containAddressee(offlinePlayer))));
+                    e.getInventory().setItem(e.getSlot(), gui.playerIcon(offlinePlayer));
                     return;
                 }
             }
@@ -244,7 +262,7 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.sent.mail")) {
             for (Mail mail : plugin.getMailManager().getMailListBySender(p)) {
                 if (mail.getMailID().equals(NBTHelper.getTag(item).l("MailID"))) {
-                    if (e.getAction().equals(InventoryAction.PICKUP_HALF)) {
+                    if (e.isRightClick()) {
                         MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.SENDER);
                         mvg.setLastInventory(gui);
                         mvg.openToPlayer();

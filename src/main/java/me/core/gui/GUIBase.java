@@ -42,6 +42,7 @@ public abstract class GUIBase {
 
     public void setLastInventory(GUIBase lastInventory) {
         this.lastInventory = lastInventory;
+        this.inventory.setItem(48, this.lastInventory != null ? MCServerItems.back : MCServerItems.board);
     }
 
     public void openLastInventory() {

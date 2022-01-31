@@ -1,6 +1,7 @@
 package me.core;
 
 import me.core.command.CommandManager;
+import me.core.enchantments.PluginEnchantments;
 import me.core.event.ServerChatBarListener;
 import me.core.event.ServerGUIListener;
 import me.core.event.StatTrakEvent;
@@ -20,12 +21,13 @@ public class MCServerPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        serverPlayerHashMap = new HashMap<>();
         this.loadConfig();
         this.configManager = new ConfigurationManager();
         this.configManager.setup();
         this.commandManager = new CommandManager();
         this.commandManager.setup();
+        PluginEnchantments.loadEnchantments();
+        serverPlayerHashMap = new HashMap<>();
         this.mailManager = new MailManager();
         this.registerEvents();
         for (Player player : this.getServer().getOnlinePlayers()) {
@@ -38,12 +40,12 @@ public class MCServerPlugin extends JavaPlugin {
     public void onDisable() {
         for (Player p : this.getServer().getOnlinePlayers()) {
             p.closeInventory();
+            ServerPlayer sp = serverPlayerHashMap.get(p);
+            if (sp != null) sp.save();
         }
+        PluginEnchantments.unloadEnchantments();
         this.mailManager.save();
         this.configManager.savePlayerConfig();
-        for (ServerPlayer sp : serverPlayerHashMap.values()) {
-            sp.save();
-        }
         this.log("Server Plugin Disable");
     }
 

@@ -20,7 +20,7 @@ public class ServerGUIListener implements Listener {
     public void onClick(@NotNull InventoryClickEvent e) {
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
-        if (MCServerItems.isServerItem(item)) e.setCancelled(true);
+        if (MCServerItems.isInventoryItem(item)) e.setCancelled(true);
         if (MCServerItems.equalItem(item, MCServerItems.close)) {
             Player p = (Player) e.getWhoClicked();
             p.closeInventory();

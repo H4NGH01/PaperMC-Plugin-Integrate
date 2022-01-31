@@ -43,7 +43,6 @@ public class MailWriterGUI extends GUIBase {
         this.inventory.setItem(18, to());
         this.inventory.setItem(27, text());
         this.inventory.setItem(36, attachment());
-        this.inventory.setItem(48, MCServerItems.back);
     }
 
     @Override

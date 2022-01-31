@@ -2,7 +2,6 @@ package me.core.gui.mail;
 
 import me.core.gui.MultiplePageGUI;
 import me.core.item.InventoryItem;
-import me.core.item.MCServerItems;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
@@ -36,16 +35,11 @@ public class MailSentGUI extends MultiplePageGUI {
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
         for (Mail mail : plugin.getMailManager().getMailListBySender(this.getPlayer())) {
-            stacks.add(mail(mail));
+            stacks.add(mailStack(mail));
         }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.getPlayer()).getPage() : 1);
-
         this.inventory.setItem(0, info(this.getPlayer()));
-        this.inventory.setItem(48, MCServerItems.back);
-        this.inventory.setItem(45, MCServerItems.prev);
-        this.inventory.setItem(53, MCServerItems.next);
-
         this.updateGUIName();
     }
 
@@ -67,7 +61,8 @@ public class MailSentGUI extends MultiplePageGUI {
         return item;
     }
 
-    private @NotNull ItemStack mail(@NotNull Mail mail) {
+    @Contract("_ -> new")
+    private @NotNull InventoryItem mailStack(@NotNull Mail mail) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.sent.mail").setTag("MailID", mail.getMailID());
         item.setDisplayName(ComponentUtil.translate(ChatColor.YELLOW, mail.getTitle()));
         item.addLore(ComponentUtil.translate(ChatColor.GRAY, "gui.mail.to").append(Component.text(ChatColor.GRAY + ": " + Objects.requireNonNull(plugin.getServer().getOfflinePlayer(mail.getAddressee()).getName()))));

@@ -2,7 +2,6 @@ package me.core.gui.mail;
 
 import me.core.gui.MultiplePageGUI;
 import me.core.item.InventoryItem;
-import me.core.item.MCServerItems;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
@@ -33,16 +32,11 @@ public class MailBinGUI extends MultiplePageGUI {
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
         for (Mail mail : plugin.getMailManager().getDeletedMail(this.getPlayer())) {
-            stacks.add(mail(mail));
+            stacks.add(mailStack(mail));
         }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.getPlayer()).getPage() : 1);
-
         this.inventory.setItem(0, info(this.getPlayer()));
-        this.inventory.setItem(48, MCServerItems.back);
-        this.inventory.setItem(45, MCServerItems.prev);
-        this.inventory.setItem(53, MCServerItems.next);
-
         this.updateGUIName();
     }
 
@@ -59,8 +53,9 @@ public class MailBinGUI extends MultiplePageGUI {
         return item;
     }
 
-    private @NotNull ItemStack mail(@NotNull Mail mail) {
-        InventoryItem item = new InventoryItem(Material.MAP).setTag("ItemTag", "gui.mail.bin.mail").setTag("MailID", mail.getMailID());
+    @Contract("_ -> new")
+    private @NotNull InventoryItem mailStack(@NotNull Mail mail) {
+        InventoryItem item = new InventoryItem(Material.FILLED_MAP).setTag("ItemTag", "gui.mail.bin.mail").setTag("MailID", mail.getMailID());
         item.setDisplayName(ComponentUtil.component(ChatColor.YELLOW, Component.translatable(mail.getTitle())));
         String sender = mail.getSender().startsWith("player@") ? plugin.getServer().getOfflinePlayer(UUID.fromString(mail.getSender().substring(7))).getName() : mail.getSender();
         item.addLore(ComponentUtil.component(ChatColor.GRAY, ComponentUtil.translate("gui.mail.from"), ComponentUtil.text(": " + Objects.requireNonNull(sender))));
@@ -87,7 +82,7 @@ public class MailBinGUI extends MultiplePageGUI {
 
     public void update() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getDeletedMail(this.getPlayer())) stacks.add(mail(mail));
+        for (Mail mail : plugin.getMailManager().getDeletedMail(this.getPlayer())) stacks.add(mailStack(mail));
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.getPlayer()).getPage() : 1);
         this.inventory.setItem(0, info(this.getPlayer()));

@@ -1,8 +1,8 @@
 package me.core.gui.mail;
 
+import me.core.enchantments.PluginEnchantments;
 import me.core.gui.MultiplePageGUI;
 import me.core.item.InventoryItem;
-import me.core.item.MCServerItems;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
@@ -32,20 +32,17 @@ public class MailBoxGUI extends MultiplePageGUI {
     @Override
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
+        int i = this.startSlot;
         for (Mail mail : plugin.getMailManager().getMailList(this.player)) {
-            if (!mail.isDeleted()) stacks.add(mail(mail));
+            if (!mail.isDeleted()) stacks.add(this.mailStack(mail, i++));
         }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.player).getPage() : 1);
-
         this.inventory.setItem(0, info(this.player));
         this.inventory.setItem(1, writeMail());
         this.inventory.setItem(2, sentMail());
         this.inventory.setItem(3, mailBin());
         this.inventory.setItem(8, deleteMail());
-        this.inventory.setItem(45, MCServerItems.prev);
-        this.inventory.setItem(53, MCServerItems.next);
-
         this.updateGUIName();
     }
 
@@ -67,6 +64,7 @@ public class MailBoxGUI extends MultiplePageGUI {
     private @NotNull InventoryItem writeMail() {
         InventoryItem item = new InventoryItem(Material.WRITABLE_BOOK).setTag("ItemTag", "gui.mail.box.write");
         item.setDisplayName(Component.translatable("gui.mail.box.write"));
+        item.addLore(Component.translatable("gui.mail.box.write_lore"));
         return item;
     }
 
@@ -90,11 +88,12 @@ public class MailBoxGUI extends MultiplePageGUI {
     private @NotNull InventoryItem deleteMail() {
         InventoryItem item = new InventoryItem(Material.CAULDRON).setTag("ItemTag", "gui.mail.box.delete");
         item.setDisplayName(Component.translatable("gui.mail.box.delete"));
-        item.addLore(Component.translatable("gui.mail.box.delete_lore"));
+        item.addLore(Component.translatable("gui.mail.box.delete_lore1"));
+        item.addLore(Component.translatable("gui.mail.box.delete_lore2"));
         return item;
     }
 
-    private @NotNull ItemStack mail(@NotNull Mail mail) {
+    private @NotNull InventoryItem mailStack(@NotNull Mail mail, int slot) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.box.mail").setTag("MailID", mail.getMailID());
         item.setDisplayName(ComponentUtil.translate(ChatColor.YELLOW, mail.getTitle()));
         String sender = mail.getSender().startsWith("player@") ? plugin.getServer().getOfflinePlayer(UUID.fromString(mail.getSender().substring(7))).getName() : mail.getSender();
@@ -120,14 +119,17 @@ public class MailBoxGUI extends MultiplePageGUI {
             item.addLore(Component.translatable("gui.mail.received"));
             item.setType(Material.MAP);
         }
+        item.addLore(Component.translatable(this.isSelectedSlot(slot) ? "gui.mail.unselect" : "gui.mail.select"));
         item.addLore(Component.translatable("gui.mail.show_details"));
+        if (this.isSelectedSlot(slot)) item.addUnsafeEnchantment(PluginEnchantments.WRAPPER, 0);
         return item;
     }
 
     public void update() {
         List<ItemStack> stacks = new ArrayList<>();
+        int i = this.startSlot;
         for (Mail mail : plugin.getMailManager().getMailList(this.player)) {
-            if (!mail.isDeleted()) stacks.add(mail(mail));
+            if (!mail.isDeleted()) stacks.add(mailStack(mail, i++));
         }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.player) ? VIEW_MAP.get(this.player).getPage() : 1);

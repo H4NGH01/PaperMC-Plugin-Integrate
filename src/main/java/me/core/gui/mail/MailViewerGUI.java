@@ -2,7 +2,6 @@ package me.core.gui.mail;
 
 import me.core.gui.GUIBase;
 import me.core.item.InventoryItem;
-import me.core.item.MCServerItems;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
@@ -47,8 +46,6 @@ public class MailViewerGUI extends GUIBase {
         if (this.type.equals(ViewType.ADDRESSEE)) {
             this.inventory.setItem(44, delete());
         }
-        this.inventory.setItem(48, MCServerItems.back);
-
         this.setTitle(getGUIName(), Component.text(mail.getMailID()));
     }
 

@@ -18,7 +18,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -64,37 +63,40 @@ public class StatTrakEvent implements Listener {
     @EventHandler
     public void onOpenAnvil(InventoryOpenEvent e) {
         if (!e.getInventory().getType().equals(InventoryType.ANVIL)) return;
-        hidePrefix(e.getInventory());
-        hidePrefix(e.getPlayer().getInventory());
+        hidePrefix(e.getInventory().getContents());
+        hidePrefix(e.getPlayer().getInventory().getContents());
+        hidePrefix(e.getPlayer().getInventory().getArmorContents());
+        hidePrefix(e.getPlayer().getInventory().getItemInOffHand());
     }
 
-    private void hidePrefix(Inventory inventory) {
-        for (ItemStack stack : inventory.getContents()) {
-            if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && StatTrak.isStattrak(stack)) {
-                ItemMeta meta = stack.getItemMeta();
-                boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
-                meta.displayName(b ? ComponentUtil.translate(stack.translationKey()) : ComponentUtil.text(NBTHelper.getTag(stack).l("CustomName")));
-                stack.setItemMeta(meta);
-            }
+    private void hidePrefix(ItemStack[] contents) {
+        for (ItemStack stack : contents) {
+            hidePrefix(stack);
+        }
+    }
+
+    private void hidePrefix(ItemStack stack) {
+        if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && StatTrak.isStattrak(stack)) {
+            ItemMeta meta = stack.getItemMeta();
+            boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
+            meta.displayName(b ? null : ComponentUtil.text(NBTHelper.getTag(stack).l("CustomName")));
+            stack.setItemMeta(meta);
         }
     }
 
     @EventHandler
     public void onCloseAnvil(InventoryCloseEvent e) {
         if (!e.getInventory().getType().equals(InventoryType.ANVIL)) return;
-        showPrefix(e.getInventory());
-        showPrefix(e.getPlayer().getInventory());
+        showPrefix(e.getInventory().getContents());
+        showPrefix(e.getPlayer().getInventory().getContents());
+        showPrefix(e.getPlayer().getInventory().getArmorContents());
         showPrefix(e.getPlayer().getItemOnCursor());
+        showPrefix(e.getPlayer().getInventory().getItemInOffHand());
     }
 
-    private void showPrefix(Inventory inventory) {
-        for (ItemStack stack : inventory.getContents()) {
-            if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && StatTrak.isStattrak(stack)) {
-                ItemMeta meta = stack.getItemMeta();
-                boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
-                meta.displayName(Component.text(ChatColor.GOLD + "StatTrak™ ").append(b ? ComponentUtil.translate(stack.translationKey()) : ComponentUtil.text(NBTHelper.getTag(stack).l("CustomName"))));
-                stack.setItemMeta(meta);
-            }
+    private void showPrefix(ItemStack[] contents) {
+        for (ItemStack stack : contents) {
+            showPrefix(stack);
         }
     }
 
@@ -109,8 +111,9 @@ public class StatTrakEvent implements Listener {
 
     @EventHandler
     public void onAnvilRenamed(PrepareAnvilEvent e) {
-        if (!StatTrak.isStattrak(e.getResult())) return;
-        NBTHelper.setTag(e.getResult(), "CustomName", e.getInventory().getRenameText());
+        if (e.getResult() == null || e.getResult().getType().equals(Material.AIR) || !StatTrak.isStattrak(e.getResult())) return;
+        String s = e.getInventory().getRenameText() == null || e.getInventory().getRenameText().replaceAll(" ", "").equals("") ? e.getResult().translationKey() : e.getInventory().getRenameText();
+        NBTHelper.setTag(e.getResult(), "CustomName", s);
     }
 
 }

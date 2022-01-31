@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatTrak extends ItemStack {
+public class StatTrak extends PluginItem {
 
     public StatTrak(Material material) {
         this(material, 1);
@@ -23,22 +23,20 @@ public class StatTrak extends ItemStack {
         this(new ItemStack(material, amount));
     }
 
-    public StatTrak(ItemStack stack) throws IllegalArgumentException {
+    public StatTrak(ItemStack stack) {
         super(stack);
-        NBTHelper.setTag(this, "CustomName", this.getItemMeta().hasDisplayName() ? this.getItemMeta().getDisplayName() : this.translationKey());
-        ItemMeta meta = this.getItemMeta();
+        boolean b = this.getItemMeta().hasDisplayName();
+        this.setTag("CustomName", b ? this.getItemMeta().getDisplayName() : this.translationKey());
         TextComponent.Builder display = Component.text().decoration(TextDecoration.ITALIC, false);
         display.append(Component.text(ChatColor.GOLD + "StatTrak™ "));
-        Component c = this.getItemMeta().hasDisplayName() ? Component.text(this.getItemMeta().getDisplayName()) : Component.translatable(this.translationKey());
-        display.append(c);
-        meta.displayName(display.build());
+        display.append(b ? Component.text(this.getItemMeta().getDisplayName()) : Component.translatable(this.translationKey()));
+        this.setDisplayName(display.build());
         List<Component> components = new ArrayList<>();
         components.add(Component.translatable("item.stattrak.count").args(ComponentUtil.text(ChatColor.RED.toString() + getKills(this))));
-        List<Component> base = meta.lore();
-        components.addAll(base != null ? base : new ArrayList<>());
-        meta.lore(components);
-        this.setItemMeta(meta);
-        NBTHelper.setTag(this, "stattrak", isStattrak(this) ? getKills(stack) : 0);
+        List<Component> base = this.getItemMeta().lore();
+        if (base != null && base.size() != 0) components.addAll(base);
+        this.lore(components);
+        this.setTag("stattrak", isStattrak(this) ? getKills(stack) : 0);
     }
 
     public static boolean isStattrak(ItemStack stack) {
