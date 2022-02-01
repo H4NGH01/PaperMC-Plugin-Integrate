@@ -5,6 +5,7 @@ import me.core.item.StatTrak;
 import me.core.util.ComponentUtil;
 import me.core.util.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -71,7 +72,7 @@ public class AdminStatTrakCommand extends PluginCommand {
             player.sendMessage(Component.translatable("command.item_reset_stattrak"));
             return;
         }
-        player.sendMessage(ComponentUtil.translate(org.bukkit.ChatColor.RED, "command.unknown.argument"));
+        player.sendMessage(ComponentUtil.translate(NamedTextColor.RED, "command.unknown.argument"));
         player.sendMessage(Component.translatable("command.usages"));
         player.sendMessage("/admin-stattrak give");
         player.sendMessage("/admin-stattrak take");

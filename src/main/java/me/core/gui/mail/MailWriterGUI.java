@@ -7,6 +7,7 @@ import me.core.mail.NewMail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,8 +54,8 @@ public class MailWriterGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem title() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.writer.title");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.title"));
-        item.addLore(ComponentUtil.translate(ChatColor.YELLOW, mail.getTitle()));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.title"));
+        item.addLore(ComponentUtil.translate(NamedTextColor.YELLOW, mail.getTitle()));
         item.addLore(Component.translatable("gui.mail.edit"));
         return item;
     }
@@ -62,16 +63,16 @@ public class MailWriterGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem to() {
         InventoryItem item = new InventoryItem(Material.PLAYER_HEAD).setTag("ItemTag", "gui.mail.writer.to");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.to"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.to"));
         TextComponent.Builder builder = Component.text();
         if (this.mail.getAddressee().length > 0) {
             for (int i = 0; i < this.mail.getAddressee().length; i++) {
                 OfflinePlayer op = this.mail.getAddressee()[i];
-                builder.append(ComponentUtil.text(ChatColor.YELLOW, Objects.requireNonNull(op.getName())));
+                builder.append(ComponentUtil.text(NamedTextColor.YELLOW, Objects.requireNonNull(op.getName())));
                 if (i < this.mail.getAddressee().length - 1) builder.append(Component.text(", "));
             }
         } else {
-            builder.append(ComponentUtil.translate(ChatColor.GRAY, "gui.none"));
+            builder.append(ComponentUtil.translate(NamedTextColor.GRAY, "gui.none"));
         }
         item.addLore(builder.build());
         item.addLore(Component.translatable("gui.mail.edit"));
@@ -81,9 +82,9 @@ public class MailWriterGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem text() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.writer.text");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.text"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.text"));
         if (this.mail.getText().equals("gui.mail.no_text")) {
-            item.addLore(ComponentUtil.translate(ChatColor.GRAY, mail.getText()).decoration(TextDecoration.ITALIC, true));
+            item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, mail.getText()).decoration(TextDecoration.ITALIC, true));
         } else {
             String[] sa = (this.mail.getText()).split("\\\\n");
             for (String s : sa) {
@@ -97,7 +98,7 @@ public class MailWriterGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem attachment() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.writer.attachment");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.attachment"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.attachment"));
         item.addLore(Component.translatable("gui.mail.attachment_edit_lore1"));
         item.addLore(Component.translatable("gui.mail.attachment_edit_lore2"));
         item.addLore(Component.translatable("gui.mail.edit"));

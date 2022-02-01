@@ -5,6 +5,7 @@ import me.core.item.InventoryItem;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -64,26 +65,26 @@ public class MailSentGUI extends MultiplePageGUI {
     @Contract("_ -> new")
     private @NotNull InventoryItem mailStack(@NotNull Mail mail) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.sent.mail").setTag("MailID", mail.getMailID());
-        item.setDisplayName(ComponentUtil.translate(ChatColor.YELLOW, mail.getTitle()));
-        item.addLore(ComponentUtil.translate(ChatColor.GRAY, "gui.mail.to").append(Component.text(ChatColor.GRAY + ": " + Objects.requireNonNull(plugin.getServer().getOfflinePlayer(mail.getAddressee()).getName()))));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.YELLOW, mail.getTitle()));
+        item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.mail.to").append(Component.text(ChatColor.GRAY + ": " + Objects.requireNonNull(plugin.getServer().getOfflinePlayer(mail.getAddressee()).getName()))));
 
         if (mail.getText().equals("gui.mail.no_text")) {
-            item.addLore(ComponentUtil.translate(ChatColor.GRAY, mail.getText()).decoration(TextDecoration.ITALIC, true));
+            item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, mail.getText()).decoration(TextDecoration.ITALIC, true));
         } else {
             String[] sa = (mail.getText()).split("\\\\n");
             for (String s : sa) {
                 item.addLore(Component.text(ChatColor.GRAY + "§o" + s));
             }
         }
-        item.addLore(ComponentUtil.translate(ChatColor.GRAY, "gui.mail.attachment"));
+        item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.mail.attachment"));
         if (mail.getItemList().size() == 0) {
-            item.addLore(ComponentUtil.translate(ChatColor.GRAY, "gui.none"));
+            item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.none"));
         } else {
             for (ItemStack stack : mail.getItemList()) {
                 item.addLore(ComponentUtil.component(Component.text(ChatColor.GRAY + "- "), stack.displayName()));
             }
         }
-        item.addLore(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.date").append(Component.text(": " + mail.getDate())));
+        item.addLore(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.date").append(Component.text(": " + mail.getDate())));
         if (mail.isReceived()) {
             item.addLore(Component.translatable("gui.mail.received"));
             item.setType(Material.MAP);

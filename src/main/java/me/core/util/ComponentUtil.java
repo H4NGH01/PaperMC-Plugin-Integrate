@@ -5,9 +5,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
-
-import java.awt.*;
 
 public class ComponentUtil {
 
@@ -19,7 +16,7 @@ public class ComponentUtil {
         return component(components);
     }
 
-    public static Component text(ChatColor color, String... string) {
+    public static Component text(TextColor color, String... string) {
         return component(color, text(string));
     }
 
@@ -31,8 +28,8 @@ public class ComponentUtil {
         return builder.build();
     }
 
-    public static Component component(ChatColor color, Component... component) {
-        return component(component).color(convertTextColor(color));
+    public static Component component(TextColor color, Component... component) {
+        return component(component).color(color);
     }
 
     public static Component translate(String... keys) {
@@ -43,8 +40,8 @@ public class ComponentUtil {
         return component(components);
     }
 
-    public static Component translate(ChatColor color, String... keys) {
-        return translate(keys).color(convertTextColor(color));
+    public static Component translate(TextColor color, String... keys) {
+        return translate(keys).color(color);
     }
 
     public static Component setBold(Component component, boolean bold) {
@@ -53,11 +50,6 @@ public class ComponentUtil {
 
     public static Component setItalic(Component component, boolean bold) {
         return component.decoration(TextDecoration.ITALIC, bold);
-    }
-
-    public static TextColor convertTextColor(ChatColor color) {
-        Color c = color.asBungee().getColor();
-        return TextColor.color(c.getRed(), c.getGreen(), c.getBlue());
     }
 
     public static String plainText(Component component) {

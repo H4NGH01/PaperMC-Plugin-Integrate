@@ -4,6 +4,7 @@ import me.core.command.PluginCommand;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -38,7 +39,7 @@ public class AdminMailCommand extends PluginCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                 } catch (Exception ignored) {
-                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1])).color(ComponentUtil.convertTextColor(org.bukkit.ChatColor.RED)));
+                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1])).color(NamedTextColor.RED));
                     return;
                 }
             }
@@ -91,7 +92,7 @@ public class AdminMailCommand extends PluginCommand {
             player.sendMessage(Component.translatable("command.cleared_all_mail"));
             return;
         }
-        player.sendMessage(ComponentUtil.translate(org.bukkit.ChatColor.RED, "command.unknown.argument"));
+        player.sendMessage(ComponentUtil.translate(NamedTextColor.RED, "command.unknown.argument"));
         player.sendMessage(Component.translatable("command.usages"));
         player.sendMessage("/admin-mail list");
         player.sendMessage("/admin-mail clear");

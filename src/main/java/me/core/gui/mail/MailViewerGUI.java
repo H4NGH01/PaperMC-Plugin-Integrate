@@ -5,6 +5,7 @@ import me.core.item.InventoryItem;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -58,7 +59,7 @@ public class MailViewerGUI extends GUIBase {
     private @NotNull InventoryItem from() {
         String sender = mail.getSender().startsWith("player@") ? plugin.getServer().getOfflinePlayer(UUID.fromString(mail.getSender().substring(7))).getName() : mail.getSender();
         InventoryItem item = new InventoryItem(Material.PLAYER_HEAD).setTag("ItemTag", "gui.mail.viewer.from");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.from"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.from"));
         item.addLore(Component.text(ChatColor.YELLOW + Objects.requireNonNull(sender)));
         return item;
     }
@@ -66,7 +67,7 @@ public class MailViewerGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem to() {
         InventoryItem item = new InventoryItem(Material.PLAYER_HEAD).setTag("ItemTag", "gui.mail.viewer.to");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.to"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.to"));
         item.addLore(Component.text(ChatColor.YELLOW + Objects.requireNonNull(plugin.getServer().getOfflinePlayer(mail.getAddressee()).getName())));
         return item;
     }
@@ -74,17 +75,17 @@ public class MailViewerGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem title() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.viewer.title");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.title"));
-        item.setLore(ComponentUtil.translate(ChatColor.YELLOW, mail.getTitle()));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.title"));
+        item.setLore(ComponentUtil.translate(NamedTextColor.YELLOW, mail.getTitle()));
         return item;
     }
 
     @Contract(" -> new")
     private @NotNull InventoryItem text() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.viewer.content");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.text"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.text"));
         if (this.mail.getText().equals("gui.mail.no_text")) {
-            item.addLore(ComponentUtil.translate(ChatColor.GRAY, mail.getText()));
+            item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, mail.getText()));
         } else {
             String[] sa = (this.mail.getText()).split("\\\\n");
             for (String s : sa) {
@@ -97,15 +98,15 @@ public class MailViewerGUI extends GUIBase {
     @Contract(" -> new")
     private @NotNull InventoryItem attachment() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.viewer.attachment");
-        item.setDisplayName(ComponentUtil.translate(ChatColor.GREEN, "gui.mail.attachment"));
-        if (mail.getItemList().size() == 0) item.addLore(ComponentUtil.translate(ChatColor.GRAY, "gui.none"));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.attachment"));
+        if (mail.getItemList().size() == 0) item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.none"));
         return item;
     }
 
     @Contract(" -> new")
     private @NotNull InventoryItem date() {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.viewer.date");
-        item.setDisplayName(ComponentUtil.component(ChatColor.GREEN, ComponentUtil.translate("gui.mail.date"), Component.text(ChatColor.GREEN + ": " + mail.getDate())));
+        item.setDisplayName(ComponentUtil.component(NamedTextColor.GREEN, ComponentUtil.translate("gui.mail.date"), Component.text(ChatColor.GREEN + ": " + mail.getDate())));
         return item;
     }
 

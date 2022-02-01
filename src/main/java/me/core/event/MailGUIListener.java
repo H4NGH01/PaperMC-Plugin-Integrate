@@ -8,8 +8,7 @@ import me.core.mail.NewMail;
 import me.core.util.ComponentUtil;
 import me.core.util.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -92,19 +91,11 @@ public class MailGUIListener {
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.delete")) {
             if (e.isLeftClick()) {
-                List<Mail> mailList = new ArrayList<>();
-                int i = gui.getStartSlot();
-                for (ItemStack mailStack : gui.getContents()) {
-                    if (mailStack == null || mailStack.getType().equals(Material.AIR) || !mailStack.hasItemMeta() || !NBTHelper.hasTag(mailStack, "MailID")) continue;
-                    for (Mail mail : plugin.getMailManager().getMailList(p)) {
-                        if (mail.getMailID().equals(NBTHelper.getTag(mailStack).l("MailID")) && gui.isSelectedSlot(i)) mailList.add(mail);
-                    }
-                    i++;
-                }
+                List<Mail> mailList = new ArrayList<>(gui.getSelectedMail());
                 for (Mail mail : mailList) {
                     mail.setDeleted();
                 }
-                gui.unselectedAllSlot();
+                gui.getSelectedMail().clear();
             }
             if (e.isRightClick()) {
                 for (Mail mail : plugin.getMailManager().getReceivedMail(p)) {
@@ -126,7 +117,11 @@ public class MailGUIListener {
                         mvg.openToPlayer();
                         break;
                     } else {
-                        gui.selectSlot(e.getSlot(), !gui.isSelectedSlot(e.getSlot()));
+                        if (gui.getSelectedMail().contains(mail)) {
+                            gui.getSelectedMail().remove(mail);
+                        } else {
+                            gui.getSelectedMail().add(mail);
+                        }
                         gui.update();
                     }
                     p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
@@ -199,7 +194,7 @@ public class MailGUIListener {
             sb.deleteCharAt(sb.length() - 2);
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
-            p.sendMessage(Component.translatable("chat.mail_send_success").args(ComponentUtil.text(ChatColor.YELLOW, sb.toString())));
+            p.sendMessage(Component.translatable("chat.mail_send_success").args(ComponentUtil.text(NamedTextColor.YELLOW, sb.toString())));
         }
     }
 

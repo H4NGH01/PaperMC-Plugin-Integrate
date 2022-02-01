@@ -6,6 +6,7 @@ import me.core.item.InventoryItem;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,17 +25,21 @@ public class MailBoxGUI extends MultiplePageGUI {
         VIEW_MAP = new HashMap<>();
     }
 
+    private final HashSet<Mail> selectedMail;
+
     public MailBoxGUI(Player player) {
         super(player);
         VIEW_MAP.put(player, this);
+        this.selectedMail = new HashSet<>();
     }
 
     @Override
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
-        int i = this.startSlot;
         for (Mail mail : plugin.getMailManager().getMailList(this.player)) {
-            if (!mail.isDeleted()) stacks.add(this.mailStack(mail, i++));
+            if (!mail.isDeleted()) {
+                stacks.add(mailStack(mail, false));
+            }
         }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.player).getPage() : 1);
@@ -93,46 +98,51 @@ public class MailBoxGUI extends MultiplePageGUI {
         return item;
     }
 
-    private @NotNull InventoryItem mailStack(@NotNull Mail mail, int slot) {
+    private @NotNull InventoryItem mailStack(@NotNull Mail mail, boolean selected) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.box.mail").setTag("MailID", mail.getMailID());
-        item.setDisplayName(ComponentUtil.translate(ChatColor.YELLOW, mail.getTitle()));
+        item.setDisplayName(ComponentUtil.translate(NamedTextColor.YELLOW, mail.getTitle()));
         String sender = mail.getSender().startsWith("player@") ? plugin.getServer().getOfflinePlayer(UUID.fromString(mail.getSender().substring(7))).getName() : mail.getSender();
-        item.addLore(ComponentUtil.component(ChatColor.GRAY, Component.translatable("gui.mail.from"), Component.text(": " + Objects.requireNonNull(sender))));
+        item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.translatable("gui.mail.from"), Component.text(": " + Objects.requireNonNull(sender))));
         if (mail.getText().equals("gui.mail.no_text")) {
-            item.addLore(ComponentUtil.component(ChatColor.GRAY, Component.translatable(mail.getText()).decoration(TextDecoration.ITALIC, true)));
+            item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.translatable(mail.getText()).decoration(TextDecoration.ITALIC, true)));
         } else {
             String[] sa = (mail.getText()).split("\\\\n");
             for (String s : sa) {
                 item.addLore(Component.text(ChatColor.GRAY + "§o" + s));
             }
         }
-        item.addLore(ComponentUtil.component(ChatColor.GRAY, Component.translatable("gui.mail.attachment")));
+        item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.translatable("gui.mail.attachment")));
         if (mail.getItemList().size() == 0) {
-            item.addLore(ComponentUtil.component(ChatColor.GRAY, Component.translatable("gui.none")));
+            item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.translatable("gui.none")));
         } else {
             for (ItemStack stack : mail.getItemList()) {
                 item.addLore(ComponentUtil.component(Component.text(ChatColor.GRAY + "- "), stack.displayName()));
             }
         }
-        item.addLore(ComponentUtil.component(ChatColor.GREEN, Component.translatable("gui.mail.date"), Component.text(": " + mail.getDate())));
+        item.addLore(ComponentUtil.component(NamedTextColor.GREEN, Component.translatable("gui.mail.date"), Component.text(": " + mail.getDate())));
         if (mail.isReceived()) {
             item.addLore(Component.translatable("gui.mail.received"));
             item.setType(Material.MAP);
         }
-        item.addLore(Component.translatable(this.isSelectedSlot(slot) ? "gui.mail.unselect" : "gui.mail.select"));
+        item.addLore(Component.translatable(selected ? "gui.mail.unselect" : "gui.mail.select"));
         item.addLore(Component.translatable("gui.mail.show_details"));
-        if (this.isSelectedSlot(slot)) item.addUnsafeEnchantment(PluginEnchantments.WRAPPER, 0);
+        if (selected) item.addUnsafeEnchantment(PluginEnchantments.WRAPPER, 0);
         return item;
     }
 
     public void update() {
         List<ItemStack> stacks = new ArrayList<>();
-        int i = this.startSlot;
         for (Mail mail : plugin.getMailManager().getMailList(this.player)) {
-            if (!mail.isDeleted()) stacks.add(mailStack(mail, i++));
+            if (!mail.isDeleted()) {
+                stacks.add(mailStack(mail, this.selectedMail.contains(mail)));
+            }
         }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.player) ? VIEW_MAP.get(this.player).getPage() : 1);
         this.inventory.setItem(0, info(this.player));
+    }
+
+    public HashSet<Mail> getSelectedMail() {
+        return this.selectedMail;
     }
 }
