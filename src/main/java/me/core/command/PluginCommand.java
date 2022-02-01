@@ -1,10 +1,20 @@
 package me.core.command;
 
+import me.core.MCServerPlugin;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
-public abstract class PluginCommand {
+import java.util.Objects;
 
-    public PluginCommand() {}
+public abstract class PluginCommand implements Listener, TabCompleter {
+
+    protected final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
+
+    public PluginCommand() {
+        Objects.requireNonNull(plugin.getCommand(this.name())).setExecutor(plugin.getCommandManager());
+        Objects.requireNonNull(plugin.getCommand(this.name())).setTabCompleter(this);
+    }
 
     public abstract void onCommand(Player player, String[] args);
 

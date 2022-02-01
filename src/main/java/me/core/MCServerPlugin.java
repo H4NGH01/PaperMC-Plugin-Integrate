@@ -4,7 +4,7 @@ import me.core.command.CommandManager;
 import me.core.enchantments.PluginEnchantments;
 import me.core.event.ServerChatBarListener;
 import me.core.event.ServerGUIListener;
-import me.core.event.StatTrakEvent;
+import me.core.event.StatTrakListener;
 import me.core.mail.MailManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class MCServerPlugin extends JavaPlugin {
         for (Player player : this.getServer().getOnlinePlayers()) {
             serverPlayerHashMap.put(player, new ServerPlayer(player));
         }
-        this.log("Server Plugin Enable");
+        this.log("Plugin Enable");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class MCServerPlugin extends JavaPlugin {
         PluginEnchantments.unloadEnchantments();
         this.mailManager.save();
         this.configManager.savePlayerConfig();
-        this.log("Server Plugin Disable");
+        this.log("Plugin Disable");
     }
 
     private void loadConfig() {
@@ -58,7 +58,7 @@ public class MCServerPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ServerEventListener(), this);
         this.getServer().getPluginManager().registerEvents(new ServerGUIListener(), this);
         this.getServer().getPluginManager().registerEvents(new ServerChatBarListener(), this);
-        this.getServer().getPluginManager().registerEvents(new StatTrakEvent(), this);
+        this.getServer().getPluginManager().registerEvents(new StatTrakListener(), this);
     }
 
     public static HashMap<Player, ServerPlayer> getServerPlayerHashMap() {

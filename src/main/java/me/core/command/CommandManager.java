@@ -1,6 +1,5 @@
 package me.core.command;
 
-import me.core.MCServerPlugin;
 import me.core.command.admin.AdminMailCommand;
 import me.core.command.admin.AdminStatTrakCommand;
 import org.bukkit.ChatColor;
@@ -12,20 +11,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CommandManager implements CommandExecutor {
 
-    private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
     private final List<PluginCommand> commands = new ArrayList<>();
 
     public void setup() {
         this.addCommand(new MailCommand());
         this.addCommand(new AdminMailCommand());
         this.addCommand(new AdminStatTrakCommand());
-        for (PluginCommand command : commands) {
-            Objects.requireNonNull(plugin.getCommand(command.name())).setExecutor(this);
-        }
     }
 
     public void addCommand(PluginCommand command) {

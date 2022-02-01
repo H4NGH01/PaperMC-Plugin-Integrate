@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -89,10 +88,6 @@ public class Mail {
 
     public boolean isDeleted() {
         return this.deleted;
-    }
-
-    public void addItem(ItemStack... stack) {
-        Collections.addAll(this.itemList, stack);
     }
 
     public void setReceived() {

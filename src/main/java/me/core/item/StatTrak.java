@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class StatTrak extends PluginItem {
 
@@ -26,10 +27,10 @@ public class StatTrak extends PluginItem {
     public StatTrak(ItemStack stack) {
         super(stack);
         boolean b = this.getItemMeta().hasDisplayName();
-        this.setTag("CustomName", b ? this.getItemMeta().getDisplayName() : this.translationKey());
+        this.setTag("CustomName", b ? ComponentUtil.plainText(this.getItemMeta().displayName()) : this.translationKey());
         TextComponent.Builder display = Component.text().decoration(TextDecoration.ITALIC, false);
         display.append(Component.text(ChatColor.GOLD + "StatTrak™ "));
-        display.append(b ? Component.text(this.getItemMeta().getDisplayName()) : Component.translatable(this.translationKey()));
+        display.append(b ? Objects.requireNonNull(this.getItemMeta().displayName()) : Component.translatable(this.translationKey()));
         this.setDisplayName(display.build());
         List<Component> components = new ArrayList<>();
         components.add(Component.translatable("item.stattrak.count").args(ComponentUtil.text(ChatColor.RED.toString() + getKills(this))));

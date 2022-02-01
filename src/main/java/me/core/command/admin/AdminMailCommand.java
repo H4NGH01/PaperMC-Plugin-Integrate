@@ -1,6 +1,5 @@
 package me.core.command.admin;
 
-import me.core.MCServerPlugin;
 import me.core.command.PluginCommand;
 import me.core.mail.Mail;
 import me.core.util.ComponentUtil;
@@ -11,16 +10,19 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
 import net.minecraft.nbt.NBTTagCompound;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class AdminMailCommand extends PluginCommand {
-
-    private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
-    private final String[] s = new String[]{"a-mail"};
 
     @Override
     public void onCommand(Player player, String[] args) {
@@ -36,7 +38,7 @@ public class AdminMailCommand extends PluginCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                 } catch (Exception ignored) {
-                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1])));
+                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1])).color(ComponentUtil.convertTextColor(org.bukkit.ChatColor.RED)));
                     return;
                 }
             }
@@ -79,14 +81,14 @@ public class AdminMailCommand extends PluginCommand {
                 textComponent.addExtra(ChatColor.GRAY + "]\n");
                 textComponent.addExtra(ChatColor.GRAY + "Date: " + ChatColor.YELLOW + mail.getDate() + "\n");
                 textComponent.addExtra(ChatColor.GRAY + "Received: " + (mail.isReceived() ? ChatColor.YELLOW + "Yes" : ChatColor.RED + "No"));
-                player.spigot().sendMessage(textComponent);
+                player.sendMessage(textComponent);
                 //
             }
             return;
         }
         if (args[0].equalsIgnoreCase("clear")) {
             plugin.getMailManager().getMailList().clear();
-            player.sendMessage(ChatColor.GREEN + "Cleared all mail");
+            player.sendMessage(Component.translatable("command.cleared_all_mail"));
             return;
         }
         player.sendMessage(ComponentUtil.translate(org.bukkit.ChatColor.RED, "command.unknown.argument"));
@@ -107,6 +109,16 @@ public class AdminMailCommand extends PluginCommand {
 
     @Override
     public String[] aliases() {
-        return s;
+        return new String[]{"a-mail"};
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        List<String> list = new ArrayList<>();
+        if (args.length == 1) {
+            list.add("list");
+            list.add("clear");
+        }
+        return list;
     }
 }

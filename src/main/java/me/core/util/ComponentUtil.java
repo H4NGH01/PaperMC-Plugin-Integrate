@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 
 import java.awt.*;
@@ -57,6 +58,10 @@ public class ComponentUtil {
     public static TextColor convertTextColor(ChatColor color) {
         Color c = color.asBungee().getColor();
         return TextColor.color(c.getRed(), c.getGreen(), c.getBlue());
+    }
+
+    public static String plainText(Component component) {
+        return PlainTextComponentSerializer.plainText().serialize(component);
     }
 
 }

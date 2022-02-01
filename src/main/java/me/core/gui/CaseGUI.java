@@ -15,7 +15,9 @@ public class CaseGUI extends GUIBase {
 
     @Override
     public void setInventory() {
-
+        for (int i = 0; i < this.caseIn.getItems().length; i++) {
+            this.inventory.setItem(i + 9, this.caseIn.getItems()[i]);
+        }
     }
 
     @Override

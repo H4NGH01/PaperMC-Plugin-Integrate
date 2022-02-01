@@ -10,7 +10,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 public class EnchantmentWrapper extends Enchantment {
@@ -86,7 +85,7 @@ public class EnchantmentWrapper extends Enchantment {
 
     @Override
     public @NotNull Set<EquipmentSlot> getActiveSlots() {
-        return Collections.singleton(EquipmentSlot.HAND);
+        return null;
     }
 
     @Override

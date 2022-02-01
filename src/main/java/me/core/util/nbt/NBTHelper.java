@@ -65,34 +65,37 @@ public class NBTHelper {
         return stack;
     }
 
-    public static void setTag(ItemStack stack, String key, int value) {
+    public static <T extends ItemStack> T setTag(T stack, String key, int value) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;
         tag.a(key, value);
         nmsStack.c(tag);
         stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
+        return stack;
     }
 
-    public static void setTag(ItemStack stack, String key, String value) {
+    public static <T extends ItemStack> T setTag(T stack, String key, String value) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;
         tag.a(key, value);
         nmsStack.c(tag);
         stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
+        return stack;
     }
 
-    public static void setTag(ItemStack stack, String key, boolean value) {
+    public static <T extends ItemStack> T setTag(T stack, String key, boolean value) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;
         tag.a(key, value);
         nmsStack.c(tag);
         stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
+        return stack;
     }
 
-    public static void removeTag(ItemStack stack, String key) {
+    public static <T extends ItemStack> void removeTag(T stack, String key) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;

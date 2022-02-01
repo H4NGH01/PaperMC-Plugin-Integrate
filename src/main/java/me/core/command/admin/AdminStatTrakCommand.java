@@ -6,15 +6,18 @@ import me.core.util.ComponentUtil;
 import me.core.util.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminStatTrakCommand extends PluginCommand {
-
-    private final String[] s = new String[]{"a-stattrak", "a-st"};
 
     @Override
     public void onCommand(Player player, String[] args) {
@@ -87,6 +90,17 @@ public class AdminStatTrakCommand extends PluginCommand {
 
     @Override
     public String[] aliases() {
-        return s;
+        return new String[]{"a-stattrak", "a-st"};
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        List<String> list = new ArrayList<>();
+        if (args.length == 1) {
+            list.add("give");
+            list.add("take");
+            list.add("reset");
+        }
+        return list;
     }
 }

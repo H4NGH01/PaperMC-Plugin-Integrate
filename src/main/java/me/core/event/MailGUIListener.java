@@ -28,31 +28,31 @@ public class MailGUIListener {
 
     public void onClick(@NotNull InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (e.getView().getTitle().startsWith(MAIL_GUIS_NAME[0])) {
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[0])) {
             if (!(MailBoxGUI.VIEW_MAP.containsKey(p) && MailBoxGUI.VIEW_MAP.get(p).getInventory().equals(e.getInventory()))) return;
             this.onMailGUIClick(e);
             return;
         }
-        if (e.getView().getTitle().startsWith(MAIL_GUIS_NAME[1])) {
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[1])) {
             if (!(MailWriterGUI.VIEW_MAP.containsKey(p) && MailWriterGUI.VIEW_MAP.get(p).getInventory().equals(e.getInventory()))) return;
             this.onMailWriterGUIClick(e);
             return;
         }
-        if (e.getView().getTitle().startsWith(MAIL_GUIS_NAME[2])) {
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[2])) {
             if (!(MailPlayerSelectorGUI.VIEW_MAP.containsKey(p) && MailPlayerSelectorGUI.VIEW_MAP.get(p).getInventory().equals(e.getInventory()))) return;
             this.onMailSelectorGUIClick(e);
             return;
         }
-        if (e.getView().getTitle().startsWith(MAIL_GUIS_NAME[3])) {
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[3])) {
             if (!(MailSentGUI.VIEW_MAP.containsKey(p) && MailSentGUI.VIEW_MAP.get(p).getInventory().equals(e.getInventory()))) return;
             this.onSentMailGUIClick(e);
             return;
         }
-        if (e.getView().getTitle().startsWith(MAIL_GUIS_NAME[4])) {
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[4])) {
             if (!(MailBinGUI.VIEW_MAP.containsKey(p) && MailBinGUI.VIEW_MAP.get(p).getInventory().equals(e.getInventory()))) return;
             this.onMailBinGUIClick(e);
         }
-        if (e.getView().getTitle().startsWith(MAIL_GUIS_NAME[5])) {
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[5])) {
             if (!MailViewerGUI.VIEW_MAP.containsKey(p)) return;
             this.onMailViewerClick(e);
         }
@@ -204,7 +204,6 @@ public class MailGUIListener {
     }
 
     private void onMailSelectorGUIClick(@NotNull InventoryClickEvent e) {
-        e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
         if (item.getItemMeta() == null) return;
@@ -224,7 +223,7 @@ public class MailGUIListener {
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.selector.player_icon")) {
             for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
-                if (Objects.equals(offlinePlayer.getName(), item.getItemMeta().getDisplayName().substring(2))) {
+                if (Objects.equals(offlinePlayer.getName(), ComponentUtil.plainText(Objects.requireNonNull(item.getItemMeta().displayName())).substring(2))) {
                     NewMail mail = MailWriterGUI.VIEW_MAP.get(p).getMail();
                     if (mail.containAddressee(offlinePlayer)) {
                         mail.removeAddressee(offlinePlayer);
@@ -241,7 +240,6 @@ public class MailGUIListener {
     }
 
     private void onSentMailGUIClick(@NotNull InventoryClickEvent e) {
-        e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
         if (item.getItemMeta() == null) return;
@@ -275,7 +273,6 @@ public class MailGUIListener {
     }
 
     private void onMailBinGUIClick(@NotNull InventoryClickEvent e) {
-        e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
         if (item.getItemMeta() == null) return;
@@ -306,7 +303,6 @@ public class MailGUIListener {
     }
 
     private void onMailViewerClick(@NotNull InventoryClickEvent e) {
-        e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
         if (item.getItemMeta() == null) return;

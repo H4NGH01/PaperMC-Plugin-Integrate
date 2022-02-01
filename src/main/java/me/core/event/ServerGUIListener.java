@@ -2,6 +2,7 @@ package me.core.event;
 
 import me.core.gui.mail.MailViewerGUI;
 import me.core.item.MCServerItems;
+import me.core.util.ComponentUtil;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,12 +23,13 @@ public class ServerGUIListener implements Listener {
         if (item == null) return;
         if (MCServerItems.isInventoryItem(item)) e.setCancelled(true);
         if (MCServerItems.equalItem(item, MCServerItems.close)) {
+            if (e.isShiftClick()) return;
             Player p = (Player) e.getWhoClicked();
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.7f, 1f);
         }
         for (String s : MAIL_GUIS_NAME) {
-            if (e.getView().getTitle().startsWith(s)) {
+            if (ComponentUtil.plainText(e.getView().title()).startsWith(s)) {
                 mge.onClick(e);
                 return;
             }
@@ -37,8 +39,7 @@ public class ServerGUIListener implements Listener {
     @EventHandler
     public void onClose(@NotNull InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (!e.getView().getTitle().startsWith(MAIL_GUIS_NAME[4])) return;
-        MailViewerGUI.VIEW_MAP.remove(p);
+        if (ComponentUtil.plainText(e.getView().title()).startsWith(MAIL_GUIS_NAME[4])) MailViewerGUI.VIEW_MAP.remove(p);
     }
 
 }
