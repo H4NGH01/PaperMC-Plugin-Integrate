@@ -1,5 +1,5 @@
 # PaperMC集成插件
-[English](https://github.com/H4NGH01/PaperMC-Plugin-Integrate/blob/main/README.md) | 中文简体
+[English](https://github.com/H4NGH01/PaperMC-Plugin-Integrate/blob/main/README.md) | 中文简体 | [中文繁體](https://github.com/H4NGH01/PaperMC-Plugin-Integrate/blob/main/README_zh_tc.md)
 > 我的世界PaperMC核心服务器的集成插件
 
 PaperMC集成插件是一个用于PaperMC服务器的插件
