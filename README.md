@@ -1,4 +1,5 @@
 # PaperMC-Plugin-Integrate
+English | [中文简体](https://github.com/H4NGH01/PaperMC-Plugin-Integrate/blob/main/README_zh_cn.md)
 > A integrate plugin for papermc core minecraft server
 
 PaperMC-Plugin-Integrate is a plugin for PaperMC server.
