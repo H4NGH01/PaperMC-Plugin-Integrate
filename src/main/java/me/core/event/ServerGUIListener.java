@@ -7,6 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
@@ -23,7 +24,7 @@ public class ServerGUIListener implements Listener {
         if (item == null) return;
         if (MCServerItems.isInventoryItem(item)) e.setCancelled(true);
         if (MCServerItems.equalItem(item, MCServerItems.close)) {
-            if (e.isShiftClick()) return;
+            if (e.isShiftClick() || e.getAction().equals(InventoryAction.HOTBAR_SWAP)) return;
             Player p = (Player) e.getWhoClicked();
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.7f, 1f);
