@@ -25,6 +25,9 @@ public class NBTStorageFile {
         this.tagCompound = new NBTTagCompound();
         try {
             if (!this.file.exists()) {
+                if (!this.file.getParentFile().exists()) {
+                    this.file.getParentFile().mkdirs();
+                }
                 this.file.createNewFile();
                 this.plugin.log(ChatColor.GREEN + this.file.getName() + " file created.");
                 return;

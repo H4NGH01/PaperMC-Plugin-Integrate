@@ -5,39 +5,64 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class ConfigurationManager {
 
     private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
-    private FileConfiguration playerConfig;
-    private File playerFile;
+    private HashMap<File, FileConfiguration> configurationMap;
 
     public void setup() {
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
+        this.configurationMap = new HashMap<>();
+        if (!this.plugin.getDataFolder().exists()) {
+            this.plugin.getDataFolder().mkdir();
         }
-        playerFile = new File(plugin.getDataFolder(), "player.yml");
-        if (!playerFile.exists()) {
+        addConfig("player.yml");
+    }
+
+    private FileConfiguration addConfig(String fileName) {
+        File file = new File(this.plugin.getDataFolder(), fileName);
+        FileConfiguration config = this.load(new File(this.plugin.getDataFolder(), fileName));
+        this.getConfigurationMap().put(file, config);
+        return config;
+    }
+
+    public FileConfiguration load(File file) {
+        if (!file.exists()) {
             try {
-                playerFile.createNewFile();
+                file.createNewFile();
             } catch (IOException e) {
-                plugin.getServer().getConsoleSender().sendMessage("Could not load the player.yml file.");
+                plugin.getServer().getConsoleSender().sendMessage("Could not load the " + file.getName() + " file.");
             }
         }
-        playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-        plugin.getServer().getConsoleSender().sendMessage("player.yml file loaded.");
+        plugin.getServer().getConsoleSender().sendMessage(file.getName() + " file loaded.");
+        return YamlConfiguration.loadConfiguration(file);
     }
 
-    public FileConfiguration getPlayerConfig() {
-        return playerConfig;
+    public HashMap<File, FileConfiguration> getConfigurationMap() {
+        return this.configurationMap;
     }
 
-    public void savePlayerConfig() {
-        try {
-            playerConfig.save(playerFile);
-        } catch (IOException e) {
-            plugin.getServer().getConsoleSender().sendMessage("Could not save the player.yml file.");
+    public FileConfiguration getConfiguration(String fileName) {
+        for (File file : this.getConfigurationMap().keySet()) {
+            if (file.getName().equals(fileName)) {
+                return this.getConfigurationMap().get(file);
+            }
+        }
+        return this.addConfig(fileName);
+    }
+
+    public void save(String fileName) {
+        for (File file : this.getConfigurationMap().keySet()) {
+            if (file.getName().equals(fileName)) {
+                try {
+                    this.getConfigurationMap().get(file).save(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    this.plugin.getServer().getConsoleSender().sendMessage("Could not save the " + fileName + " file.");
+                }
+                return;
+            }
         }
     }
-
 }

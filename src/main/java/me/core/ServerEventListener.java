@@ -2,6 +2,7 @@ package me.core;
 
 import me.core.mail.Mail;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,6 +34,11 @@ public class ServerEventListener implements Listener {
             stacks.add(stack);
             Mail mail = new Mail("server", p, "Welcome to " + plugin.getServer().getName() + "!", "Use this to become a stand user.", stacks);
             plugin.getMailManager().sendMail(mail);
+        }
+        ServerPlayer sp = MCServerPlugin.getServerPlayerHashMap().get(p);
+        if (sp.getNewMail() != 0) {
+            p.sendMessage(Component.translatable("chat.mail_received_offline").args(Component.text(sp.getNewMail()).color(NamedTextColor.YELLOW)));
+            sp.setNewMail(0);
         }
     }
 

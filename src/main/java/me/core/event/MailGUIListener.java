@@ -1,6 +1,7 @@
 package me.core.event;
 
 import me.core.MCServerPlugin;
+import me.core.ServerPlayer;
 import me.core.gui.mail.*;
 import me.core.item.MCServerItems;
 import me.core.mail.Mail;
@@ -190,6 +191,13 @@ public class MailGUIListener {
                 Mail m = new Mail(p, op, mail.getTitle(), mail.getText(), stacks);
                 plugin.getMailManager().sendMail(m);
                 sb.append(op.getName()).append(", ");
+                if (op.isOnline()) {
+                    Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail_received"));
+                } else {
+                    ServerPlayer sp = new ServerPlayer(op.getPlayer());
+                    sp.setNewMail(sp.getNewMail() + 1);
+                    sp.save();
+                }
             }
             sb.deleteCharAt(sb.length() - 2);
             p.closeInventory();

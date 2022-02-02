@@ -45,7 +45,7 @@ public class MCServerPlugin extends JavaPlugin {
         }
         PluginEnchantments.unloadEnchantments();
         this.mailManager.save();
-        this.configManager.savePlayerConfig();
+        this.configManager.save("player.yml");
         this.log("Plugin Disable");
     }
 

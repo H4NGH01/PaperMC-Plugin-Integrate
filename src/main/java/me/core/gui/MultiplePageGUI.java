@@ -72,10 +72,6 @@ public abstract class MultiplePageGUI extends GUIBase {
         }
     }
 
-    public int getStartSlot() {
-        return this.startSlot;
-    }
-
     public int getPage() {
         return this.page;
     }

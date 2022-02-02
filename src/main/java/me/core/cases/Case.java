@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 public abstract class Case {
 
     private final ItemStack item;
+    private CaseKey caseKey;
 
     public Case() {
         this.item = generate();

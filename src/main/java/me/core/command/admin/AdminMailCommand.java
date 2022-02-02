@@ -39,7 +39,7 @@ public class AdminMailCommand extends PluginCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                 } catch (Exception ignored) {
-                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1])).color(NamedTextColor.RED));
+                    player.sendMessage(Component.translatable("command.nan").args(Component.text(args[1]).color(NamedTextColor.RED)));
                     return;
                 }
             }
