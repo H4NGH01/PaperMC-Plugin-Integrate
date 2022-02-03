@@ -4,12 +4,12 @@ import me.core.item.StatTrak;
 import me.core.util.ComponentUtil;
 import me.core.util.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.entity.projectile.EntityThrownTrident;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftTrident;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -39,7 +39,7 @@ public class StatTrakListener implements Listener {
         if (damager instanceof Player) {
             killer = (Player) e.getDamager();
             weapon = killer.getInventory().getItemInMainHand();
-        }  else {
+        } else if (damager instanceof Arrow) {
             if (BOW_ITEMSTACK_MAP.containsKey(damager) && BOW_ITEMSTACK_MAP.get(damager) != null) {
                 weapon = BOW_ITEMSTACK_MAP.get(damager);
                 BOW_ITEMSTACK_MAP.remove(damager);
@@ -47,6 +47,21 @@ public class StatTrakListener implements Listener {
                 BOW_ITEMSTACK_MAP.remove(damager);
                 return;
             }
+        } else if (damager instanceof Trident) {
+            Trident trident = (Trident) e.getDamager();
+
+            ItemStack tridentItem = trident.getItem();
+            if (!StatTrak.isStattrak(tridentItem)) return;
+            StatTrak.addKills(tridentItem);
+            NBTTagCompound tridentItemTag = NBTHelper.getTag(tridentItem);
+            EntityThrownTrident thrownTrident = ((CraftTrident) trident).getHandle();
+            NBTTagCompound compound = new NBTTagCompound();
+            thrownTrident.e(compound);
+            compound.p("Trident").a("tag", tridentItemTag);
+            thrownTrident.a(compound);
+            return;
+        } else {
+            return;
         }
         if (weapon.getType().equals(Material.AIR)) return;
         if (!weapon.hasItemMeta() || !StatTrak.isStattrak(weapon)) return;
