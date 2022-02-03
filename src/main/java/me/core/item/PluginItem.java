@@ -66,4 +66,8 @@ public class PluginItem extends ItemStack {
         return this;
     }
 
+    public void setPlaceable(boolean placeable) {
+        NBTHelper.setTag(this, "placeable", placeable);
+    }
+
 }

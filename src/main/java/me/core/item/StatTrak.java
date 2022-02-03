@@ -24,7 +24,7 @@ public class StatTrak extends PluginItem {
         this(new ItemStack(material, amount));
     }
 
-    public StatTrak(ItemStack stack) {
+    public <T extends ItemStack> StatTrak(T stack) {
         super(stack);
         boolean b = this.getItemMeta().hasDisplayName();
         this.setTag("CustomName", b ? ComponentUtil.plainText(this.getItemMeta().displayName()) : this.translationKey());
