@@ -16,6 +16,12 @@ commands:
     aliases:
       - a-mail
     permission: admin.mail
+  admin-case:
+    description: "Admin case commands"
+    usage: '/admin-case'
+    aliases:
+      - a-case
+    permission: admin.case
   admin-stattrak:
     description: "Admin StatTrak commands"
     usage: '/admin-stattrak'
@@ -25,6 +31,8 @@ commands:
     permission: admin.stattrak
 permissions:
   admin.mail:
+    default: op
+  admin.case:
     default: op
   admin.stattrak:
     default: op
