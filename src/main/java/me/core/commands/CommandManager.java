@@ -1,6 +1,6 @@
 package me.core.commands;
 
-import me.core.commands.admin.AdminCaseCommand;
+import me.core.commands.admin.AdminContainerCommand;
 import me.core.commands.admin.AdminMailCommand;
 import me.core.commands.admin.AdminStatTrakCommand;
 import org.bukkit.ChatColor;
@@ -20,7 +20,7 @@ public class CommandManager implements CommandExecutor {
     public void setup() {
         this.addCommand(new MailCommand());
         this.addCommand(new AdminMailCommand());
-        this.addCommand(new AdminCaseCommand());
+        this.addCommand(new AdminContainerCommand());
         this.addCommand(new AdminStatTrakCommand());
     }
 

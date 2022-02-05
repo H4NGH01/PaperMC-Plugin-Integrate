@@ -1,6 +1,6 @@
 package me.core.events;
 
-import me.core.guis.GUIBase;
+import me.core.gui.GUIBase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

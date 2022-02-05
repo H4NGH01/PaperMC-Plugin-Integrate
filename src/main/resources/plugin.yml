@@ -16,12 +16,13 @@ commands:
     aliases:
       - a-mail
     permission: admin.mail
-  admin-case:
-    description: "Admin case commands"
-    usage: '/admin-case'
+  admin-container:
+    description: "Admin container commands"
+    usage: '/admin-container'
     aliases:
+      - a-container
       - a-case
-    permission: admin.case
+    permission: admin.container
   admin-stattrak:
     description: "Admin StatTrak commands"
     usage: '/admin-stattrak'
@@ -32,7 +33,7 @@ commands:
 permissions:
   admin.mail:
     default: op
-  admin.case:
+  admin.container:
     default: op
   admin.stattrak:
     default: op

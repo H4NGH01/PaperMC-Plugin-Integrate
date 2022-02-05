@@ -6,10 +6,12 @@ import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -32,10 +34,17 @@ public class StatTrakListener implements Listener {
         Entity damager = e.getDamager();
         if (!(damager instanceof Player || (damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof Player))) return;
         Player killer;
-        ItemStack weapon;
+        ItemStack weapon = null;
         if (damager instanceof Player) {
             killer = (Player) e.getDamager();
-            weapon = killer.getInventory().getItemInMainHand();
+            if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) || e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK)) {
+                weapon = killer.getInventory().getItemInMainHand();
+            } else if (e.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
+                for (ItemStack armor : killer.getInventory().getArmorContents()) {
+                    if (armor != null && !armor.getType().equals(Material.AIR) && armor.getEnchantments().containsKey(Enchantment.THORNS) && StatTrak.isStattrak(armor)) StatTrak.addKills(armor);
+                }
+                return;
+            }
         } else if (damager instanceof Arrow) {
             if (BOW_ITEMSTACK_MAP.containsKey(damager) && BOW_ITEMSTACK_MAP.get(damager) != null) {
                 weapon = BOW_ITEMSTACK_MAP.get(damager);
@@ -54,7 +63,7 @@ public class StatTrakListener implements Listener {
         } else {
             return;
         }
-        if (weapon.getType().equals(Material.AIR)) return;
+        if (weapon == null || weapon.getType().equals(Material.AIR)) return;
         if (!weapon.hasItemMeta() || !StatTrak.isStattrak(weapon)) return;
         StatTrak.addKills(weapon);
     }

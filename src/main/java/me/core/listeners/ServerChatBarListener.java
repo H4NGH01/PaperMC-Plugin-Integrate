@@ -1,8 +1,8 @@
 package me.core.listeners;
 
-import me.core.guis.mails.MailBoxGUI;
-import me.core.guis.mails.MailWriterGUI;
-import me.core.mails.NewMail;
+import me.core.gui.mail.MailBoxGUI;
+import me.core.gui.mail.MailWriterGUI;
+import me.core.mail.NewMail;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

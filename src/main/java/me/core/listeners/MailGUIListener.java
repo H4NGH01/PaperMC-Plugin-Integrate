@@ -3,10 +3,10 @@ package me.core.listeners;
 import me.core.MCServerPlugin;
 import me.core.ServerPlayer;
 import me.core.events.GUIClickEvent;
-import me.core.guis.mails.*;
+import me.core.gui.mail.*;
 import me.core.items.MCServerItems;
-import me.core.mails.Mail;
-import me.core.mails.NewMail;
+import me.core.mail.Mail;
+import me.core.mail.NewMail;
 import me.core.utils.ComponentUtil;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
@@ -94,26 +94,21 @@ public class MailGUIListener {
             return;
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.mail")) {
-            for (Mail mail : plugin.getMailManager().getMailList(p)) {
-                if (mail.getMailID().equals(NBTHelper.getTag(item).l("MailID"))) {
-                    if (e.isRightClick()) {
-                        if (!mail.isReceived()) mail.setReceived();
-                        MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.ADDRESSEE);
-                        mvg.setLastInventory(gui);
-                        mvg.openToPlayer();
-                        break;
-                    } else {
-                        if (gui.getSelectedMail().contains(mail)) {
-                            gui.getSelectedMail().remove(mail);
-                        } else {
-                            gui.getSelectedMail().add(mail);
-                        }
-                        gui.update();
-                    }
-                    p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
-                    return;
+            Mail mail = plugin.getMailManager().getMailByID(NBTHelper.getTag(item).l("MailID"));
+            if (e.isRightClick()) {
+                if (!mail.isReceived()) mail.setReceived();
+                MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.ADDRESSEE);
+                mvg.setLastInventory(gui);
+                mvg.openToPlayer();
+            } else {
+                if (gui.getSelectedMail().contains(mail)) {
+                    gui.getSelectedMail().remove(mail);
+                } else {
+                    gui.getSelectedMail().add(mail);
                 }
+                gui.update();
             }
+            p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
         }
     }
 
@@ -212,16 +207,11 @@ public class MailGUIListener {
         Player p = (Player) e.getWhoClicked();
         MailSentGUI gui = (MailSentGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.sent.mail")) {
-            for (Mail mail : plugin.getMailManager().getMailListBySender(p)) {
-                if (mail.getMailID().equals(NBTHelper.getTag(item).l("MailID"))) {
-                    if (e.isRightClick()) {
-                        MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.SENDER);
-                        mvg.setLastInventory(gui);
-                        mvg.openToPlayer();
-                        break;
-                    }
-                    break;
-                }
+            Mail mail = plugin.getMailManager().getMailByID(NBTHelper.getTag(item).l("MailID"));
+            if (e.isRightClick()) {
+                MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.SENDER);
+                mvg.setLastInventory(gui);
+                mvg.openToPlayer();
             }
         }
     }
@@ -231,14 +221,10 @@ public class MailGUIListener {
         Player p = (Player) e.getWhoClicked();
         MailBinGUI gui = (MailBinGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.bin.mail")) {
-            for (Mail mail : plugin.getMailManager().getMailList(p)) {
-                if (mail.getMailID().equals(NBTHelper.getTag(item).l("MailID"))) {
-                    mail.restore();
-                    gui.update();
-                    p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_ELYTRA, 0.7f, 1f);
-                    break;
-                }
-            }
+            Mail mail = plugin.getMailManager().getMailByID(NBTHelper.getTag(item).l("MailID"));
+            mail.restore();
+            gui.update();
+            p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_ELYTRA, 0.7f, 1f);
         }
     }
 

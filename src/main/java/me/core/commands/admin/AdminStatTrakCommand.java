@@ -31,7 +31,7 @@ public class AdminStatTrakCommand extends PluginCommand {
         }
         ItemStack stack = player.getInventory().getItemInMainHand();
         if (stack.getType().equals(Material.AIR)) {
-            player.sendMessage(Component.translatable("command.stattrak.invalid_item"));
+            player.sendMessage(Component.translatable("command.invalid_item"));
             return;
         }
         if (args[0].equalsIgnoreCase("give")) {

@@ -1,13 +1,13 @@
 package me.core;
 
-import me.core.cases.CaseManager;
 import me.core.commands.CommandManager;
+import me.core.containers.ContainerManager;
 import me.core.enchantments.PluginEnchantments;
-import me.core.listeners.CaseListener;
+import me.core.listeners.ContainerListener;
 import me.core.listeners.ServerChatBarListener;
 import me.core.listeners.ServerGUIListener;
 import me.core.listeners.StatTrakListener;
-import me.core.mails.MailManager;
+import me.core.mail.MailManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +20,7 @@ public class MCServerPlugin extends JavaPlugin {
     private ConfigurationManager configManager;
     private CommandManager commandManager;
     private MailManager mailManager;
-    private CaseManager caseManager;
+    private ContainerManager containerManager;
 
     @Override
     public void onEnable() {
@@ -32,7 +32,7 @@ public class MCServerPlugin extends JavaPlugin {
         PluginEnchantments.loadEnchantments();
         serverPlayerHashMap = new HashMap<>();
         this.mailManager = new MailManager();
-        this.caseManager = new CaseManager();
+        this.containerManager = new ContainerManager();
         this.registerEvents();
         ServerGUIListener.getOpenedGUI().clear();
         for (Player player : this.getServer().getOnlinePlayers()) {
@@ -50,7 +50,7 @@ public class MCServerPlugin extends JavaPlugin {
         }
         PluginEnchantments.unloadEnchantments();
         this.mailManager.save();
-        this.caseManager.save();
+        this.containerManager.save();
         this.configManager.save("player.yml");
         this.log("Plugin Disable");
     }
@@ -64,7 +64,7 @@ public class MCServerPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ServerEventListener(), this);
         this.getServer().getPluginManager().registerEvents(new ServerGUIListener(), this);
         this.getServer().getPluginManager().registerEvents(new ServerChatBarListener(), this);
-        this.getServer().getPluginManager().registerEvents(new CaseListener(), this);
+        this.getServer().getPluginManager().registerEvents(new ContainerListener(), this);
         this.getServer().getPluginManager().registerEvents(new StatTrakListener(), this);
     }
 
@@ -88,8 +88,8 @@ public class MCServerPlugin extends JavaPlugin {
         return this.mailManager;
     }
 
-    public CaseManager getCaseManager() {
-        return this.caseManager;
+    public ContainerManager getContainerManager() {
+        return this.containerManager;
     }
 
     public void log(String s) {

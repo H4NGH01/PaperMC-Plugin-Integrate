@@ -1,6 +1,6 @@
 package me.core;
 
-import me.core.mails.Mail;
+import me.core.mail.Mail;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

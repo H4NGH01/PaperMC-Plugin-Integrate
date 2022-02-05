@@ -1,6 +1,6 @@
 package me.core.commands;
 
-import me.core.guis.mails.MailBoxGUI;
+import me.core.gui.mail.MailBoxGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
