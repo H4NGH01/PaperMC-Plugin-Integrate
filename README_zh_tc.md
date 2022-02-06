@@ -10,8 +10,12 @@ PaperMC集成插件是一個用於PaperMC服務器的插件
 ### 郵箱系統
 允許您向服務器玩家發送電子郵件，包括離線玩家。
 
+### 開箱系統
+體驗在CSGO中開箱的感覺。
+
 ### StatTrak
 允許您記錄您所使用的武器的擊殺次數。
+(就像CSGO一樣)
 
 ## Commands
 ### /mail
@@ -19,6 +23,9 @@ PaperMC集成插件是一個用於PaperMC服務器的插件
 
 ### /admin-mail
 管理員郵件命令。
+
+### /admin-container
+管理員開箱命令。
 
 ### /admin-stattrak
 管理員StatTrak命令。
