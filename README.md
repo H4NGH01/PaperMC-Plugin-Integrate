@@ -10,8 +10,12 @@ The plugin uses resource bundles to display different languages depending on the
 ### Mail System
 Allows you to send emails to server players, including offline players.
 
+### Container Opening
+Experience what it's like to unboxing in CSGO.
+
 ### StatTrak
 Allows you to record the number of kills with the weapon you use.
+(Like CSGO)
 
 ## Commands
 ### /mail
@@ -19,6 +23,9 @@ Open the mailbox menu.
 
 ### /admin-mail
 Admin mail command.
+
+### /admin-container
+Admin container command.
 
 ### /admin-stattrak
 Admin StatTrak command.
