@@ -24,7 +24,7 @@ public class MailWriterGUI extends GUIBase {
     public static final HashMap<Player, NewMail> NEW_MAP_MAP = new HashMap<>();
     private final NewMail mail;
 
-    public MailWriterGUI(Player player, NewMail mail) {
+    public MailWriterGUI(@NotNull Player player, @NotNull NewMail mail) {
         super(player);
         this.mail = mail;
         this.setDefault();

@@ -36,7 +36,7 @@ public class MailManager {
             NBTTagList itemTagList = mailTag.c("ItemList", 10);
             List<ItemStack> stacks = new ArrayList<>();
             for (NBTBase b : itemTagList) {
-                if (b instanceof NBTTagCompound) stacks.add(NBTHelper.getItemStack((NBTTagCompound) b));
+                if (b instanceof NBTTagCompound) stacks.add(NBTHelper.asItemStack((NBTTagCompound) b));
             }
             Mail mail = new Mail(key, mailTag.l("sender"), mailTag.l("addressee"), mailTag.l("title"), mailTag.l("text"), stacks, mailTag.l("date"), mailTag.q("received"), mailTag.q("deleted"));
             this.mailList.add(mail);
@@ -59,7 +59,7 @@ public class MailManager {
                 NBTBase b = itemTagList.get(i);
                 if (b instanceof NBTTagCompound) {
                     NBTTagCompound tag = (NBTTagCompound) b;
-                    stacks[i] = NBTHelper.getItemStack(tag);
+                    stacks[i] = NBTHelper.asItemStack(tag);
                 }
             }
             NewMail mail = new NewMail(key, mailTag.l("sender"), uuids, mailTag.l("title"), mailTag.l("text"), stacks);
@@ -79,7 +79,7 @@ public class MailManager {
             mailTag.a("text", mail.getText());
             NBTTagList itemTagList = new NBTTagList();
             for (ItemStack stack : mail.getItemList()) {
-                itemTagList.add(NBTHelper.getNBTTagCompound(stack));
+                itemTagList.add(NBTHelper.asNBTTagCompound(stack));
             }
             mailTag.a("ItemList", itemTagList);
             mailTag.a("date", mail.getDate());
@@ -105,7 +105,7 @@ public class MailManager {
             mailTag.a("text", mail.getText());
             NBTTagList itemTagList = new NBTTagList();
             for (ItemStack stack : mail.getItemStacks()) {
-                if (stack != null) itemTagList.add(NBTHelper.getNBTTagCompound(stack));
+                if (stack != null) itemTagList.add(NBTHelper.asNBTTagCompound(stack));
             }
             mailTag.a("ItemList", itemTagList);
             this.newMailFile.setTagCompound(mail.getMailID(), mailTag);

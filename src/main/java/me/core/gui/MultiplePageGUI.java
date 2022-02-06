@@ -4,6 +4,7 @@ import me.core.items.MCServerItems;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,11 @@ public abstract class MultiplePageGUI extends GUIBase {
     private int maxPage;
     private int page = 1;
 
-    public MultiplePageGUI(Player player) {
+    public MultiplePageGUI(@NotNull Player player) {
         this(player, new ArrayList<>(), 9, 44);
     }
 
-    public MultiplePageGUI(Player player, List<ItemStack> list, int start, int end) {
+    public MultiplePageGUI(@NotNull Player player, @NotNull List<ItemStack> list, int start, int end) {
         super(player);
         this.startSlot = start;
         this.endSlot = end;
@@ -33,11 +34,11 @@ public abstract class MultiplePageGUI extends GUIBase {
     @Override
     protected void setDefault() {
         super.setDefault();
-        this.inventory.setItem(45, MCServerItems.prev);
-        this.inventory.setItem(53, MCServerItems.next);
+        this.inventory.setItem(this.size - 9, MCServerItems.prev);
+        this.inventory.setItem(this.size - 1, MCServerItems.next);
     }
 
-    public void setContents(List<ItemStack> list) {
+    public void setContents(@NotNull List<ItemStack> list) {
         this.list = list;
         this.maxPage = this.list.size() > this.slotPerPage ? this.list.size() / this.slotPerPage + 1 : 1;
     }

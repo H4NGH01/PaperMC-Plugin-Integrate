@@ -38,6 +38,12 @@ public class ServerEventListener implements Listener {
             plugin.getMailManager().sendMail(mail);
         }
         ServerPlayer sp = MCServerPlugin.getServerPlayerHashMap().get(p);
+        if (sp.getStorage().size() != 0) {
+            for (ItemStack stack : sp.getStorage()) {
+                sp.safeAddItem(stack);
+            }
+            sp.getStorage().clear();
+        }
         if (sp.getNewMail() != 0) {
             p.sendMessage(Component.translatable("chat.mail_received_offline").args(Component.text(sp.getNewMail()).color(NamedTextColor.YELLOW)));
             sp.setNewMail(0);

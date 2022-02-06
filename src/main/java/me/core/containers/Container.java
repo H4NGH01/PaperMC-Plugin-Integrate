@@ -6,9 +6,9 @@ import me.core.items.ContainerItemStack;
 import me.core.items.StatTrak;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -20,15 +20,17 @@ public abstract class Container {
 
     private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
     protected final UUID uuid;
-    private ItemStack drop;
+    private ContainerItemStack drop;
+    private final ContainerData data;
 
     /**
      * Generate a new Container
      */
     public Container() {
         this.uuid = UUID.randomUUID();
-        generateDrop();
-        plugin.getContainerManager().registryContainerData(new ContainerData(this.uuid, this.getContainerType(), this.drop));
+        this.drop = generateDrop();
+        this.data = new ContainerData(this.uuid, this.getContainerType(), this.drop);
+        plugin.getContainerManager().registryContainerData(data);
     }
 
     /**
@@ -39,27 +41,29 @@ public abstract class Container {
         this.uuid = uuid;
         for (ContainerData data : plugin.getContainerManager().getCaseDataList()) {
             if (this.uuid.equals(data.getUUID())) {
+                this.data = data;
                 this.drop = data.getDrop();
-                break;
+                return;
             }
         }
+        this.data = null;
     }
 
-    public void generateDrop() {
+    public ContainerItemStack generateDrop() {
         List<ContainerItemStack> list = new ArrayList<>();
         CaseItemRarity rarity = CaseItemRarity.MIL_SPEC;
-        int i = 0;
-        for (CaseItemRarity itemRarity : CaseItemRarity.values()) {
-            i += itemRarity.getDropRate();
+        float f = 0;
+        for (CaseItemRarity rarity1 : CaseItemRarity.values()) {
+            f += rarity1.getDropRate();
         }
-        float rate = new Random().nextFloat() * i;
+        float rate = new Random().nextFloat() * f;
         for (CaseItemRarity itemRarity : CaseItemRarity.values()) {
-            int j = (int) (i - itemRarity.getDropRate());
-            if (rate > j && rate <= i) {
+            float j = f - itemRarity.getDropRate();
+            if (rate > j && rate <= f) {
                 rarity = itemRarity;
                 break;
             }
-            i = j;
+            f = j;
         }
         for (ContainerItemStack stack : getContainerDrops()) {
             if (stack.getItemRarity().equals(rarity)) list.add(stack);
@@ -67,18 +71,19 @@ public abstract class Container {
         rate = new Random().nextFloat() * list.size();
         ContainerItemStack stack = list.get((int) rate);
         rate = new Random().nextFloat() * 10;
-        this.drop = rate <= 1 ? new StatTrak(stack) : stack;
+        return rate <= 1 ? new ContainerItemStack(new StatTrak(stack)) : stack;
     }
 
     @NotNull
     public abstract ContainerItemStack[] getContainerDrops();
 
     @NotNull
-    public List<ItemStack> getDisplayDrops() {
-        List<ItemStack> stackList = new ArrayList<>();
+    public List<ContainerItemStack> getDisplayDrops() {
+        List<ContainerItemStack> stackList = new ArrayList<>();
         boolean hasRarity = false;
         for (ContainerItemStack stack : getContainerDrops()) {
             if (!stack.isRareSpecial()) {
+                stack.setDisplayName(Component.translatable(stack.translationKey()).color(TextColor.color(stack.getItemRarity().getColor())));
                 stackList.add(stack);
             } else {
                 hasRarity = true;
@@ -103,15 +108,17 @@ public abstract class Container {
     public abstract Material getContainerTexture();
 
     @NotNull
-    public ItemStack getDrop() {
-        return drop;
+    public ContainerItemStack getDrop() {
+        return this.drop;
     }
 
-    private static ItemStack superRarity() {
-        ItemStack item = new ItemStack(Material.NETHER_STAR);
-        ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.translatable("container.rare_special_item"));
-        item.setItemMeta(meta);
+    public boolean hasData() {
+        return this.data != null;
+    }
+
+    public static ContainerItemStack superRarity() {
+        ContainerItemStack item = (ContainerItemStack) new ContainerItemStack(Material.NETHER_STAR, CaseItemRarity.RARE_SPECIAL).setTag("ItemTag", "rare_special_item");
+        item.setDisplayName(Component.translatable("container.rare_special_item"));
         return item;
     }
 

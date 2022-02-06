@@ -3,7 +3,10 @@ package me.core.listeners;
 import me.core.MCServerPlugin;
 import me.core.containers.Container;
 import me.core.events.GUIClickEvent;
+import me.core.events.GUICloseEvent;
 import me.core.gui.ContainerGUI;
+import me.core.items.MCServerItems;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -29,7 +32,13 @@ public class ContainerListener implements Listener {
         ItemStack stack = player.getInventory().getItemInMainHand();
         if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return;
         e.setCancelled(true);
-        ContainerGUI gui = new ContainerGUI(player, plugin.getContainerManager().getContainerByStack(stack));
+        Container c = plugin.getContainerManager().getContainerByStack(stack);
+        if (!c.hasData()) {
+            player.sendMessage(Component.translatable("chat.container.invalid_container_opened"));
+            player.getInventory().remove(stack);
+            return;
+        }
+        ContainerGUI gui = new ContainerGUI(player, stack);
         gui.openToPlayer();
     }
 
@@ -48,6 +57,15 @@ public class ContainerListener implements Listener {
         if (stack == null || stack.getType().equals(Material.AIR) || e.getClickedInventory() == null || e.getClickedInventory().equals(player.getInventory())) return;
         if (!(e.getGUI() instanceof ContainerGUI)) return;
         e.setCancelled(true);
+        if (MCServerItems.equalWithTag(stack, "ItemTag", "gui.container.unlock")) {
+            ((ContainerGUI) e.getGUI()).openContainer();
+        }
+    }
+
+    @EventHandler
+    public void onCloseGUI(GUICloseEvent e) {
+        if (!(e.getGUI() instanceof ContainerGUI gui)) return;
+        if (gui.isOpening()) gui.setAnimationEnd();
     }
 
     @EventHandler

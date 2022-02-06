@@ -18,7 +18,7 @@ public class MailPlayerSelectorGUI extends MultiplePageGUI {
 
     private static final HashMap<Player, MailPlayerSelectorGUI> VIEW_MAP = new HashMap<>();
 
-    public MailPlayerSelectorGUI(Player player) {
+    public MailPlayerSelectorGUI(@NotNull Player player) {
         super(player);
         this.setDefault();
     }

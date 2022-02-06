@@ -24,7 +24,7 @@ public class MailSentGUI extends MultiplePageGUI {
 
     private static final HashMap<Player, MailSentGUI> VIEW_MAP = new HashMap<>();
 
-    public MailSentGUI(Player player) {
+    public MailSentGUI(@NotNull Player player) {
         super(player);
         VIEW_MAP.put(player, this);
         this.setDefault();

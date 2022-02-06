@@ -16,7 +16,7 @@ public class CaseKeyStack extends PluginItem {
         this.type = containerKey;
         this.setDisplayName(Component.translatable(containerKey.getTranslationKey()));
         this.addLore(Component.translatable("container.key.can_open").args(Component.translatable(containerKey.canOpen().getTranslationKey())).decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY));
-        NBTHelper.setTag(this, "CaseKey", containerKey.getID());
+        NBTHelper.setTag(this, "ContainerKey", containerKey.getID());
         this.setPlaceable(false);
     }
 

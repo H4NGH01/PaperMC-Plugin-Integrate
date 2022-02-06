@@ -30,11 +30,10 @@ public class CommandManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(ChatColor.RED + "Only players can use this command.");
             return true;
         }
-        Player player = (Player) sender;
         for (PluginCommand pluginCommand : commands) {
             if (command.getName().equalsIgnoreCase(pluginCommand.name())) {
                 pluginCommand.onCommand(player, args);

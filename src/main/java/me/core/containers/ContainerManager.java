@@ -1,6 +1,7 @@
 package me.core.containers;
 
 import me.core.items.CaseStack;
+import me.core.items.ContainerItemStack;
 import me.core.utils.nbt.NBTHelper;
 import me.core.utils.nbt.NBTStorageFile;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,20 +23,20 @@ public class ContainerManager {
         this.file = new NBTStorageFile(new File("container-data.nbt"));
         this.file.read();
         for (String key : this.file.getKeys()) {
-            NBTTagCompound caseTag = this.file.getTagCompound(key);
-            ItemStack stack = NBTHelper.getItemStack(caseTag.p("item"));
-            this.containerDataList.add(new ContainerData(UUID.fromString(key), ContainerType.valueOf(caseTag.l("type")), stack));
+            NBTTagCompound containerTag = this.file.getTagCompound(key);
+            ContainerItemStack stack = new ContainerItemStack(NBTHelper.asItemStack(containerTag.p("item")));
+            this.containerDataList.add(new ContainerData(UUID.fromString(key), ContainerType.valueOf(containerTag.l("type")), stack));
         }
     }
 
     public void save() {
         this.file.clear();
         for (ContainerData data : this.containerDataList) {
-            NBTTagCompound caseTag = new NBTTagCompound();
-            NBTTagCompound itemTag = NBTHelper.getNBTTagCompound(data.getDrop());
-            caseTag.a("type", data.getType().toString());
-            caseTag.a("item", itemTag);
-            this.file.setTagCompound(data.getUUID().toString(), caseTag);
+            NBTTagCompound containerTag = new NBTTagCompound();
+            NBTTagCompound itemTag = NBTHelper.asNBTTagCompound(data.getDrop());
+            containerTag.a("type", data.getType().toString());
+            containerTag.a("item", itemTag);
+            this.file.setTagCompound(data.getUUID().toString(), containerTag);
         }
         this.file.write();
     }

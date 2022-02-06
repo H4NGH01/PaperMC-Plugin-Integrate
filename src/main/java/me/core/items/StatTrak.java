@@ -40,7 +40,7 @@ public class StatTrak extends PluginItem {
         this.setTag("stattrak", isStattrak(this) ? getKills(stack) : 0);
     }
 
-    public static boolean isStattrak(ItemStack stack) {
+    public static <T extends ItemStack> boolean isStattrak(T stack) {
         return NBTHelper.hasTag(stack, "stattrak");
     }
 

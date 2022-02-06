@@ -49,6 +49,10 @@ public class AdminContainerCommand extends PluginCommand {
                 return;
             }
             String id = args[1];
+            if (player.getInventory().firstEmpty() == -1) {
+                player.sendMessage(Component.translatable("command.inventory_full"));
+                return;
+            }
             if (id.equalsIgnoreCase("random_case")) {
                 CaseStack stack = plugin.getContainerManager().generateRandomCaseStack();
                 player.getInventory().addItem(stack);

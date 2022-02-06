@@ -40,14 +40,14 @@ public class NBTHelper {
     $.I()           return  $.getCount()
     /* -------------------------------------------- */
 
-    public static @NotNull ItemStack getItemStack(@NotNull NBTTagCompound tagCompound) {
+    public static @NotNull ItemStack asItemStack(@NotNull NBTTagCompound tagCompound) {
         ItemStack stack = new ItemStack(Objects.requireNonNull(Material.getMaterial(tagCompound.l("id").toUpperCase())), tagCompound.h("Count"));
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         if (tagCompound.c("tag") != null) nmsStack.c(tagCompound.p("tag"));
         return CraftItemStack.asBukkitCopy(nmsStack);
     }
 
-    public static NBTTagCompound getNBTTagCompound(@NotNull ItemStack stack) {
+    public static NBTTagCompound asNBTTagCompound(@NotNull ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.a("id", stack.getType().toString().toLowerCase());
         tag.a("Count", stack.getAmount());

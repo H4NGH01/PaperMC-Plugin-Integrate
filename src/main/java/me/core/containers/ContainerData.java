@@ -1,20 +1,10 @@
 package me.core.containers;
 
-import org.bukkit.inventory.ItemStack;
+import me.core.items.ContainerItemStack;
 
 import java.util.UUID;
 
-public class ContainerData {
-
-    private final UUID uuid;
-    private final ContainerType type;
-    private final ItemStack drop;
-
-    public ContainerData(UUID uuid, ContainerType type, ItemStack drop) {
-        this.uuid = uuid;
-        this.type = type;
-        this.drop = drop;
-    }
+public record ContainerData(UUID uuid, ContainerType type, ContainerItemStack drop) {
 
     public UUID getUUID() {
         return this.uuid;
@@ -24,7 +14,7 @@ public class ContainerData {
         return this.type;
     }
 
-    public ItemStack getDrop() {
+    public ContainerItemStack getDrop() {
         return this.drop;
     }
 }

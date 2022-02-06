@@ -21,7 +21,7 @@ public class MailBinGUI extends MultiplePageGUI {
 
     private static final HashMap<Player, MailBinGUI> VIEW_MAP = new HashMap<>();
 
-    public MailBinGUI(Player player) {
+    public MailBinGUI(@NotNull Player player) {
         super(player);
         this.setDefault();
     }

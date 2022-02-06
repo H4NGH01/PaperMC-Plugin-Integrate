@@ -23,7 +23,7 @@ public class MailBoxGUI extends MultiplePageGUI {
     private static final HashMap<Player, MailBoxGUI> VIEW_MAP = new HashMap<>();
     private final HashSet<Mail> selectedMail = new HashSet<>();
 
-    public MailBoxGUI(Player player) {
+    public MailBoxGUI(@NotNull Player player) {
         super(player);
         this.setDefault();
     }

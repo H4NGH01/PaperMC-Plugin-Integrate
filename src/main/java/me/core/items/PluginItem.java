@@ -25,6 +25,11 @@ public class PluginItem extends ItemStack {
         super(stack);
     }
 
+    public Component getDisplayName() {
+        if (this.hasItemMeta() && this.getItemMeta().hasDisplayName()) return super.displayName();
+        return Component.translatable(this.translationKey());
+    }
+
     public void setDisplayName(Component displayName) {
         ItemMeta meta = this.getItemMeta();
         meta.displayName(displayName.decoration(TextDecoration.ITALIC, false));

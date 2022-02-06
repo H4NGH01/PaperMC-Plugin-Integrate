@@ -25,5 +25,4 @@ public enum ContainerKey {
     public ContainerType canOpen() {
         return this.canOpen;
     }
-
 }

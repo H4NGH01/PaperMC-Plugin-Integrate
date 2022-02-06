@@ -3,6 +3,7 @@ package me.core.utils.nbt;
 import me.core.MCServerPlugin;
 import net.minecraft.nbt.NBTCompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import org.bukkit.ChatColor;
 
 import java.io.File;
@@ -56,6 +57,7 @@ public class NBTStorageFile {
     /*
     net.minecraft.nbt.NBTTagCompound
     $.a(key, var)   return  $.set(key, var)
+    $.c(key, int)   return  $.getList(key, int)
     $.d()           return  $.getKeys()
     $.e(key)        return  $.hasKey(key)
     $.f()           return  $.isEmpty()
@@ -106,12 +108,20 @@ public class NBTStorageFile {
         this.tagCompound.a(key, value);
     }
 
+    public void setTagCompound(String key, NBTTagCompound tagCompound) {
+        this.tagCompound.a(key, tagCompound);
+    }
+
     public void setBoolean(String key, boolean value) {
         this.tagCompound.a(key, value);
     }
 
-    public void setTagCompound(String key, NBTTagCompound tagCompound) {
-        this.tagCompound.a(key, tagCompound);
+    public void setList(String key, NBTTagList tagList) {
+        this.tagCompound.a(key, tagList);
+    }
+
+    public NBTTagList getList(String key, int var) {
+        return this.tagCompound.c(key, var);
     }
 
     public Set<String> getKeys() {

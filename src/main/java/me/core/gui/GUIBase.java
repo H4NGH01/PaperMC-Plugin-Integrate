@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -15,20 +16,26 @@ public abstract class GUIBase {
 
     protected final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
     protected final Player player;
-    protected Inventory inventory;
+    protected final int size;
+    protected Inventory inventory = null;
     protected GUIBase lastInventory;
 
-    public GUIBase(Player player) {
+    public GUIBase(@NotNull Player player, int size) {
         this.player = player;
+        this.size = size;
+    }
+
+    public GUIBase(@NotNull Player player) {
+        this(player, 54);
     }
 
     protected void setDefault() {
-        this.inventory = plugin.getServer().createInventory(null, 54, getGUIName());
+        this.inventory = this.inventory == null ? plugin.getServer().createInventory(null, this.size, this.getGUIName()) : this.inventory;
         for (int i = 0; i < 9; i++) {
             this.inventory.setItem(i, MCServerItems.board);
-            this.inventory.setItem(i + 45, MCServerItems.board);
+            this.inventory.setItem(i + this.size - 9, MCServerItems.board);
         }
-        for (int i = 9; i < 45; i++) {
+        for (int i = 9; i < this.size - 9; i++) {
             this.inventory.setItem(i, MCServerItems.air);
         }
         this.inventory.setItem(8, MCServerItems.close);
