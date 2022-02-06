@@ -15,7 +15,7 @@ PaperMC集成插件是一个用于PaperMC服务器的插件
 
 ### StatTrak
 允许您记录您所使用的武器的击杀次数。
-(就像CSGO一樣)
+(就像CSGO一样)
 
 ## Commands
 ### /mail
