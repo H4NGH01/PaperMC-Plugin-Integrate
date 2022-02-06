@@ -18,10 +18,10 @@ import java.util.UUID;
 
 public abstract class Container {
 
-    private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
+    protected final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
     protected final UUID uuid;
-    private ContainerItemStack drop;
-    private final ContainerData data;
+    protected final ContainerItemStack drop;
+    protected final ContainerData data;
 
     /**
      * Generate a new Container
@@ -47,6 +47,7 @@ public abstract class Container {
             }
         }
         this.data = null;
+        this.drop = null;
     }
 
     public ContainerItemStack generateDrop() {
@@ -114,6 +115,10 @@ public abstract class Container {
 
     public boolean hasData() {
         return this.data != null;
+    }
+
+    public ContainerData getData() {
+        return this.data;
     }
 
     public static ContainerItemStack superRarity() {

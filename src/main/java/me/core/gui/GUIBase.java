@@ -5,7 +5,6 @@ import me.core.events.GUIOpenEvent;
 import me.core.items.MCServerItems;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +51,6 @@ public abstract class GUIBase {
         this.setInventory();
         this.player.openInventory(this.inventory);
         this.getViewMap().put(this.player, this);
-        this.player.playSound(this.player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.7f, 1f);
         Bukkit.getPluginManager().callEvent(new GUIOpenEvent(this.player, this));
     }
 

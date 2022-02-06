@@ -4,6 +4,7 @@ import me.core.utils.ComponentUtil;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ public class StatTrak extends PluginItem {
 
     public <T extends ItemStack> StatTrak(T stack) {
         super(stack);
+        if (stack.hasItemMeta() && isStattrak(this)) return;
         boolean b = this.getItemMeta().hasDisplayName();
         this.setTag("CustomName", b ? ComponentUtil.plainText(this.getItemMeta().displayName()) : this.translationKey());
         TextComponent.Builder display = Component.text().decoration(TextDecoration.ITALIC, false);
@@ -33,11 +35,11 @@ public class StatTrak extends PluginItem {
         display.append(b ? Objects.requireNonNull(this.getItemMeta().displayName()) : Component.translatable(this.translationKey()));
         this.setDisplayName(display.build());
         List<Component> components = new ArrayList<>();
-        components.add(Component.translatable("item.stattrak.count").args(ComponentUtil.text(ChatColor.RED.toString() + getKills(this))));
+        components.add(Component.translatable("item.stattrak.count").args(ComponentUtil.text(NamedTextColor.RED, getKills(this))));
         List<Component> base = this.getItemMeta().lore();
         if (base != null && base.size() != 0) components.addAll(base);
         this.lore(components);
-        this.setTag("stattrak", isStattrak(this) ? getKills(stack) : 0);
+        this.setTag("stattrak", getKills(stack));
     }
 
     public static <T extends ItemStack> boolean isStattrak(T stack) {

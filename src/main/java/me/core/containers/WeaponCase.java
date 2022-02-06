@@ -53,8 +53,8 @@ public class WeaponCase extends Container {
                 new ContainerItemStack(Material.NETHERITE_SWORD, CaseItemRarity.COVERT),
                 new ContainerItemStack(Material.NETHERITE_AXE, CaseItemRarity.COVERT),
                 new ContainerItemStack(Material.NETHERITE_HOE, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.DAMAGE_ALL, 20)),
-                new ContainerItemStack(Material.BOW, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.ARROW_DAMAGE, 6)),
-                new ContainerItemStack(Material.TRIDENT, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.DAMAGE_ALL, 5, Enchantment.IMPALING, 5)),
+                new ContainerItemStack(Material.BOW, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.ARROW_DAMAGE, 6, Enchantment.DAMAGE_ALL, 10)),
+                new ContainerItemStack(Material.TRIDENT, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.IMPALING, 5, Enchantment.DAMAGE_ALL, 5)),
         };
     }
 }

@@ -8,6 +8,18 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class ComponentUtil {
 
+    public static Component component(Component... components) {
+        TextComponent.Builder builder = Component.text().decoration(TextDecoration.ITALIC, false);
+        for (Component c : components) {
+            builder.append(c);
+        }
+        return builder.build();
+    }
+
+    public static Component component(TextColor color, Component... component) {
+        return component(component).color(color);
+    }
+
     public static Component text(String... string) {
         Component[] components = new Component[string.length];
         for (int i = 0; i < string.length; i++) {
@@ -20,16 +32,16 @@ public class ComponentUtil {
         return component(color, text(string));
     }
 
-    public static Component component(Component... components) {
-        TextComponent.Builder builder = Component.text().decoration(TextDecoration.ITALIC, false);
-        for (Component c : components) {
-            builder.append(c);
+    public static Component text(int... i) {
+        Component[] components = new Component[i.length];
+        for (int j = 0; j < i.length; j++) {
+            components[j] = Component.text(i[j]);
         }
-        return builder.build();
+        return component(components);
     }
 
-    public static Component component(TextColor color, Component... component) {
-        return component(component).color(color);
+    public static Component text(TextColor color, int... i) {
+        return component(color, text(i));
     }
 
     public static Component translate(String... keys) {

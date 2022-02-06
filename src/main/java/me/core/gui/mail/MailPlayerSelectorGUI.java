@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -49,6 +50,12 @@ public class MailPlayerSelectorGUI extends MultiplePageGUI {
 
     public static HashMap<Player, MailPlayerSelectorGUI> getViews() {
         return VIEW_MAP;
+    }
+
+    @Override
+    public void openToPlayer() {
+        this.player.playSound(this.player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.7f, 1f);
+        super.openToPlayer();
     }
 
     public @NotNull InventoryItem playerIcon(@NotNull OfflinePlayer p) {

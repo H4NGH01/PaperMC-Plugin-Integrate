@@ -57,6 +57,12 @@ public class ContainerGUI extends GUIBase {
         return (HashMap<Player, T>) VIEW_MAP;
     }
 
+    @Override
+    public void openToPlayer() {
+        this.player.playSound(this.player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 0.7f, 1f);
+        super.openToPlayer();
+    }
+
     public void openContainer() {
         if (!playerContainsContainer()) {
             this.player.sendMessage(Component.translatable("chat.container.invalid_container"));
@@ -154,8 +160,8 @@ public class ContainerGUI extends GUIBase {
     private void playEndAnimation() {
         switch (this.container.getDrop().getItemRarity()) {
             case MIL_SPEC -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
-            case RESTRICTED -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1f, 1f);
-            case CLASSIFIED -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+            case RESTRICTED -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
+            case CLASSIFIED -> this.player.playSound(this.player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1f, 1f);
             case COVERT -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1f, 1f);
             case RARE_SPECIAL -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
             default -> {}
