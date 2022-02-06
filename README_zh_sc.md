@@ -10,6 +10,9 @@ PaperMC集成插件是一个用于PaperMC服务器的插件
 ### 邮箱系统
 允许您向服务器玩家发送电子邮件，包括离线玩家。
 
+### 开箱系统
+体验在CSGO中开箱的感觉
+
 ### StatTrak
 允许您记录您所使用的武器的击杀次数。
 
@@ -19,6 +22,9 @@ PaperMC集成插件是一个用于PaperMC服务器的插件
 
 ### /admin-mail
 管理员邮件命令。
+
+### /admin-container
+管理员开箱命令。
 
 ### /admin-stattrak
 管理员StatTrak命令。
