@@ -5,6 +5,7 @@ import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
 import me.core.items.InventoryItem;
 import me.core.mail.Mail;
+import me.core.mail.MailManager;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,7 +33,7 @@ public class MailBoxGUI extends MultiplePageGUI {
     @Override
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getMailList(this.player)) {
+        for (Mail mail : MailManager.getMailList(this.player)) {
             if (!mail.isDeleted()) {
                 stacks.add(mailStack(mail, false));
             }
@@ -71,8 +72,8 @@ public class MailBoxGUI extends MultiplePageGUI {
     private @NotNull InventoryItem info(Player p) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.box.info");
         item.setDisplayName(Component.translatable("gui.mail.box.info"));
-        item.addLore(ComponentUtil.component(Component.translatable("gui.mail.box.info_total").args(Component.text(ChatColor.YELLOW.toString() + plugin.getMailManager().getMailCount(p)))));
-        item.addLore(ComponentUtil.component(Component.translatable("gui.mail.box.info_new").args(Component.text(ChatColor.YELLOW.toString() + plugin.getMailManager().getUnreadMail(p).size()))));
+        item.addLore(ComponentUtil.component(Component.translatable("gui.mail.box.info_total").args(Component.text(ChatColor.YELLOW.toString() + MailManager.getMailCount(p)))));
+        item.addLore(ComponentUtil.component(Component.translatable("gui.mail.box.info_new").args(Component.text(ChatColor.YELLOW.toString() + MailManager.getUnreadMail(p).size()))));
         return item;
     }
 
@@ -127,7 +128,7 @@ public class MailBoxGUI extends MultiplePageGUI {
             item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.translatable("gui.none")));
         } else {
             for (ItemStack stack : mail.getItemList()) {
-                item.addLore(ComponentUtil.component(Component.text(ChatColor.GRAY + "- "), stack.displayName()));
+                item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.text("- "), stack.displayName()));
             }
         }
         item.addLore(ComponentUtil.component(NamedTextColor.GREEN, Component.translatable("gui.mail.date"), Component.text(": " + mail.getDate())));
@@ -143,7 +144,7 @@ public class MailBoxGUI extends MultiplePageGUI {
 
     public void update() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getMailList(this.player)) {
+        for (Mail mail : MailManager.getMailList(this.player)) {
             if (!mail.isDeleted()) {
                 stacks.add(mailStack(mail, this.selectedMail.contains(mail)));
             }

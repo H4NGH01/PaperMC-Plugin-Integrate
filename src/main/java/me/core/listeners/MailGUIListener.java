@@ -6,6 +6,7 @@ import me.core.events.GUIClickEvent;
 import me.core.gui.mail.*;
 import me.core.items.MCServerItems;
 import me.core.mail.Mail;
+import me.core.mail.MailManager;
 import me.core.mail.NewMail;
 import me.core.utils.ComponentUtil;
 import me.core.utils.nbt.NBTHelper;
@@ -84,7 +85,7 @@ public class MailGUIListener {
                 gui.getSelectedMail().clear();
             }
             if (e.isRightClick()) {
-                for (Mail mail : plugin.getMailManager().getReceivedMail(p)) {
+                for (Mail mail : MailManager.getReceivedMail(p)) {
                     mail.setDeleted();
                 }
             }
@@ -94,7 +95,7 @@ public class MailGUIListener {
             return;
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.mail")) {
-            Mail mail = plugin.getMailManager().getMailByID(NBTHelper.getTag(item).l("MailID"));
+            Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
             if (e.isRightClick()) {
                 if (!mail.isReceived()) mail.setReceived();
                 MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.ADDRESSEE);
@@ -137,7 +138,7 @@ public class MailGUIListener {
             return;
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.writer.to")) {
-            MailPlayerSelectorGUI mps =  MailPlayerSelectorGUI.getViews().containsKey(p) ? MailPlayerSelectorGUI.getViews().get(p) : new MailPlayerSelectorGUI(p);
+            MailPlayerSelectorGUI mps = MailPlayerSelectorGUI.getViews().containsKey(p) ? MailPlayerSelectorGUI.getViews().get(p) : new MailPlayerSelectorGUI(p);
             mps.setPage(1);
             mps.setLastInventory(gui);
             mps.openToPlayer();
@@ -163,7 +164,7 @@ public class MailGUIListener {
             }
             for (OfflinePlayer op : mail.getAddressee()) {
                 Mail m = new Mail(p, op, mail.getTitle(), mail.getText(), stacks);
-                plugin.getMailManager().sendMail(m);
+                MailManager.sendMail(m);
                 sb.append(op.getName()).append(", ");
                 if (op.isOnline()) {
                     Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail_received"));
@@ -207,7 +208,7 @@ public class MailGUIListener {
         Player p = (Player) e.getWhoClicked();
         MailSentGUI gui = (MailSentGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.sent.mail")) {
-            Mail mail = plugin.getMailManager().getMailByID(NBTHelper.getTag(item).l("MailID"));
+            Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
             if (e.isRightClick()) {
                 MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.SENDER);
                 mvg.setLastInventory(gui);
@@ -221,7 +222,7 @@ public class MailGUIListener {
         Player p = (Player) e.getWhoClicked();
         MailBinGUI gui = (MailBinGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.bin.mail")) {
-            Mail mail = plugin.getMailManager().getMailByID(NBTHelper.getTag(item).l("MailID"));
+            Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
             mail.restore();
             gui.update();
             p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_ELYTRA, 0.7f, 1f);

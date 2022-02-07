@@ -6,7 +6,9 @@ import me.core.items.ContainerItemStack;
 import me.core.items.StatTrak;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +22,7 @@ public abstract class Container {
 
     protected final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
     protected final UUID uuid;
-    protected final ContainerItemStack drop;
+    protected ContainerItemStack drop;
     protected final ContainerData data;
 
     /**
@@ -30,16 +32,17 @@ public abstract class Container {
         this.uuid = UUID.randomUUID();
         this.drop = generateDrop();
         this.data = new ContainerData(this.uuid, this.getContainerType(), this.drop);
-        plugin.getContainerManager().registryContainerData(data);
+        ContainerManager.registryContainerData(data);
     }
 
     /**
      * Load an existed Container
+     *
      * @param uuid UUID of Container
      */
     public Container(UUID uuid) {
         this.uuid = uuid;
-        for (ContainerData data : plugin.getContainerManager().getCaseDataList()) {
+        for (ContainerData data : ContainerManager.getCaseDataList()) {
             if (this.uuid.equals(data.getUUID())) {
                 this.data = data;
                 this.drop = data.getDrop();
@@ -72,7 +75,13 @@ public abstract class Container {
         rate = new Random().nextFloat() * list.size();
         ContainerItemStack stack = list.get((int) rate);
         rate = new Random().nextFloat() * 10;
-        return rate <= 1 ? new ContainerItemStack(new StatTrak(stack)) : stack;
+        if (rate <= 1) StatTrak.addStatTrak(stack);
+        if (stack.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) {
+            TextComponent.Builder builder = Component.text();
+            if (StatTrak.isStattrak(stack)) builder.append(Component.text(ChatColor.GOLD + "StatTrak™ "));
+            stack.setDisplayName(builder.append(Component.translatable(stack.translationKey()).append(Component.text(" (★)"))).build());
+        }
+        return stack;
     }
 
     @NotNull

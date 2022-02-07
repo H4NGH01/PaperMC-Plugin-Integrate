@@ -26,7 +26,7 @@ public class PluginItem extends ItemStack {
     }
 
     public Component getDisplayName() {
-        if (this.hasItemMeta() && this.getItemMeta().hasDisplayName()) return super.displayName();
+        if (this.hasItemMeta() && this.getItemMeta().hasDisplayName()) return super.getItemMeta().displayName();
         return Component.translatable(this.translationKey());
     }
 

@@ -70,7 +70,7 @@ public abstract class GUIBase {
         return this.inventory;
     }
 
-    protected Player getPlayer() {
+    public Player getPlayer() {
         return this.player;
     }
 }

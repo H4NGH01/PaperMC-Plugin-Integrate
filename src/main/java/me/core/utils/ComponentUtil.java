@@ -67,5 +67,4 @@ public class ComponentUtil {
     public static String plainText(Component component) {
         return PlainTextComponentSerializer.plainText().serialize(component);
     }
-
 }

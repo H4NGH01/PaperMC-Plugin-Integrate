@@ -40,7 +40,8 @@ public class ServerGUIListener implements Listener {
     @EventHandler
     public void onClose(@NotNull InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (ComponentUtil.plainText(e.getView().title()).startsWith("gui.mail.viewer")) MailViewerGUI.getViews().remove(p);
+        if (ComponentUtil.plainText(e.getView().title()).startsWith("gui.mail.viewer"))
+            MailViewerGUI.getViews().remove(p);
         if (OPENED_GUI.containsKey(p)) Bukkit.getPluginManager().callEvent(new GUICloseEvent(p, OPENED_GUI.get(p)));
     }
 

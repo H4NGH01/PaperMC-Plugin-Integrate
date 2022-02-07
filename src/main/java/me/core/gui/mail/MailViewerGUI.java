@@ -33,18 +33,14 @@ public class MailViewerGUI extends GUIBase {
     @Override
     public void setInventory() {
         switch (this.type) {
-            case ADMIN:
+            case ADMIN -> {
                 this.inventory.setItem(9, from());
                 this.inventory.setItem(10, to());
-                break;
-            case SENDER:
-                this.inventory.setItem(9, to());
-                break;
-            case ADDRESSEE:
-                this.inventory.setItem(9, from());
-                break;
-            default:
-                break;
+            }
+            case SENDER -> this.inventory.setItem(9, to());
+            case ADDRESSEE -> this.inventory.setItem(9, from());
+            default -> {
+            }
         }
         this.inventory.setItem(18, title());
         this.inventory.setItem(19, text());

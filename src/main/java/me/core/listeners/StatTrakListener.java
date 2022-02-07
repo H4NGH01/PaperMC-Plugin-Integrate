@@ -13,10 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,7 +29,8 @@ public class StatTrakListener implements Listener {
         if (e.isCancelled()) return;
         if (e.getDamage() < ((LivingEntity) e.getEntity()).getHealth()) return;
         Entity damager = e.getDamager();
-        if (!(damager instanceof Player || (damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof Player))) return;
+        if (!(damager instanceof Player || (damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof Player)))
+            return;
         Player killer;
         ItemStack weapon = null;
         if (damager instanceof Player) {
@@ -41,7 +39,8 @@ public class StatTrakListener implements Listener {
                 weapon = killer.getInventory().getItemInMainHand();
             } else if (e.getCause().equals(EntityDamageEvent.DamageCause.THORNS)) {
                 for (ItemStack armor : killer.getInventory().getArmorContents()) {
-                    if (armor != null && !armor.getType().equals(Material.AIR) && armor.getEnchantments().containsKey(Enchantment.THORNS) && StatTrak.isStattrak(armor)) StatTrak.addKills(armor);
+                    if (armor != null && !armor.getType().equals(Material.AIR) && armor.getEnchantments().containsKey(Enchantment.THORNS) && StatTrak.isStattrak(armor))
+                        StatTrak.addKills(armor);
                 }
                 return;
             }
@@ -76,8 +75,8 @@ public class StatTrakListener implements Listener {
     }
 
     @EventHandler
-    public void onOpenAnvil(InventoryOpenEvent e) {
-        if (!e.getInventory().getType().equals(InventoryType.ANVIL)) return;
+    public void onOpenSpecialGUI(InventoryOpenEvent e) {
+        if (!(e.getInventory().getType().equals(InventoryType.ANVIL) || e.getInventory().getType().equals(InventoryType.SMITHING))) return;
         hidePrefix(e.getInventory().getContents());
         hidePrefix(e.getPlayer().getInventory().getContents());
         hidePrefix(e.getPlayer().getInventory().getArmorContents());
@@ -100,8 +99,8 @@ public class StatTrakListener implements Listener {
     }
 
     @EventHandler
-    public void onCloseAnvil(InventoryCloseEvent e) {
-        if (!e.getInventory().getType().equals(InventoryType.ANVIL)) return;
+    public void onCloseSpecialGUI(InventoryCloseEvent e) {
+        if (!(e.getInventory().getType().equals(InventoryType.ANVIL) || e.getInventory().getType().equals(InventoryType.SMITHING))) return;
         showPrefix(e.getInventory().getContents());
         showPrefix(e.getPlayer().getInventory().getContents());
         showPrefix(e.getPlayer().getInventory().getArmorContents());
@@ -126,9 +125,19 @@ public class StatTrakListener implements Listener {
 
     @EventHandler
     public void onAnvilRenamed(PrepareAnvilEvent e) {
-        if (e.getResult() == null || e.getResult().getType().equals(Material.AIR) || !StatTrak.isStattrak(e.getResult())) return;
+        if (e.getResult() == null || e.getResult().getType().equals(Material.AIR) || !e.getResult().hasItemMeta() || !StatTrak.isStattrak(e.getResult()))
+            return;
         String s = e.getInventory().getRenameText() == null || e.getInventory().getRenameText().replaceAll(" ", "").equals("") ? e.getResult().translationKey() : e.getInventory().getRenameText();
         NBTHelper.setTag(e.getResult(), "CustomName", s);
+    }
+
+    @EventHandler
+    public void onUpgrade(PrepareSmithingEvent e) {
+        if (e.getResult() == null || e.getResult().getType().equals(Material.AIR) || !e.getResult().hasItemMeta() || !StatTrak.isStattrak(e.getResult()))
+            return;
+        ItemStack base = e.getInventory().getItem(0);
+        assert base != null;
+        if (NBTHelper.getTag(base).l("CustomName").equals(base.translationKey())) NBTHelper.setTag(e.getResult(), "CustomName", e.getResult().translationKey());
     }
 
 }

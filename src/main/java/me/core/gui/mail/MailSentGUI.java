@@ -4,6 +4,7 @@ import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
 import me.core.items.InventoryItem;
 import me.core.mail.Mail;
+import me.core.mail.MailManager;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -34,7 +35,7 @@ public class MailSentGUI extends MultiplePageGUI {
     @Override
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getMailListBySender(this.getPlayer())) {
+        for (Mail mail : MailManager.getMailListBySender(this.getPlayer())) {
             stacks.add(mailStack(mail));
         }
         this.setContents(stacks);
@@ -67,9 +68,9 @@ public class MailSentGUI extends MultiplePageGUI {
     private @NotNull InventoryItem info(Player p) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.sent.info");
         item.setDisplayName(Component.translatable("gui.mail.sent.info"));
-        item.addLore(Component.translatable("gui.mail.sent.info_total").args(Component.text(ChatColor.YELLOW.toString() + plugin.getMailManager().getMailListBySender(p).size())));
+        item.addLore(Component.translatable("gui.mail.sent.info_total").args(Component.text(ChatColor.YELLOW.toString() + MailManager.getMailListBySender(p).size())));
         int i = 0;
-        for (Mail mail : plugin.getMailManager().getMailListBySender(p)) {
+        for (Mail mail : MailManager.getMailListBySender(p)) {
             if (mail.isReceived()) i++;
         }
         item.addLore(Component.translatable("gui.mail.sent.info_read").args(Component.text(ChatColor.YELLOW.toString() + i)));
@@ -95,7 +96,7 @@ public class MailSentGUI extends MultiplePageGUI {
             item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.none"));
         } else {
             for (ItemStack stack : mail.getItemList()) {
-                item.addLore(ComponentUtil.component(Component.text(ChatColor.GRAY + "- "), stack.displayName()));
+                item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.text("- "), stack.displayName()));
             }
         }
         item.addLore(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.date").append(Component.text(": " + mail.getDate())));

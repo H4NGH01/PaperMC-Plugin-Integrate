@@ -1,6 +1,7 @@
 package me.core;
 
 import me.core.mail.Mail;
+import me.core.mail.MailManager;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -35,7 +36,7 @@ public class ServerEventListener implements Listener {
             stack.setItemMeta(meta);
             stacks.add(stack);
             Mail mail = new Mail("server", p, "Welcome to " + plugin.getServer().getName() + "!", "Use this to become a stand user.", stacks);
-            plugin.getMailManager().sendMail(mail);
+            MailManager.sendMail(mail);
         }
         ServerPlayer sp = MCServerPlugin.getServerPlayerHashMap().get(p);
         if (sp.getStorage().size() != 0) {

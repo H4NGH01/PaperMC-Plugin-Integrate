@@ -48,8 +48,8 @@ public class ServerPlayer {
             tagList.add(NBTHelper.asNBTTagCompound(stack));
         }
         this.file.setList("storage", tagList);
-        this.file.setDouble("money",this.money.doubleValue());
-        this.file.setInt("NewMail",this.newMail);
+        this.file.setDouble("money", this.money.doubleValue());
+        this.file.setInt("NewMail", this.newMail);
         this.file.write();
     }
 

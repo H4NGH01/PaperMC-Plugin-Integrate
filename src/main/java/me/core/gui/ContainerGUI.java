@@ -3,6 +3,7 @@ package me.core.gui;
 import me.core.ServerPlayer;
 import me.core.containers.Container;
 import me.core.containers.ContainerKey;
+import me.core.containers.ContainerManager;
 import me.core.items.*;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
@@ -57,6 +58,10 @@ public class ContainerGUI extends GUIBase {
         return (HashMap<Player, T>) VIEW_MAP;
     }
 
+    public static HashMap<Player, ContainerGUI> getViews() {
+        return VIEW_MAP;
+    }
+
     @Override
     public void openToPlayer() {
         this.player.playSound(this.player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 0.7f, 1f);
@@ -84,6 +89,7 @@ public class ContainerGUI extends GUIBase {
                     this.cancel();
                     op.getStorage().add(container.getDrop());
                     op.save();
+                    ContainerManager.unregisterContainerData(container);
                     return;
                 }
                 if (!animation) {
@@ -91,12 +97,13 @@ public class ContainerGUI extends GUIBase {
                     playEndAnimation();
                     op.safeAddItem(container.getDrop());
                     player.sendMessage(Component.translatable("chat.container.opened_item").args(container.getDrop().getDisplayName()));
-                    plugin.getContainerManager().unregisterContainerData(container);
+                    ContainerManager.unregisterContainerData(container);
                 }
             }
         }.runTaskTimer(this.plugin, 0, 1);
     }
 
+    @SuppressWarnings("all")
     private void playOpenAnimation() {
         this.animation = true;
         this.player.playSound(this.getPlayer().getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 0.7f, 1f);
@@ -117,7 +124,6 @@ public class ContainerGUI extends GUIBase {
             private int i = 0;
             private int rollSpeed = startSpeed;
 
-            @SuppressWarnings("all")
             @Override
             public void run() {
                 if (!player.isOnline() || !animation || rollSpeed <= 0) {
@@ -164,7 +170,8 @@ public class ContainerGUI extends GUIBase {
             case CLASSIFIED -> this.player.playSound(this.player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1f, 1f);
             case COVERT -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1f, 1f);
             case RARE_SPECIAL -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
-            default -> {}
+            default -> {
+            }
         }
         if (!inventory.getViewers().contains(player)) return;
         for (int i = 0; i < 9; i++) {
@@ -243,6 +250,10 @@ public class ContainerGUI extends GUIBase {
             }
         }
         return false;
+    }
+
+    public Container getContainer() {
+        return this.container;
     }
 
     public boolean isOpening() {

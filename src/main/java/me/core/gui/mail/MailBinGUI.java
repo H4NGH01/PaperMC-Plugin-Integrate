@@ -4,6 +4,7 @@ import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
 import me.core.items.InventoryItem;
 import me.core.mail.Mail;
+import me.core.mail.MailManager;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,7 +31,7 @@ public class MailBinGUI extends MultiplePageGUI {
     @Override
     public void setInventory() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getDeletedMail(this.getPlayer())) {
+        for (Mail mail : MailManager.getDeletedMail(this.getPlayer())) {
             stacks.add(mailStack(mail));
         }
         this.setContents(stacks);
@@ -63,7 +64,7 @@ public class MailBinGUI extends MultiplePageGUI {
     private @NotNull InventoryItem info(Player p) {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.bin.info");
         item.setDisplayName(ComponentUtil.translate("gui.mail.bin.info"));
-        item.setLore(ComponentUtil.component(Component.translatable("gui.mail.bin.info_count").args(Component.text(ChatColor.YELLOW.toString() + plugin.getMailManager().getDeletedMail(p).size()))));
+        item.setLore(ComponentUtil.component(Component.translatable("gui.mail.bin.info_count").args(Component.text(ChatColor.YELLOW.toString() + MailManager.getDeletedMail(p).size()))));
         return item;
     }
 
@@ -86,7 +87,7 @@ public class MailBinGUI extends MultiplePageGUI {
             item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.none"));
         } else {
             for (ItemStack stack : mail.getItemList()) {
-                item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.text("- ").append(stack.displayName())));
+                item.addLore(ComponentUtil.component(NamedTextColor.GRAY, Component.text("- "), stack.displayName()));
             }
         }
         item.addLore(ComponentUtil.component(NamedTextColor.GREEN, ComponentUtil.translate("gui.mail.date"), Component.text(": " + mail.getDate())));
@@ -96,7 +97,7 @@ public class MailBinGUI extends MultiplePageGUI {
 
     public void update() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getDeletedMail(this.getPlayer())) stacks.add(mailStack(mail));
+        for (Mail mail : MailManager.getDeletedMail(this.getPlayer())) stacks.add(mailStack(mail));
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.getPlayer()).getPage() : 1);
         this.inventory.setItem(0, info(this.getPlayer()));

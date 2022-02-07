@@ -20,31 +20,28 @@ import java.util.UUID;
 public class MailManager {
 
     private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
-    private final List<Mail> mailList;
-    private final NBTStorageFile mailFile;
-    private final NBTStorageFile newMailFile;
+    private static final List<Mail> mailList = new ArrayList<>();
+    private static final NBTStorageFile mailFile = new NBTStorageFile(new File("mails.nbt"));
+    private static final NBTStorageFile newMailFile = new NBTStorageFile(new File("new-mails.nbt"));
 
     public MailManager() {
         //read mail data
-        this.mailList = new ArrayList<>();
-        this.mailFile = new NBTStorageFile(new File("mails.nbt"));
-        this.newMailFile = new NBTStorageFile(new File("new-mails.nbt"));
-        this.mailFile.read();
-        this.newMailFile.read();
-        for (String key : this.mailFile.getKeys()) {
-            NBTTagCompound mailTag = this.mailFile.getTagCompound(key);
+        mailFile.read();
+        newMailFile.read();
+        for (String key : mailFile.getKeys()) {
+            NBTTagCompound mailTag = mailFile.getTagCompound(key);
             NBTTagList itemTagList = mailTag.c("ItemList", 10);
             List<ItemStack> stacks = new ArrayList<>();
             for (NBTBase b : itemTagList) {
                 if (b instanceof NBTTagCompound) stacks.add(NBTHelper.asItemStack((NBTTagCompound) b));
             }
             Mail mail = new Mail(key, mailTag.l("sender"), mailTag.l("addressee"), mailTag.l("title"), mailTag.l("text"), stacks, mailTag.l("date"), mailTag.q("received"), mailTag.q("deleted"));
-            this.mailList.add(mail);
+            mailList.add(mail);
         }
-        this.mailList.sort(Comparator.comparing(Mail::getDate));
+        mailList.sort(Comparator.comparing(Mail::getDate));
         //read new mail data
-        for (String key : this.newMailFile.getKeys()) {
-            NBTTagCompound mailTag = this.newMailFile.getTagCompound(key);
+        for (String key : newMailFile.getKeys()) {
+            NBTTagCompound mailTag = newMailFile.getTagCompound(key);
             NBTTagList addresseeTagList = mailTag.c("addressee", 10);
             UUID[] uuids = new UUID[addresseeTagList.size()];
             for (int i = 0; i < addresseeTagList.size(); i++) {
@@ -57,8 +54,7 @@ public class MailManager {
             ItemStack[] stacks = new ItemStack[8];
             for (int i = 0; i < itemTagList.size(); i++) {
                 NBTBase b = itemTagList.get(i);
-                if (b instanceof NBTTagCompound) {
-                    NBTTagCompound tag = (NBTTagCompound) b;
+                if (b instanceof NBTTagCompound tag) {
                     stacks[i] = NBTHelper.asItemStack(tag);
                 }
             }
@@ -68,10 +64,10 @@ public class MailManager {
         }
     }
 
-    public void save() {
+    public static void save() {
         //Save mail data
-        this.mailFile.clear();
-        for (Mail mail : this.mailList) {
+        mailFile.clear();
+        for (Mail mail : mailList) {
             NBTTagCompound mailTag = new NBTTagCompound();
             mailTag.a("sender", mail.getSender());
             mailTag.a("addressee", mail.getAddressee().toString());
@@ -85,12 +81,12 @@ public class MailManager {
             mailTag.a("date", mail.getDate());
             mailTag.a("received", mail.isReceived());
             mailTag.a("deleted", mail.isDeleted());
-            this.mailFile.setTagCompound(mail.getMailID(), mailTag);
+            mailFile.setTagCompound(mail.getMailID(), mailTag);
         }
-        this.mailFile.write();
+        mailFile.write();
         //Save new mail data
         List<NewMail> newMailList = new ArrayList<>(MailWriterGUI.NEW_MAP_MAP.values());
-        this.newMailFile.clear();
+        newMailFile.clear();
         for (NewMail mail : newMailList) {
             NBTTagCompound mailTag = new NBTTagCompound();
             mailTag.a("sender", mail.getSender().toString());
@@ -108,13 +104,13 @@ public class MailManager {
                 if (stack != null) itemTagList.add(NBTHelper.asNBTTagCompound(stack));
             }
             mailTag.a("ItemList", itemTagList);
-            this.newMailFile.setTagCompound(mail.getMailID(), mailTag);
+            newMailFile.setTagCompound(mail.getMailID(), mailTag);
         }
-        this.newMailFile.write();
+        newMailFile.write();
     }
 
-    public Mail getMailByID(String id) {
-        for (Mail mail : this.mailList) {
+    public static Mail getMailByID(String id) {
+        for (Mail mail : mailList) {
             if (mail.getMailID().equals(id)) {
                 return mail;
             }
@@ -122,53 +118,54 @@ public class MailManager {
         return null;
     }
 
-    public void sendMail(Mail mail) {
-        this.mailList.add(mail);
+    public static void sendMail(Mail mail) {
+        mailList.add(mail);
     }
 
-    public List<Mail> getMailList(Player p) {
+    public static List<Mail> getMailList(Player p) {
         List<Mail> mailList = new ArrayList<>();
-        for (Mail mail : this.mailList) if (p.getUniqueId().equals(mail.getAddressee())) mailList.add(mail);
+        for (Mail mail : MailManager.mailList) if (p.getUniqueId().equals(mail.getAddressee())) mailList.add(mail);
         return mailList;
     }
 
-    public List<Mail> getUnreadMail(Player p) {
+    public static List<Mail> getUnreadMail(Player p) {
         List<Mail> mailList = new ArrayList<>();
         for (Mail mail : getMailList(p)) if (!mail.isReceived()) mailList.add(mail);
         return mailList;
     }
 
-    public int getMailCount(Player p) {
+    public static int getMailCount(Player p) {
         int i = 0;
-        for (Mail mail : this.mailList) if (p.getUniqueId().equals(mail.getAddressee()) && !mail.isDeleted()) i++;
+        for (Mail mail : mailList) if (p.getUniqueId().equals(mail.getAddressee()) && !mail.isDeleted()) i++;
         return i;
     }
 
-    public List<Mail> getMailListBySender(Player p) {
+    public static List<Mail> getMailListBySender(Player p) {
         List<Mail> mailList = new ArrayList<>();
-        for (Mail mail : this.mailList) {
-            if (mail.getSender().startsWith("player@") && p.getUniqueId().equals(UUID.fromString(mail.getSender().substring(7)))) mailList.add(mail);
+        for (Mail mail : MailManager.mailList) {
+            if (mail.getSender().startsWith("player@") && p.getUniqueId().equals(UUID.fromString(mail.getSender().substring(7))))
+                mailList.add(mail);
         }
         return mailList;
     }
 
-    public List<Mail> getReceivedMail(Player p) {
+    public static List<Mail> getReceivedMail(Player p) {
         List<Mail> mailList = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getMailList(p)) {
+        for (Mail mail : getMailList(p)) {
             if (mail.isReceived()) mailList.add(mail);
         }
         return mailList;
     }
 
-    public List<Mail> getDeletedMail(Player p) {
+    public static List<Mail> getDeletedMail(Player p) {
         List<Mail> mailList = new ArrayList<>();
-        for (Mail mail : plugin.getMailManager().getMailList(p)) {
+        for (Mail mail : getMailList(p)) {
             if (mail.isDeleted()) mailList.add(mail);
         }
         return mailList;
     }
 
-    public List<Mail> getMailList() {
-        return this.mailList;
+    public static List<Mail> getMailList() {
+        return mailList;
     }
 }

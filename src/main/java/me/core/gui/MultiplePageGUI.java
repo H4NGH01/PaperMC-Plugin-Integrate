@@ -78,8 +78,4 @@ public abstract class MultiplePageGUI extends GUIBase {
     public void setPage(int page) {
         this.page = page;
     }
-
-    public int getMaxPage() {
-        return this.maxPage;
-    }
 }

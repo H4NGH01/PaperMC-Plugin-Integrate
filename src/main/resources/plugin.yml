@@ -32,9 +32,5 @@ commands:
       - a-st
     permission: admin.stattrak
 permissions:
-  admin.mail:
-    default: op
-  admin.container:
-    default: op
-  admin.stattrak:
+  admin.*:
     default: op

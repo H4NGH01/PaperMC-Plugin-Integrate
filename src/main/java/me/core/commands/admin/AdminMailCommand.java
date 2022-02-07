@@ -4,6 +4,7 @@ import me.core.commands.PluginCommand;
 import me.core.gui.mail.MailViewerGUI;
 import me.core.gui.mail.ViewType;
 import me.core.mail.Mail;
+import me.core.mail.MailManager;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -36,17 +37,18 @@ public class AdminMailCommand extends PluginCommand {
                 try {
                     page = Integer.parseInt(args[1]);
                 } catch (Exception ignored) {
-                    player.sendMessage(Component.translatable("command.nan_int").args(Component.text(args[1]).color(NamedTextColor.RED)));
+                    player.sendMessage(Component.translatable("parsing.int.invalid").args(Component.text(args[1])).color(NamedTextColor.RED));
                     return;
                 }
             }
-            player.sendMessage(Component.translatable("command.mail.total_count").args(Component.text(plugin.getMailManager().getMailList().size())));
-            if (plugin.getMailManager().getMailList().size() > 10) player.sendMessage(Component.translatable("command.page").args(Component.text(page)));
+            player.sendMessage(Component.translatable("command.mail.total_count").args(Component.text(MailManager.getMailList().size())));
+            if (MailManager.getMailList().size() > 10)
+                player.sendMessage(Component.translatable("command.page").args(Component.text(page)));
 
-            for (int i = (page - 1) * 10; i < plugin.getMailManager().getMailList().size(); i++) {
-                Mail mail = plugin.getMailManager().getMailList().get(i);
+            for (int i = (page - 1) * 10; i < MailManager.getMailList().size(); i++) {
+                Mail mail = MailManager.getMailList().get(i);
                 net.kyori.adventure.text.TextComponent.Builder builder = Component.text();
-                builder.append(Component.text("§7=====================§e"+ (i + 1) + "§7=====================\n"));
+                builder.append(Component.text("§7=====================§e" + (i + 1) + "§7=====================\n"));
                 Component open = Component.translatable("command.mail.open");
                 builder.append(Component.translatable("command.mail.id").args(Component.text("§e" + mail.getMailID() + "\n").hoverEvent(open.asHoverEvent()).clickEvent(ClickEvent.runCommand("/admin-mail view " + mail.getMailID()))));
                 builder.append(Component.translatable("command.mail.sender").args(Component.text("§e" + (mail.getSender().startsWith("player@") ? plugin.getServer().getOfflinePlayer(UUID.fromString(mail.getSender().substring(7))).getName() : mail.getSender()) + "\n")));
@@ -87,17 +89,21 @@ public class AdminMailCommand extends PluginCommand {
             return;
         }
         if (args[0].equalsIgnoreCase("view")) {
-            if (args.length == 1 || plugin.getMailManager().getMailByID(args[1]) == null) {
-                player.sendMessage(Component.translatable("command.mail.invalid_id"));
+            if (args.length == 1) {
+                player.sendMessage(Component.translatable("command.unknown.argument").color(NamedTextColor.RED));
                 return;
             }
             String id = args[1];
-            MailViewerGUI gui = new MailViewerGUI(player, plugin.getMailManager().getMailByID(id), ViewType.ADMIN);
+            if (MailManager.getMailByID(id) == null) {
+                player.sendMessage(Component.translatable("command.mail.invalid_id").args(Component.text(id)).color(NamedTextColor.RED));
+                return;
+            }
+            MailViewerGUI gui = new MailViewerGUI(player, MailManager.getMailByID(id), ViewType.ADMIN);
             gui.openToPlayer();
             return;
         }
         if (args[0].equalsIgnoreCase("clear")) {
-            plugin.getMailManager().getMailList().clear();
+            MailManager.getMailList().clear();
             player.sendMessage(Component.translatable("command.mail.cleared_all"));
             return;
         }

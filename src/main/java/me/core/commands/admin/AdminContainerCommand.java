@@ -5,13 +5,11 @@ import me.core.containers.Container;
 import me.core.containers.ContainerData;
 import me.core.containers.ContainerKey;
 import me.core.containers.ContainerType;
-import me.core.items.CaseItemRarity;
-import me.core.items.CaseKeyStack;
-import me.core.items.CaseStack;
-import me.core.items.ContainerItemStack;
+import me.core.items.*;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -32,7 +30,7 @@ public class AdminContainerCommand extends PluginCommand {
             player.sendMessage("/admin-container list");
             player.sendMessage("/admin-container give");
             player.sendMessage("/admin-container seek");
-            player.sendMessage("/admin-container setdrop");
+            player.sendMessage("/admin-container set");
             return;
         }
         if (args[0].equalsIgnoreCase("list")) {
@@ -105,7 +103,7 @@ public class AdminContainerCommand extends PluginCommand {
             player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
             return;
         }
-        if (args[0].equalsIgnoreCase("setdrop")) {
+        if (args[0].equalsIgnoreCase("set")) {
             ItemStack stack = player.getInventory().getItemInMainHand();
             if (stack.getType().equals(Material.AIR)) {
                 player.sendMessage(Component.translatable("command.invalid_item"));
@@ -116,30 +114,50 @@ public class AdminContainerCommand extends PluginCommand {
                 return;
             }
             Container container = plugin.getContainerManager().getContainerByStack(stack);
-            if (args.length == 1) {
+            ContainerData data = container.getData();
+            if (args.length <= 2) {
                 player.sendMessage(ComponentUtil.translate(NamedTextColor.RED, "command.unknown.argument"));
                 return;
             }
-            if (getItemFromString(container, args[1]) == null) {
-                player.sendMessage(Component.translatable("argument.item.id.invalid").color(NamedTextColor.RED).args(Component.text(args[1]).color(NamedTextColor.RED)));
+            if (args[1].equalsIgnoreCase("drop")) {
+                String id = args[2];
+                ContainerItemStack item = getItemFromString(container, id);
+                if (item == null) {
+                    player.sendMessage(Component.translatable("argument.item.id.invalid").color(NamedTextColor.RED).args(Component.text(id).color(NamedTextColor.RED)));
+                    return;
+                }
+                if (data == null) throw new IllegalArgumentException("Cannot get container's data because data is null");
+                data.setDrop(item);
+                player.sendMessage(Component.translatable("command.container.drop_set").args(item.getDisplayName()));
                 return;
             }
-            ContainerData data = plugin.getContainerManager().getContainerByStack(stack).getData();
-            ContainerItemStack item = getItemFromString(container, args[1]);
-            assert item != null;
-            data.setDrop(item);
-            player.sendMessage(Component.text("Drop set ").append(item.getDisplayName()));
-            return;
+            if (args[1].equalsIgnoreCase("stattrak")) {
+                boolean b = Boolean.parseBoolean(args[2]);
+                ContainerItemStack drop = data.getDrop();
+                if (b) {
+                    if (!StatTrak.isStattrak(drop)) {
+                        StatTrak.addStatTrak(drop);
+                        if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) drop.setDisplayName(Component.text(ChatColor.GOLD + "StatTrak™ ").append(Component.translatable(drop.translationKey()).append(Component.text(" (★)"))));
+                    }
+                } else {
+                    if (StatTrak.isStattrak(drop)) {
+                        StatTrak.removeStatTrak(drop);
+                        if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) drop.setDisplayName(Component.translatable(drop.translationKey()).append(Component.text(" (★)")));
+                    }
+                }
+                player.sendMessage(Component.translatable("command.container.stattrak_set").args(Component.text(b)));
+                return;
+            }
         }
         player.sendMessage(ComponentUtil.translate(NamedTextColor.RED, "command.unknown.argument"));
         player.sendMessage(Component.translatable("command.usages"));
         player.sendMessage("/admin-container list");
         player.sendMessage("/admin-container give");
         player.sendMessage("/admin-container seek");
-        player.sendMessage("/admin-container setdrop");
+        player.sendMessage("/admin-container set");
     }
 
-    private ContainerItemStack getItemFromString(Container container, String str) {
+    private static ContainerItemStack getItemFromString(Container container, String str) {
         ContainerItemStack[] drops = container.getContainerDrops();
         boolean rare = false;
         if (str.toLowerCase().startsWith("RARE_".toLowerCase())) {
@@ -148,7 +166,10 @@ public class AdminContainerCommand extends PluginCommand {
         }
         for (ContainerItemStack item : drops) {
             if (rare && !item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) continue;
-            if (item.getType().name().equalsIgnoreCase(str)) return item;
+            if (item.getType().name().equalsIgnoreCase(str)) {
+                if (item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) item.setDisplayName(Component.translatable(item.translationKey()).append(Component.text(" (★)")));
+                return item;
+            }
         }
         return null;
     }
@@ -175,9 +196,10 @@ public class AdminContainerCommand extends PluginCommand {
             list.add("list");
             list.add("give");
             list.add("seek");
-            list.add("setdrop");
+            list.add("set");
+            return list;
         }
-        if (args.length > 1 & args[0].equalsIgnoreCase("give")) {
+        if (args[0].equalsIgnoreCase("give")) {
             for (ContainerType type : ContainerType.values()) {
                 list.add(type.getID());
             }
@@ -185,15 +207,29 @@ public class AdminContainerCommand extends PluginCommand {
                 list.add(key.getID());
             }
             list.add("random_case");
+            return list;
         }
-        if (args.length > 1 & args[0].equalsIgnoreCase("setdrop")) {
-            if (!(sender instanceof Player player)) return list;
-            ItemStack stack = player.getInventory().getItemInMainHand();
-            if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return list;
-            Container container = plugin.getContainerManager().getContainerByStack(stack);
-            ContainerItemStack[] drops = container.getContainerDrops();
-            for (ContainerItemStack item : drops) {
-                list.add(item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL) ? "RARE_" + item.getType().name() : item.getType().name());
+        if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
+            list.add("drop");
+            list.add("stattrak");
+            return list;
+        }
+        if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
+            if (args[1].equalsIgnoreCase("drop")) {
+                if (!(sender instanceof Player player)) return list;
+                ItemStack stack = player.getInventory().getItemInMainHand();
+                if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return list;
+                Container container = plugin.getContainerManager().getContainerByStack(stack);
+                ContainerItemStack[] drops = container.getContainerDrops();
+                for (ContainerItemStack item : drops) {
+                    list.add(item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL) ? "RARE_" + item.getType().name() : item.getType().name());
+                }
+                return list;
+            }
+            if (args[1].equalsIgnoreCase("stattrak")) {
+                list.add("true");
+                list.add("false");
+                return list;
             }
         }
         return list;

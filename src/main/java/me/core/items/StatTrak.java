@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,19 +28,47 @@ public class StatTrak extends PluginItem {
 
     public <T extends ItemStack> StatTrak(T stack) {
         super(stack);
-        if (stack.hasItemMeta() && isStattrak(this)) return;
-        boolean b = this.getItemMeta().hasDisplayName();
-        this.setTag("CustomName", b ? ComponentUtil.plainText(this.getItemMeta().displayName()) : this.translationKey());
+        addStatTrak(this);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static <T extends ItemStack> void addStatTrak(@NotNull T stack) {
+        if (stack.hasItemMeta() && isStattrak(stack)) return;
+        NBTHelper.setTag(stack, "CustomName", stack.hasItemMeta() && stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayName() : stack.translationKey());
+        ItemMeta meta = stack.getItemMeta();
         TextComponent.Builder display = Component.text().decoration(TextDecoration.ITALIC, false);
         display.append(Component.text(ChatColor.GOLD + "StatTrak™ "));
-        display.append(b ? Objects.requireNonNull(this.getItemMeta().displayName()) : Component.translatable(this.translationKey()));
-        this.setDisplayName(display.build());
+        display.append(stack.hasItemMeta() && stack.getItemMeta().hasDisplayName() ? Objects.requireNonNull(stack.getItemMeta().displayName()) : Component.translatable(stack.translationKey()));
+        meta.displayName(display.build());
+        stack.setItemMeta(meta);
         List<Component> components = new ArrayList<>();
-        components.add(Component.translatable("item.stattrak.count").args(ComponentUtil.text(NamedTextColor.RED, getKills(this))));
-        List<Component> base = this.getItemMeta().lore();
+        components.add(ComponentUtil.component(NamedTextColor.RED, Component.translatable("item.stattrak.count").args(Component.text(getKills(stack)))));
+        List<Component> base = meta.lore();
         if (base != null && base.size() != 0) components.addAll(base);
-        this.lore(components);
-        this.setTag("stattrak", getKills(stack));
+        stack.lore(components);
+        NBTHelper.setTag(stack, "stattrak", getKills(stack));
+    }
+
+    public static <T extends ItemStack> void removeStatTrak(@NotNull T stack) {
+        if (!stack.hasItemMeta() || !isStattrak(stack)) return;
+        ItemMeta meta = stack.getItemMeta();
+        boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
+        meta.displayName(b ? null : Component.text(NBTHelper.getTag(stack).l("CustomName")));
+        List<Component> components = meta.lore();
+        if (components != null) {
+            for (int i = 0; i < components.size(); i++) {
+                if (ComponentUtil.plainText(components.get(i)).equals("item.stattrak.count")) {
+                    components.remove(i);
+                    break;
+                }
+            }
+            meta.lore(components);
+        }
+        stack.setItemMeta(meta);
+        NBTHelper.removeTag(stack, "CustomName");
+        NBTHelper.removeTag(stack, "stattrak");
+        if ((components == null || components.size() == 0) && !meta.hasDisplayName())
+            NBTHelper.removeTag(stack, "display");
     }
 
     public static <T extends ItemStack> boolean isStattrak(T stack) {
@@ -62,13 +91,15 @@ public class StatTrak extends PluginItem {
 
     private static void update(ItemStack stack) {
         ItemMeta meta = stack.getItemMeta();
-        List<Component> components = new ArrayList<>();
-        components.add(Component.translatable("item.stattrak.count").args(ComponentUtil.text(ChatColor.RED.toString() + getKills(stack))));
         List<Component> base = meta.lore();
         assert base != null;
-        base.remove(0);
-        components.addAll(base);
-        meta.lore(components);
+        for (int i = 0; i < base.size(); i++) {
+            if (ComponentUtil.plainText(base.get(i)).equals("item.stattrak.count")) {
+                base.set(i, ComponentUtil.component(NamedTextColor.RED, Component.translatable("item.stattrak.count").args(Component.text(getKills(stack)))));
+                break;
+            }
+        }
+        meta.lore(base);
         stack.setItemMeta(meta);
     }
 }

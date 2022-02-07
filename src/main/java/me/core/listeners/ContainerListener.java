@@ -2,6 +2,7 @@ package me.core.listeners;
 
 import me.core.MCServerPlugin;
 import me.core.containers.Container;
+import me.core.containers.ContainerManager;
 import me.core.events.GUIClickEvent;
 import me.core.events.GUICloseEvent;
 import me.core.gui.ContainerGUI;
@@ -54,7 +55,8 @@ public class ContainerListener implements Listener {
     public void onClick(GUIClickEvent e) {
         Player player = e.getPlayer();
         ItemStack stack = e.getCurrentItem();
-        if (stack == null || stack.getType().equals(Material.AIR) || e.getClickedInventory() == null || e.getClickedInventory().equals(player.getInventory())) return;
+        if (stack == null || stack.getType().equals(Material.AIR) || e.getClickedInventory() == null || e.getClickedInventory().equals(player.getInventory()))
+            return;
         if (!(e.getGUI() instanceof ContainerGUI)) return;
         e.setCancelled(true);
         if (MCServerItems.equalWithTag(stack, "ItemTag", "gui.container.unlock")) {
@@ -78,13 +80,15 @@ public class ContainerListener implements Listener {
     public void onDespawn(ItemDespawnEvent e) {
         if (e.isCancelled()) return;
         ItemStack stack = e.getEntity().getItemStack();
-        if (Container.isContainerStack(stack)) plugin.getContainerManager().unregisterContainerData(plugin.getContainerManager().getContainerByStack(stack));
+        if (Container.isContainerStack(stack))
+            ContainerManager.unregisterContainerData(plugin.getContainerManager().getContainerByStack(stack));
     }
 
     @EventHandler
     public void onDestroy(EntityDamageEvent e) {
         if (e.isCancelled() || !(e.getEntity() instanceof Item)) return;
         ItemStack stack = ((Item) e.getEntity()).getItemStack();
-        if (Container.isContainerStack(stack)) plugin.getContainerManager().unregisterContainerData(plugin.getContainerManager().getContainerByStack(stack));
+        if (Container.isContainerStack(stack))
+            ContainerManager.unregisterContainerData(plugin.getContainerManager().getContainerByStack(stack));
     }
 }

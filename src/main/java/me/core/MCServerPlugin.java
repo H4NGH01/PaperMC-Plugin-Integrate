@@ -3,11 +3,13 @@ package me.core;
 import me.core.commands.CommandManager;
 import me.core.containers.ContainerManager;
 import me.core.enchantments.PluginEnchantments;
+import me.core.gui.ContainerGUI;
 import me.core.listeners.ContainerListener;
 import me.core.listeners.ServerChatBarListener;
 import me.core.listeners.ServerGUIListener;
 import me.core.listeners.StatTrakListener;
 import me.core.mail.MailManager;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,14 +45,24 @@ public class MCServerPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        PluginEnchantments.unloadEnchantments();
+        if (ContainerGUI.getViews() != null && ContainerGUI.getViews().size() != 0) {
+            for (ContainerGUI gui : ContainerGUI.getViews().values()) {
+                if (gui.isOpening()) {
+                    ServerPlayer sp = serverPlayerHashMap.get(gui.getPlayer());
+                    sp.safeAddItem(gui.getContainer().getDrop());
+                    sp.getPlayer().sendMessage(Component.translatable("chat.container.opened_item").args(gui.getContainer().getDrop().getDisplayName()));
+                    ContainerManager.unregisterContainerData(gui.getContainer());
+                }
+            }
+        }
         for (Player p : this.getServer().getOnlinePlayers()) {
             p.closeInventory();
             ServerPlayer sp = serverPlayerHashMap.get(p);
             if (sp != null) sp.save();
         }
-        PluginEnchantments.unloadEnchantments();
-        this.mailManager.save();
-        this.containerManager.save();
+        MailManager.save();
+        ContainerManager.save();
         this.configManager.save("player.yml");
         this.log("Plugin Disable");
     }
