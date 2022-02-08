@@ -18,12 +18,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AdminMailCommand extends PluginCommand {
 
     @Override
-    public void onCommand(Player player, String[] args) {
+    public void onCommand(Player player, String @NotNull [] args) {
         if (args.length == 0) {
             player.sendMessage(Component.translatable("command.usages"));
             player.sendMessage("/admin-mail list");
@@ -78,7 +79,7 @@ public class AdminMailCommand extends PluginCommand {
                         Component item = stack.displayName();
                         item.hoverEvent(stack.asHoverEvent());
                         builder.append(item);
-                        if (j < mail.getItemList().size() - 1) builder.append(Component.text(", "));
+                        if (j + 1 < mail.getItemList().size()) builder.append(Component.text(", "));
                     }
                 }
                 builder.append(Component.text("\n"));
@@ -98,7 +99,7 @@ public class AdminMailCommand extends PluginCommand {
                 player.sendMessage(Component.translatable("command.mail.invalid_id").args(Component.text(id)).color(NamedTextColor.RED));
                 return;
             }
-            MailViewerGUI gui = new MailViewerGUI(player, MailManager.getMailByID(id), ViewType.ADMIN);
+            MailViewerGUI gui = new MailViewerGUI(player, Objects.requireNonNull(MailManager.getMailByID(id)), ViewType.ADMIN);
             gui.openToPlayer();
             return;
         }
@@ -130,7 +131,7 @@ public class AdminMailCommand extends PluginCommand {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.add("list");

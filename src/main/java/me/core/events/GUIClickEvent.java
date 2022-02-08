@@ -18,7 +18,7 @@ public class GUIClickEvent extends InventoryClickEvent {
     private final Player player;
     private final GUIBase gui;
 
-    public GUIClickEvent(Player player, GUIBase gui, InventoryClickEvent event) {
+    public GUIClickEvent(Player player, GUIBase gui, @NotNull InventoryClickEvent event) {
         super(event.getView(), event.getSlotType(), event.getSlot(), event.getClick(), event.getAction(), event.getHotbarButton());
         this.player = player;
         this.gui = gui;

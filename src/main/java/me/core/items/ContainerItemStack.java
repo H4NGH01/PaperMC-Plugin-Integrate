@@ -4,6 +4,7 @@ import me.core.utils.nbt.NBTHelper;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public class ContainerItemStack extends PluginItem {
     private final CaseItemRarity rarity;
 
     @SafeVarargs
-    public ContainerItemStack(Material material, CaseItemRarity rarity, Map<Enchantment, Integer>... enchantments) {
+    public ContainerItemStack(Material material, CaseItemRarity rarity, Map<Enchantment, Integer> @NotNull ... enchantments) {
         super(material);
         this.rarity = rarity;
         for (Map<Enchantment, Integer> enchantment : enchantments) {

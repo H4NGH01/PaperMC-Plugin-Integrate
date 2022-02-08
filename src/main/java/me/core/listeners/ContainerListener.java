@@ -21,13 +21,14 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ContainerListener implements Listener {
 
     private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
 
     @EventHandler
-    public void onPlayerOpenCase(PlayerInteractEvent e) {
+    public void onPlayerOpenCase(@NotNull PlayerInteractEvent e) {
         Player player = e.getPlayer();
         if (!e.getAction().isRightClick()) return;
         ItemStack stack = player.getInventory().getItemInMainHand();
@@ -44,7 +45,7 @@ public class ContainerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent e) {
+    public void onPlayerInteract(@NotNull PlayerInteractEntityEvent e) {
         Player player = e.getPlayer();
         ItemStack stack = player.getInventory().getItemInMainHand();
         if (e.getRightClicked() instanceof Villager || stack.getType().equals(Material.AIR)) return;
@@ -52,7 +53,7 @@ public class ContainerListener implements Listener {
     }
 
     @EventHandler
-    public void onClick(GUIClickEvent e) {
+    public void onClick(@NotNull GUIClickEvent e) {
         Player player = e.getPlayer();
         ItemStack stack = e.getCurrentItem();
         if (stack == null || stack.getType().equals(Material.AIR) || e.getClickedInventory() == null || e.getClickedInventory().equals(player.getInventory()))
@@ -65,19 +66,19 @@ public class ContainerListener implements Listener {
     }
 
     @EventHandler
-    public void onCloseGUI(GUICloseEvent e) {
+    public void onCloseGUI(@NotNull GUICloseEvent e) {
         if (!(e.getGUI() instanceof ContainerGUI gui)) return;
         if (gui.isOpening()) gui.setAnimationEnd();
     }
 
     @EventHandler
-    public void onAnvilRenamed(InventoryClickEvent e) {
+    public void onAnvilRenamed(@NotNull InventoryClickEvent e) {
         if (e.getClickedInventory() == null || !e.getClickedInventory().equals(e.getInventory()) || !e.getInventory().getType().equals(InventoryType.ANVIL)) return;
         if (e.getSlot() == 2 && Container.isContainerStack(e.getCurrentItem())) e.setCancelled(true);
     }
 
     @EventHandler
-    public void onDespawn(ItemDespawnEvent e) {
+    public void onDespawn(@NotNull ItemDespawnEvent e) {
         if (e.isCancelled()) return;
         ItemStack stack = e.getEntity().getItemStack();
         if (Container.isContainerStack(stack))
@@ -85,7 +86,7 @@ public class ContainerListener implements Listener {
     }
 
     @EventHandler
-    public void onDestroy(EntityDamageEvent e) {
+    public void onDestroy(@NotNull EntityDamageEvent e) {
         if (e.isCancelled() || !(e.getEntity() instanceof Item)) return;
         ItemStack stack = ((Item) e.getEntity()).getItemStack();
         if (Container.isContainerStack(stack))

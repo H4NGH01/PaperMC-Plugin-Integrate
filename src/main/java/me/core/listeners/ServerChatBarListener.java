@@ -8,15 +8,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+@SuppressWarnings("deprecation")
 public class ServerChatBarListener implements Listener {
 
     public static final HashMap<Player, String> CHAT_MAP = new HashMap<>();
 
     @EventHandler
-    public void onChat(PlayerChatEvent e) {
+    public void onChat(@NotNull PlayerChatEvent e) {
         Player p = e.getPlayer();
         e.setMessage(e.getMessage().replace('&', '§'));
         if (!CHAT_MAP.containsKey(p)) return;
@@ -30,7 +32,7 @@ public class ServerChatBarListener implements Listener {
         }
     }
 
-    private void editTitle(PlayerChatEvent e) {
+    private void editTitle(@NotNull PlayerChatEvent e) {
         Player p = e.getPlayer();
         String s = e.getMessage();
         NewMail mail = MailWriterGUI.NEW_MAP_MAP.get(p);
@@ -42,7 +44,7 @@ public class ServerChatBarListener implements Listener {
         mwg.openToPlayer();
     }
 
-    private void editText(PlayerChatEvent e) {
+    private void editText(@NotNull PlayerChatEvent e) {
         Player p = e.getPlayer();
         String s = e.getMessage();
         NewMail mail = MailWriterGUI.NEW_MAP_MAP.get(p);

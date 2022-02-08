@@ -46,31 +46,31 @@ public class ServerGUIListener implements Listener {
     }
 
     @EventHandler
-    public void onDeath(PlayerDeathEvent e) {
+    public void onDeath(@NotNull PlayerDeathEvent e) {
         if (e.isCancelled()) return;
         Player p = e.getPlayer();
         if (OPENED_GUI.containsKey(p)) Bukkit.getPluginManager().callEvent(new GUICloseEvent(p, OPENED_GUI.get(p)));
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent e) {
+    public void onQuit(@NotNull PlayerQuitEvent e) {
         Player p = e.getPlayer();
         if (OPENED_GUI.containsKey(p)) Bukkit.getPluginManager().callEvent(new GUICloseEvent(p, OPENED_GUI.get(p)));
     }
 
     @EventHandler
-    public void onOpen(GUIOpenEvent e) {
+    public void onOpen(@NotNull GUIOpenEvent e) {
         OPENED_GUI.put(e.getPlayer(), e.getGUI());
     }
 
     @EventHandler
-    public void onClose(GUICloseEvent e) {
+    public void onClose(@NotNull GUICloseEvent e) {
         OPENED_GUI.remove(e.getPlayer());
         e.getGUI().getViewMap().remove(e.getPlayer());
     }
 
     @EventHandler
-    public void onClick(GUIClickEvent e) {
+    public void onClick(@NotNull GUIClickEvent e) {
         GUIBase gui = e.getGUI();
         Player p = e.getPlayer();
         ItemStack item = e.getCurrentItem();

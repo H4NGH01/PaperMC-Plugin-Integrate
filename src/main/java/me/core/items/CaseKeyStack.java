@@ -6,12 +6,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 public class CaseKeyStack extends PluginItem {
 
     private final ContainerKey type;
 
-    public CaseKeyStack(ContainerKey containerKey) {
+    public CaseKeyStack(@NotNull ContainerKey containerKey) {
         super(Material.TRIPWIRE_HOOK);
         this.type = containerKey;
         this.setDisplayName(Component.translatable(containerKey.getTranslationKey()));

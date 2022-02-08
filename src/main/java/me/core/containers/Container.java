@@ -8,7 +8,6 @@ import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +52,7 @@ public abstract class Container {
         this.drop = null;
     }
 
-    public ContainerItemStack generateDrop() {
+    private @NotNull ContainerItemStack generateDrop() {
         List<ContainerItemStack> list = new ArrayList<>();
         CaseItemRarity rarity = CaseItemRarity.MIL_SPEC;
         float f = 0;
@@ -78,7 +77,10 @@ public abstract class Container {
         if (rate <= 1) StatTrak.addStatTrak(stack);
         if (stack.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) {
             TextComponent.Builder builder = Component.text();
-            if (StatTrak.isStattrak(stack)) builder.append(Component.text(ChatColor.GOLD + "StatTrak™ "));
+            if (StatTrak.isStattrak(stack)) {
+                builder.append(Component.text("§6StatTrak™ "));
+                StatTrak.setCustomName(stack, "\\t" + stack.translationKey() + " (★)");
+            }
             stack.setDisplayName(builder.append(Component.translatable(stack.translationKey()).append(Component.text(" (★)"))).build());
         }
         return stack;
@@ -117,7 +119,6 @@ public abstract class Container {
     @NotNull
     public abstract Material getContainerTexture();
 
-    @NotNull
     public ContainerItemStack getDrop() {
         return this.drop;
     }
@@ -130,7 +131,7 @@ public abstract class Container {
         return this.data;
     }
 
-    public static ContainerItemStack superRarity() {
+    public static @NotNull ContainerItemStack superRarity() {
         ContainerItemStack item = (ContainerItemStack) new ContainerItemStack(Material.NETHER_STAR, CaseItemRarity.RARE_SPECIAL).setTag("ItemTag", "rare_special_item");
         item.setDisplayName(Component.translatable("container.rare_special_item"));
         return item;

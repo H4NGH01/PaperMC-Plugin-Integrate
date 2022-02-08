@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class NBTHelper {
         return CraftItemStack.asBukkitCopy(nmsStack);
     }
 
-    public static NBTTagCompound asNBTTagCompound(@NotNull ItemStack stack) {
+    public static @NotNull NBTTagCompound asNBTTagCompound(@NotNull ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.a("id", stack.getType().toString().toLowerCase());
         tag.a("Count", stack.getAmount());
@@ -56,16 +57,8 @@ public class NBTHelper {
         return tag;
     }
 
-    public static <T extends ItemStack> T setTag(T stack, String key, NBTBase value) {
-        net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
-        NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
-        assert tag != null;
-        tag.a(key, value);
-        stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
-        return stack;
-    }
-
-    public static <T extends ItemStack> T setTag(T stack, String key, int value) {
+    @Contract("_, _, _ -> param1")
+    public static <T extends ItemStack> @NotNull T setTag(T stack, String key, NBTBase value) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;
@@ -75,7 +68,8 @@ public class NBTHelper {
         return stack;
     }
 
-    public static <T extends ItemStack> T setTag(T stack, String key, String value) {
+    @Contract("_, _, _ -> param1")
+    public static <T extends ItemStack> @NotNull T setTag(T stack, String key, int value) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;
@@ -85,7 +79,19 @@ public class NBTHelper {
         return stack;
     }
 
-    public static <T extends ItemStack> T setTag(T stack, String key, boolean value) {
+    @Contract("_, _, _ -> param1")
+    public static <T extends ItemStack> @NotNull T setTag(T stack, String key, String value) {
+        net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
+        NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
+        assert tag != null;
+        tag.a(key, value);
+        nmsStack.c(tag);
+        stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
+        return stack;
+    }
+
+    @Contract("_, _, _ -> param1")
+    public static <T extends ItemStack> @NotNull T setTag(T stack, String key, boolean value) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         NBTTagCompound tag = nmsStack.r() ? nmsStack.s() : new NBTTagCompound();
         assert tag != null;
@@ -104,16 +110,29 @@ public class NBTHelper {
         stack.setItemMeta(CraftItemStack.asBukkitCopy(nmsStack).getItemMeta());
     }
 
+    /**
+     * @param stack input
+     * @return if ItemStack has NBT tag
+     */
     public static boolean hasTag(ItemStack stack) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         return nmsStack.r();
     }
 
+    /**
+     * @param stack input
+     * @param key tag's key
+     * @return ItemStack has tag and key exists;
+     */
     public static boolean hasTag(ItemStack stack, String key) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         return nmsStack.s() != null && nmsStack.s().e(key);
     }
 
+    /**
+     * @param stack input
+     * @return tag of ItemStack
+     */
     public static NBTTagCompound getTag(ItemStack stack) {
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
         return nmsStack.r() ? nmsStack.s() : new NBTTagCompound();

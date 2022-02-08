@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTBase;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,13 @@ public class PluginItem extends ItemStack {
         return Component.translatable(this.translationKey());
     }
 
-    public void setDisplayName(Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
         ItemMeta meta = this.getItemMeta();
         meta.displayName(displayName.decoration(TextDecoration.ITALIC, false));
         this.setItemMeta(meta);
     }
 
-    public void setLore(Component... components) {
+    public void setLore(Component @NotNull ... components) {
         List<Component> lore = new ArrayList<>();
         for (Component component : components) {
             lore.add(component.decoration(TextDecoration.ITALIC, false));

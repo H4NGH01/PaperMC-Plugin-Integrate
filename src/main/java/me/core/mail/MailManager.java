@@ -10,6 +10,8 @@ import net.minecraft.nbt.NBTTagList;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,7 +111,7 @@ public class MailManager {
         newMailFile.write();
     }
 
-    public static Mail getMailByID(String id) {
+    public static @Nullable Mail getMailByID(String id) {
         for (Mail mail : mailList) {
             if (mail.getMailID().equals(id)) {
                 return mail;
@@ -122,13 +124,13 @@ public class MailManager {
         mailList.add(mail);
     }
 
-    public static List<Mail> getMailList(Player p) {
+    public static @NotNull List<Mail> getMailList(Player p) {
         List<Mail> mailList = new ArrayList<>();
         for (Mail mail : MailManager.mailList) if (p.getUniqueId().equals(mail.getAddressee())) mailList.add(mail);
         return mailList;
     }
 
-    public static List<Mail> getUnreadMail(Player p) {
+    public static @NotNull List<Mail> getUnreadMail(Player p) {
         List<Mail> mailList = new ArrayList<>();
         for (Mail mail : getMailList(p)) if (!mail.isReceived()) mailList.add(mail);
         return mailList;
@@ -140,7 +142,7 @@ public class MailManager {
         return i;
     }
 
-    public static List<Mail> getMailListBySender(Player p) {
+    public static @NotNull List<Mail> getMailListBySender(Player p) {
         List<Mail> mailList = new ArrayList<>();
         for (Mail mail : MailManager.mailList) {
             if (mail.getSender().startsWith("player@") && p.getUniqueId().equals(UUID.fromString(mail.getSender().substring(7))))
@@ -149,7 +151,7 @@ public class MailManager {
         return mailList;
     }
 
-    public static List<Mail> getReceivedMail(Player p) {
+    public static @NotNull List<Mail> getReceivedMail(Player p) {
         List<Mail> mailList = new ArrayList<>();
         for (Mail mail : getMailList(p)) {
             if (mail.isReceived()) mailList.add(mail);
@@ -157,7 +159,7 @@ public class MailManager {
         return mailList;
     }
 
-    public static List<Mail> getDeletedMail(Player p) {
+    public static @NotNull List<Mail> getDeletedMail(Player p) {
         List<Mail> mailList = new ArrayList<>();
         for (Mail mail : getMailList(p)) {
             if (mail.isDeleted()) mailList.add(mail);

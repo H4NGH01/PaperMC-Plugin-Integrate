@@ -60,7 +60,7 @@ public class ServerEventListener implements Listener {
     }
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e) {
+    public void onBlockPlace(@NotNull BlockPlaceEvent e) {
         Player p = e.getPlayer();
         ItemStack stack = p.getInventory().getItemInMainHand();
         if (NBTHelper.hasTag(stack, "placeable") && !NBTHelper.getTag(stack).q("placeable")) e.setCancelled(true);

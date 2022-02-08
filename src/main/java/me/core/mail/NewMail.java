@@ -4,6 +4,7 @@ import me.core.MCServerPlugin;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class NewMail {
     private String text = "gui.mail.no_text";
     private ItemStack[] itemStacks = new ItemStack[8];
 
-    public NewMail(Player sender) {
+    public NewMail(@NotNull Player sender) {
         this.id = "NewMail@" + UUID.randomUUID();
         this.sender = sender.getUniqueId();
     }
@@ -34,12 +35,12 @@ public class NewMail {
         this.itemStacks = itemStacks;
     }
 
-    public boolean containAddressee(OfflinePlayer op) {
+    public boolean containAddressee(@NotNull OfflinePlayer op) {
         return new ArrayList<>(Arrays.asList(addressee)).contains(op.getUniqueId());
     }
 
     @Deprecated
-    public void setAddressee(OfflinePlayer[] addressee) {
+    public void setAddressee(OfflinePlayer @NotNull [] addressee) {
         this.addressee = new UUID[addressee.length];
         int i = 0;
         for (OfflinePlayer p : addressee) {

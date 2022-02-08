@@ -2,6 +2,7 @@ package me.core;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class ConfigurationManager {
         return config;
     }
 
-    public FileConfiguration load(File file) {
+    public FileConfiguration load(@NotNull File file) {
         if (!file.exists()) {
             try {
                 file.createNewFile();

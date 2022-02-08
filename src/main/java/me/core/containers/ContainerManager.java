@@ -6,6 +6,7 @@ import me.core.utils.nbt.NBTHelper;
 import me.core.utils.nbt.NBTStorageFile;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class ContainerManager {
         return new CaseStack(getContainerByType(type));
     }
 
-    public Container getContainerByType(ContainerType type) {
+    public Container getContainerByType(@NotNull ContainerType type) {
         Container c;
         if (type.getContainer().isAssignableFrom(WeaponCase.class)) {
             c = new WeaponCase();

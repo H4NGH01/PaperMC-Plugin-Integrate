@@ -1,10 +1,9 @@
 package me.core.listeners;
 
 import me.core.items.StatTrak;
-import me.core.utils.ComponentUtil;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -16,6 +15,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -24,7 +24,7 @@ public class StatTrakListener implements Listener {
     private static final HashMap<Projectile, ItemStack> BOW_ITEMSTACK_MAP = new HashMap<>();
 
     @EventHandler
-    public void onKills(EntityDamageByEntityEvent e) {
+    public void onKills(@NotNull EntityDamageByEntityEvent e) {
         if (!(e.getEntity() instanceof LivingEntity)) return;
         if (e.isCancelled()) return;
         if (e.getDamage() < ((LivingEntity) e.getEntity()).getHealth()) return;
@@ -68,14 +68,14 @@ public class StatTrakListener implements Listener {
     }
 
     @EventHandler
-    public void onShoot(EntityShootBowEvent e) {
+    public void onShoot(@NotNull EntityShootBowEvent e) {
         Projectile projectile = (Projectile) e.getProjectile();
         if (!(projectile.getShooter() instanceof Player && StatTrak.isStattrak(e.getBow()))) return;
         BOW_ITEMSTACK_MAP.put(projectile, e.getBow());
     }
 
     @EventHandler
-    public void onOpenSpecialGUI(InventoryOpenEvent e) {
+    public void onOpenSpecialGUI(@NotNull InventoryOpenEvent e) {
         if (!(e.getInventory().getType().equals(InventoryType.ANVIL) || e.getInventory().getType().equals(InventoryType.SMITHING))) return;
         hidePrefix(e.getInventory().getContents());
         hidePrefix(e.getPlayer().getInventory().getContents());
@@ -83,7 +83,7 @@ public class StatTrakListener implements Listener {
         hidePrefix(e.getPlayer().getInventory().getItemInOffHand());
     }
 
-    private void hidePrefix(ItemStack[] contents) {
+    private void hidePrefix(ItemStack @NotNull [] contents) {
         for (ItemStack stack : contents) {
             hidePrefix(stack);
         }
@@ -92,14 +92,13 @@ public class StatTrakListener implements Listener {
     private void hidePrefix(ItemStack stack) {
         if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && StatTrak.isStattrak(stack)) {
             ItemMeta meta = stack.getItemMeta();
-            boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
-            meta.displayName(b ? null : ComponentUtil.text(NBTHelper.getTag(stack).l("CustomName")));
+            meta.displayName(StatTrak.getCustomName(stack).build());
             stack.setItemMeta(meta);
         }
     }
 
     @EventHandler
-    public void onCloseSpecialGUI(InventoryCloseEvent e) {
+    public void onCloseSpecialGUI(@NotNull InventoryCloseEvent e) {
         if (!(e.getInventory().getType().equals(InventoryType.ANVIL) || e.getInventory().getType().equals(InventoryType.SMITHING))) return;
         showPrefix(e.getInventory().getContents());
         showPrefix(e.getPlayer().getInventory().getContents());
@@ -108,7 +107,7 @@ public class StatTrakListener implements Listener {
         showPrefix(e.getPlayer().getInventory().getItemInOffHand());
     }
 
-    private void showPrefix(ItemStack[] contents) {
+    private void showPrefix(ItemStack @NotNull [] contents) {
         for (ItemStack stack : contents) {
             showPrefix(stack);
         }
@@ -117,27 +116,28 @@ public class StatTrakListener implements Listener {
     private void showPrefix(ItemStack stack) {
         if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && StatTrak.isStattrak(stack)) {
             ItemMeta meta = stack.getItemMeta();
-            boolean b = NBTHelper.getTag(stack).l("CustomName").equals(stack.translationKey());
-            meta.displayName(Component.text(ChatColor.GOLD + "StatTrak™ ").append(b ? ComponentUtil.translate(stack.translationKey()) : ComponentUtil.text(NBTHelper.getTag(stack).l("CustomName"))));
+            TextComponent.Builder builder = Component.text();
+            builder.append(Component.text("§6StatTrak™ "));
+            meta.displayName(StatTrak.getCustomName(builder, stack).build());
             stack.setItemMeta(meta);
         }
     }
 
     @EventHandler
-    public void onAnvilRenamed(PrepareAnvilEvent e) {
+    public void onAnvilRenamed(@NotNull PrepareAnvilEvent e) {
         if (e.getResult() == null || e.getResult().getType().equals(Material.AIR) || !e.getResult().hasItemMeta() || !StatTrak.isStattrak(e.getResult()))
             return;
-        String s = e.getInventory().getRenameText() == null || e.getInventory().getRenameText().replaceAll(" ", "").equals("") ? e.getResult().translationKey() : e.getInventory().getRenameText();
-        NBTHelper.setTag(e.getResult(), "CustomName", s);
+        String s = e.getInventory().getRenameText() == null || e.getInventory().getRenameText().replaceAll(" ", "").equals("") ? "\\t" + e.getResult().translationKey() : e.getInventory().getRenameText();
+        StatTrak.setCustomName(e.getResult(), s.replaceAll("\\\\", "\\\\s"));
     }
 
     @EventHandler
-    public void onUpgrade(PrepareSmithingEvent e) {
+    public void onUpgrade(@NotNull PrepareSmithingEvent e) {
         if (e.getResult() == null || e.getResult().getType().equals(Material.AIR) || !e.getResult().hasItemMeta() || !StatTrak.isStattrak(e.getResult()))
             return;
         ItemStack base = e.getInventory().getItem(0);
         assert base != null;
-        if (NBTHelper.getTag(base).l("CustomName").equals(base.translationKey())) NBTHelper.setTag(e.getResult(), "CustomName", e.getResult().translationKey());
+        if (NBTHelper.getTag(base).l("CustomName").equals("\\t" + base.translationKey())) StatTrak.setCustomName(e.getResult(), "\\t" + e.getResult().translationKey());
     }
 
 }

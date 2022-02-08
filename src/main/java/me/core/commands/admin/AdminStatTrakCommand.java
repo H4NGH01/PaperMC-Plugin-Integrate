@@ -19,7 +19,7 @@ import java.util.List;
 public class AdminStatTrakCommand extends PluginCommand {
 
     @Override
-    public void onCommand(Player player, String[] args) {
+    public void onCommand(Player player, String @NotNull [] args) {
         if (args.length == 0) {
             player.sendMessage(Component.translatable("command.usages"));
             player.sendMessage("/admin-stattrak give");
@@ -82,7 +82,7 @@ public class AdminStatTrakCommand extends PluginCommand {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull [] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.add("give");

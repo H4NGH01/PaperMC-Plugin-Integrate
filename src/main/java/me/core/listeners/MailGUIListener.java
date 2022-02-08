@@ -97,6 +97,7 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.mail")) {
             Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
             if (e.isRightClick()) {
+                assert mail != null;
                 if (!mail.isReceived()) mail.setReceived();
                 MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.ADDRESSEE);
                 mvg.setLastInventory(gui);
@@ -210,6 +211,7 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.sent.mail")) {
             Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
             if (e.isRightClick()) {
+                assert mail != null;
                 MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.SENDER);
                 mvg.setLastInventory(gui);
                 mvg.openToPlayer();
@@ -223,6 +225,7 @@ public class MailGUIListener {
         MailBinGUI gui = (MailBinGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.bin.mail")) {
             Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
+            assert mail != null;
             mail.restore();
             gui.update();
             p.playSound(p.getLocation(), Sound.ITEM_ARMOR_EQUIP_ELYTRA, 0.7f, 1f);

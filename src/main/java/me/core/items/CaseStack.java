@@ -6,12 +6,13 @@ import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
 
 public class CaseStack extends PluginItem {
 
     private final ContainerType type;
 
-    public CaseStack(Container containerIn) {
+    public CaseStack(@NotNull Container containerIn) {
         super(containerIn.getContainerTexture());
         this.type = containerIn.getContainerType();
         this.setDisplayName(Component.translatable(containerIn.getContainerType().getTranslationKey()));

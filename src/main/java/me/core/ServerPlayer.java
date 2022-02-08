@@ -11,6 +11,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class ServerPlayer {
     private BigDecimal money;
     private int newMail;
 
-    public ServerPlayer(OfflinePlayer offlinePlayer) {
+    public ServerPlayer(@NotNull OfflinePlayer offlinePlayer) {
         this(offlinePlayer.getPlayer());
     }
 
@@ -79,7 +80,6 @@ public class ServerPlayer {
     public void setMoney(BigDecimal money) {
         this.money = money;
     }
-
 
     public int getNewMail() {
         return newMail;

@@ -1,5 +1,7 @@
 package me.core.containers;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum ContainerType {
 
     WEAPON_CASE("weapon_case", "container.weapon_case.name", WeaponCase.class);
@@ -26,7 +28,7 @@ public enum ContainerType {
         return this.container;
     }
 
-    public static ContainerType byID(String id) {
+    public static @NotNull ContainerType byID(String id) {
         for (ContainerType type : values()) {
             if (type.getID().equals(id)) {
                 return type;

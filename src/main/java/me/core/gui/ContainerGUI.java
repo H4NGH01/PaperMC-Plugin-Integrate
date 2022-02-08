@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +97,9 @@ public class ContainerGUI extends GUIBase {
                     this.cancel();
                     playEndAnimation();
                     op.safeAddItem(container.getDrop());
-                    player.sendMessage(Component.translatable("chat.container.opened_item").args(container.getDrop().getDisplayName()));
+                    Component component = container.getDrop().displayName();
+                    component.hoverEvent(container.getDrop().asHoverEvent());
+                    player.sendMessage(Component.translatable("chat.container.opened_item").args(component));
                     ContainerManager.unregisterContainerData(container);
                 }
             }
@@ -180,7 +183,7 @@ public class ContainerGUI extends GUIBase {
         }
     }
 
-    private ItemStack rarityColor() {
+    private @NotNull ItemStack rarityColor() {
         switch (this.container.getDrop().getItemRarity()) {
             case MIL_SPEC -> {
                 return colorPane(Material.BLUE_STAINED_GLASS_PANE);
@@ -201,14 +204,18 @@ public class ContainerGUI extends GUIBase {
         return colorPane(Material.GRAY_STAINED_GLASS_PANE);
     }
 
-    private ItemStack dropDisplay() {
+    private @Nullable ItemStack dropDisplay() {
         ContainerItemStack drop = new ContainerItemStack(this.container.getDrop().clone());
         if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) return Container.superRarity();
-        drop.setDisplayName(Component.translatable(drop.translationKey()).color(TextColor.color(drop.getItemRarity().getColor())));
-        return (StatTrak.isStattrak(drop) ? (new ItemStack(drop.getType())) : drop);
+        for (ContainerItemStack display : container.getDisplayDrops()) {
+            if (drop.getType().equals(display.getType())) {
+                return display;
+            }
+        }
+        return null;
     }
 
-    private ContainerItemStack randomItemFromContainer(Random random) {
+    private ContainerItemStack randomItemFromContainer(@NotNull Random random) {
         List<ContainerItemStack> displayDrops = this.container.getDisplayDrops();
         int i = (int) (random.nextFloat() * displayDrops.size());
         return displayDrops.get(i);
