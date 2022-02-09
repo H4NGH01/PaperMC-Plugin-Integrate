@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class MailBoxGUI extends MultiplePageGUI {
+public class MailBoxGUI extends MultiplePageGUI implements MailGUIInterface {
 
     private static final HashMap<Player, MailBoxGUI> VIEW_MAP = new HashMap<>();
     private final HashSet<Mail> selectedMail = new HashSet<>();
@@ -35,7 +35,7 @@ public class MailBoxGUI extends MultiplePageGUI {
         List<ItemStack> stacks = new ArrayList<>();
         for (Mail mail : MailManager.getMailList(this.player)) {
             if (!mail.isDeleted()) {
-                stacks.add(mailStack(mail, false));
+                stacks.add(mailStack(mail, this.selectedMail.contains(mail)));
             }
         }
         this.setContents(stacks);
@@ -136,8 +136,8 @@ public class MailBoxGUI extends MultiplePageGUI {
             item.addLore(Component.translatable("gui.mail.received"));
             item.setType(Material.MAP);
         }
-        item.addLore(Component.translatable(selected ? "gui.mail.unselect" : "gui.mail.select"));
-        item.addLore(Component.translatable("gui.mail.show_details"));
+        item.addLore(Component.translatable(selected ? "gui.unselect" : "gui.select"));
+        item.addLore(Component.translatable("gui.show_details"));
         if (selected) item.addUnsafeEnchantment(PluginEnchantments.WRAPPER, 0);
         return item;
     }

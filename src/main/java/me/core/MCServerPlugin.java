@@ -26,19 +26,22 @@ public class MCServerPlugin extends JavaPlugin {
         this.loadConfig();
         this.configManager = new ConfigurationManager();
         this.configManager.setup();
+        PluginEnchantments.loadEnchantments();
         this.commandManager = new CommandManager();
         this.commandManager.setup();
-        PluginEnchantments.loadEnchantments();
         this.mailManager = new MailManager();
         this.containerManager = new ContainerManager();
         this.registerEvents();
         ServerGUIListener.getOpenedGUI().clear();
+        for (Player p : this.getServer().getOnlinePlayers()) {
+            ServerPlayer.getServerPlayer(p);
+        }
         this.log("Plugin Enable");
     }
 
     @Override
     public void onDisable() {
-        if (ContainerManager.c() && ContainerGUI.getViews() != null && ContainerGUI.getViews().size() != 0) {
+        if (ContainerManager.isClassNotNull() && ContainerGUI.getViews().size() != 0) {
             for (ContainerGUI gui : ContainerGUI.getViews().values()) {
                 if (gui.isOpening()) {
                     ServerPlayer sp = ServerPlayer.getServerPlayer(gui.getPlayer());

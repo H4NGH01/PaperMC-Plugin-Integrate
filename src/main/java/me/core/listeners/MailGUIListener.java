@@ -1,6 +1,7 @@
 package me.core.listeners;
 
 import me.core.MCServerPlugin;
+import me.core.PlayerSettings;
 import me.core.ServerPlayer;
 import me.core.events.GUIClickEvent;
 import me.core.gui.mail.*;
@@ -28,8 +29,7 @@ public class MailGUIListener {
 
     public void onClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        if (item == null) return;
-        if (item.getItemMeta() == null) return;
+        if (item == null || item.getItemMeta() == null) return;
         if (e.getGUI() instanceof MailBoxGUI) {
             this.onMailGUIClick(e);
             return;
@@ -98,7 +98,10 @@ public class MailGUIListener {
             Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
             if (e.isRightClick()) {
                 assert mail != null;
-                if (!mail.isReceived()) mail.setReceived();
+                if (!mail.isReceived()) {
+                    mail.setReceived();
+                    p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
+                }
                 MailViewerGUI mvg = new MailViewerGUI(p, mail, ViewType.ADDRESSEE);
                 mvg.setLastInventory(gui);
                 mvg.openToPlayer();
@@ -109,8 +112,8 @@ public class MailGUIListener {
                     gui.getSelectedMail().add(mail);
                 }
                 gui.update();
+                p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
             }
-            p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
         }
     }
 
@@ -167,10 +170,10 @@ public class MailGUIListener {
                 Mail m = new Mail(p, op, mail.getTitle(), mail.getText(), stacks);
                 MailManager.sendMail(m);
                 sb.append(op.getName()).append(", ");
-                if (op.isOnline()) {
+                ServerPlayer sp = ServerPlayer.getServerPlayer(op);
+                if (op.isOnline() && sp.getSettings().get(PlayerSettings.NEW_MAIL_HINT)) {
                     Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail_received"));
                 } else {
-                    ServerPlayer sp = ServerPlayer.getServerPlayer(op);
                     sp.setNewMail(sp.getNewMail() + 1);
                     sp.save();
                 }

@@ -5,7 +5,9 @@ import me.core.events.GUICloseEvent;
 import me.core.events.GUIOpenEvent;
 import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
+import me.core.gui.mail.MailGUIInterface;
 import me.core.gui.mail.MailViewerGUI;
+import me.core.gui.menu.MenuGUIInterface;
 import me.core.items.MCServerItems;
 import me.core.utils.ComponentUtil;
 import org.bukkit.Bukkit;
@@ -24,8 +26,9 @@ import java.util.HashMap;
 
 public class ServerGUIListener implements Listener {
 
-    private final MailGUIListener mailGUIListener = new MailGUIListener();
     private static final HashMap<Player, GUIBase> OPENED_GUI = new HashMap<>();
+    private final MenuGUIListener menuGUIListener = new MenuGUIListener();
+    private final MailGUIListener mailGUIListener = new MailGUIListener();
 
     public static HashMap<Player, GUIBase> getOpenedGUI() {
         return OPENED_GUI;
@@ -96,7 +99,13 @@ public class ServerGUIListener implements Listener {
                 p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.7f, 1f);
             }
         }
-        if (ComponentUtil.plainText(e.getView().title()).startsWith("gui.mail.")) mailGUIListener.onClick(e);
+        if (e.getGUI() instanceof MenuGUIInterface) {
+            menuGUIListener.onClick(e);
+            return;
+        }
+        if (e.getGUI() instanceof MailGUIInterface) {
+            mailGUIListener.onClick(e);
+        }
     }
 
 }

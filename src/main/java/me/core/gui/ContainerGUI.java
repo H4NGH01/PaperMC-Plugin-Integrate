@@ -37,7 +37,7 @@ public class ContainerGUI extends GUIBase {
         this.container = ContainerManager.getContainerByStack(caseStackIn);
         this.matchKey = container.getKeyType();
         this.setDefault();
-        ContainerManager.d();
+        ContainerManager.setClassNotNull();
     }
 
     @Override

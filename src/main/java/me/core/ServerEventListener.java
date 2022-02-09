@@ -5,7 +5,6 @@ import me.core.mail.MailManager;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,7 +12,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,13 +26,7 @@ public class ServerEventListener implements Listener {
         Player p = e.getPlayer();
         if (!p.hasPlayedBefore()) {
             List<ItemStack> stacks = new ArrayList<>();
-            ItemStack stack = new ItemStack(Material.ARROW);
-            ItemMeta meta = stack.getItemMeta();
-            assert meta != null;
-            meta.displayName(Component.text("The bug arrow"));
-            stack.setItemMeta(meta);
-            stacks.add(stack);
-            Mail mail = new Mail("server", p, "Welcome to " + plugin.getServer().getName() + "!", "Use this to become a stand user.", stacks);
+            Mail mail = new Mail("server", p, "Welcome to " + plugin.getServer().getName() + "!", "Good luck and have fun!", stacks);
             MailManager.sendMail(mail);
         }
         ServerPlayer sp = ServerPlayer.getServerPlayer(p);
@@ -44,7 +36,7 @@ public class ServerEventListener implements Listener {
             }
             sp.getStorage().clear();
         }
-        if (sp.getNewMail() != 0) {
+        if (sp.getSettings().get(PlayerSettings.NEW_MAIL_HINT) && sp.getNewMail() != 0) {
             p.sendMessage(Component.translatable("chat.mail_received_offline").args(Component.text(sp.getNewMail()).color(NamedTextColor.YELLOW)));
             sp.setNewMail(0);
         }

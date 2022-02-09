@@ -18,7 +18,7 @@ public class ContainerManager {
 
     private static final NBTStorageFile file = new NBTStorageFile(new File("container-data.nbt"));
     private static final List<ContainerData> CONTAINER_DATA = new ArrayList<>();
-    private static boolean b = false;
+    private static boolean gui_class_not_null = false;
 
     public ContainerManager() {
         file.read();
@@ -27,7 +27,7 @@ public class ContainerManager {
             ContainerItemStack stack = new ContainerItemStack(NBTHelper.asItemStack(containerTag.p("item")));
             CONTAINER_DATA.add(new ContainerData(UUID.fromString(key), ContainerType.valueOf(containerTag.l("type")), stack));
         }
-        b = false;
+        gui_class_not_null = false;
     }
 
     public void save() {
@@ -86,11 +86,11 @@ public class ContainerManager {
         }
     }
 
-    public static boolean c() {
-        return b;
+    public static boolean isClassNotNull() {
+        return gui_class_not_null;
     }
 
-    public static void d() {
-        b = true;
+    public static void setClassNotNull() {
+        gui_class_not_null = true;
     }
 }

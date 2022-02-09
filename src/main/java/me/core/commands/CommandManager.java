@@ -18,6 +18,7 @@ public class CommandManager implements CommandExecutor {
     private final List<PluginCommand> commands = new ArrayList<>();
 
     public void setup() {
+        this.addCommand(new MenuCommand());
         this.addCommand(new MailCommand());
         this.addCommand(new AdminMailCommand());
         this.addCommand(new AdminContainerCommand());

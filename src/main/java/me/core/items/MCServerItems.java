@@ -2,6 +2,8 @@ package me.core.items;
 
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +32,20 @@ public class MCServerItems {
     private static @NotNull InventoryItem a(Material material, Component displayName) {
         InventoryItem item = new InventoryItem(material);
         item.setDisplayName(displayName);
+        return item;
+    }
+
+    public static @NotNull InventoryItem next(int page, int maxPage) {
+        InventoryItem item = new InventoryItem(Material.ARROW).setTag("ItemTag", "gui.next");
+        item.setDisplayName(Component.translatable("gui.next"));
+        item.addLore(Component.text("( " + page + " / " + maxPage + " )").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+        return item;
+    }
+
+    public static @NotNull InventoryItem prev(int page, int maxPage) {
+        InventoryItem item = new InventoryItem(Material.ARROW).setTag("ItemTag", "gui.prev");
+        item.setDisplayName(Component.translatable("gui.prev"));
+        item.addLore(Component.text("( " + page + " / " + maxPage + " )").color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
         return item;
     }
 }

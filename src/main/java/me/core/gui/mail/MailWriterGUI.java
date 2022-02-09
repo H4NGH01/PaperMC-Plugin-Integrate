@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class MailWriterGUI extends GUIBase {
+public class MailWriterGUI extends GUIBase implements MailGUIInterface {
 
     private static final HashMap<Player, MailWriterGUI> VIEW_MAP = new HashMap<>();
     private final NewMail mail;
@@ -70,7 +70,7 @@ public class MailWriterGUI extends GUIBase {
         InventoryItem item = new InventoryItem(Material.PAPER).setTag("ItemTag", "gui.mail.writer.title");
         item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.title"));
         item.addLore(ComponentUtil.translate(NamedTextColor.YELLOW, mail.getTitle()));
-        item.addLore(Component.translatable("gui.mail.edit"));
+        item.addLore(Component.translatable("gui.edit"));
         return item;
     }
 
@@ -89,7 +89,7 @@ public class MailWriterGUI extends GUIBase {
             builder.append(ComponentUtil.translate(NamedTextColor.GRAY, "gui.none"));
         }
         item.addLore(builder.build());
-        item.addLore(Component.translatable("gui.mail.edit"));
+        item.addLore(Component.translatable("gui.edit"));
         return item;
     }
 
@@ -105,7 +105,7 @@ public class MailWriterGUI extends GUIBase {
                 item.addLore(Component.text(ChatColor.GRAY + "§o" + s));
             }
         }
-        item.addLore(Component.translatable("gui.mail.edit"));
+        item.addLore(Component.translatable("gui.edit"));
         return item;
     }
 
@@ -115,7 +115,7 @@ public class MailWriterGUI extends GUIBase {
         item.setDisplayName(ComponentUtil.translate(NamedTextColor.GREEN, "gui.mail.attachment"));
         item.addLore(Component.translatable("gui.mail.attachment_edit_lore1"));
         item.addLore(Component.translatable("gui.mail.attachment_edit_lore2"));
-        item.addLore(Component.translatable("gui.mail.edit"));
+        item.addLore(Component.translatable("gui.edit"));
         return item;
     }
 

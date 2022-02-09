@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class MailPlayerSelectorGUI extends MultiplePageGUI {
+public class MailPlayerSelectorGUI extends MultiplePageGUI implements MailGUIInterface {
 
     private static final HashMap<Player, MailPlayerSelectorGUI> VIEW_MAP = new HashMap<>();
 
@@ -67,7 +67,7 @@ public class MailPlayerSelectorGUI extends MultiplePageGUI {
         SkullMeta ms = (SkullMeta) icon.getItemMeta();
         ms.setOwningPlayer(p);
         icon.setItemMeta(ms);
-        icon.addLore(Component.translatable(b ? "gui.mail.unselect" : "gui.mail.select"));
+        icon.addLore(Component.translatable(b ? "gui.unselect" : "gui.select"));
         return icon;
     }
 

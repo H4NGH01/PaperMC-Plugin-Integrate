@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class MailSentGUI extends MultiplePageGUI {
+public class MailSentGUI extends MultiplePageGUI implements MailGUIInterface {
 
     private static final HashMap<Player, MailSentGUI> VIEW_MAP = new HashMap<>();
 
@@ -108,7 +108,7 @@ public class MailSentGUI extends MultiplePageGUI {
             item.addLore(Component.translatable("gui.mail.deleted"));
             item.setType(Material.CAULDRON);
         }
-        item.addLore(Component.translatable("gui.mail.show_details"));
+        item.addLore(Component.translatable("gui.show_details"));
         return item;
     }
 }

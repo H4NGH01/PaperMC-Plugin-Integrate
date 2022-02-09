@@ -34,8 +34,8 @@ public abstract class MultiplePageGUI extends GUIBase {
     @Override
     protected void setDefault() {
         super.setDefault();
-        this.inventory.setItem(this.size - 9, MCServerItems.prev);
-        this.inventory.setItem(this.size - 1, MCServerItems.next);
+        this.inventory.setItem(this.size - 1, MCServerItems.next(this.page, this.maxPage));
+        this.inventory.setItem(this.size - 9, MCServerItems.prev(this.page, this.maxPage));
     }
 
     public void setContents(@NotNull List<ItemStack> list) {

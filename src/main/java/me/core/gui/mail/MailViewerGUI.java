@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
-public class MailViewerGUI extends GUIBase {
+public class MailViewerGUI extends GUIBase implements MailGUIInterface {
 
     private static final HashMap<Player, MailViewerGUI> VIEW_MAP = new HashMap<>();
     private final Mail mail;

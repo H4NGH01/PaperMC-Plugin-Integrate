@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class MailBinGUI extends MultiplePageGUI {
+public class MailBinGUI extends MultiplePageGUI implements MailGUIInterface {
 
     private static final HashMap<Player, MailBinGUI> VIEW_MAP = new HashMap<>();
 

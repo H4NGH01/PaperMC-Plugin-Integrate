@@ -23,6 +23,7 @@ public class ServerPlayer {
     private final Player player;
     private final NBTStorageFile file;
     private final List<ItemStack> storage = new ArrayList<>();
+    private final HashMap<PlayerSettings, Boolean> settings = new HashMap<>();
     private BigDecimal money;
     private int newMail;
 
@@ -36,16 +37,26 @@ public class ServerPlayer {
         for (NBTBase nbtBase : tagList) {
             if (nbtBase instanceof NBTTagCompound) storage.add(NBTHelper.asItemStack((NBTTagCompound) nbtBase));
         }
+        this.settings.put(PlayerSettings.NEW_MAIL_HINT, true);
+        NBTTagCompound settingsCompound = this.file.getTagCompound("settings");
+        for (String key : settingsCompound.d()) {
+            this.settings.put(PlayerSettings.byKey(key), settingsCompound.q(key));
+        }
         this.money = this.file.hasKey("money") ? BigDecimal.valueOf(this.file.getDouble("money")) : new BigDecimal(0);
         this.newMail = this.file.hasKey("NewMail") ? this.file.getInt("NewMail") : 0;
     }
 
     public void save() {
-        NBTTagList tagList = new NBTTagList();
+        NBTTagList storageList = new NBTTagList();
         for (ItemStack stack : this.storage) {
-            tagList.add(NBTHelper.asNBTTagCompound(stack));
+            storageList.add(NBTHelper.asNBTTagCompound(stack));
         }
-        this.file.setList("storage", tagList);
+        this.file.setList("storage", storageList);
+        NBTTagCompound settingsCompound = new NBTTagCompound();
+        for (PlayerSettings key : this.settings.keySet()) {
+            settingsCompound.a(key.getKey(), this.settings.get(key));
+        }
+        this.file.setTagCompound("settings", settingsCompound);
         this.file.setDouble("money", this.money.doubleValue());
         this.file.setInt("NewMail", this.newMail);
         this.file.write();
@@ -85,8 +96,12 @@ public class ServerPlayer {
         return this.storage;
     }
 
+    public HashMap<PlayerSettings, Boolean> getSettings() {
+        return this.settings;
+    }
+
     public BigDecimal getMoney() {
-        return money;
+        return this.money;
     }
 
     public void setMoney(BigDecimal money) {
@@ -94,11 +109,10 @@ public class ServerPlayer {
     }
 
     public int getNewMail() {
-        return newMail;
+        return this.newMail;
     }
 
     public void setNewMail(int newMail) {
         this.newMail = newMail;
     }
-
 }

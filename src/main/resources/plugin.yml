@@ -5,6 +5,9 @@ api-version: 1.18
 authors: [ JJGP ]
 description: A PaperMC server plugin
 commands:
+  menu:
+    description: "Open menu"
+    usage: "/menu"
   mail:
     description: "Open your mailbox"
     usage: "/mail"
