@@ -15,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ServerPlayer {
 
@@ -27,11 +26,9 @@ public class ServerPlayer {
     private BigDecimal money;
     private int newMail;
 
-    public ServerPlayer(@NotNull OfflinePlayer offlinePlayer) {
-        this(offlinePlayer.getPlayer());
-    }
+    private static final HashMap<UUID, ServerPlayer> SERVER_PLAYER_HASH_MAP = new HashMap<>();
 
-    public ServerPlayer(Player player) {
+    private ServerPlayer(Player player) {
         this.player = player;
         this.file = new NBTStorageFile(new File(plugin.getDataFolder() + "/playerdata/" + this.player.getUniqueId() + ".dat"));
         this.file.read();
@@ -52,6 +49,21 @@ public class ServerPlayer {
         this.file.setDouble("money", this.money.doubleValue());
         this.file.setInt("NewMail", this.newMail);
         this.file.write();
+    }
+
+    public static ServerPlayer getServerPlayer(@NotNull OfflinePlayer player) {
+        return getServerPlayer(Objects.requireNonNull(player.getPlayer()));
+    }
+
+    public static ServerPlayer getServerPlayer(@NotNull Player player) {
+        if (SERVER_PLAYER_HASH_MAP.containsKey(player.getUniqueId())) return SERVER_PLAYER_HASH_MAP.get(player.getUniqueId());
+        ServerPlayer sp = new ServerPlayer(player);
+        SERVER_PLAYER_HASH_MAP.put(player.getUniqueId(), sp);
+        return sp;
+    }
+
+    public static HashMap<UUID, ServerPlayer> getServerPlayerHashMap() {
+        return SERVER_PLAYER_HASH_MAP;
     }
 
     public void safeAddItem(ItemStack stack) {
@@ -88,4 +100,5 @@ public class ServerPlayer {
     public void setNewMail(int newMail) {
         this.newMail = newMail;
     }
+
 }

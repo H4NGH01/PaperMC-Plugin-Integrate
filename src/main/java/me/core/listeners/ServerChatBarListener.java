@@ -2,6 +2,7 @@ package me.core.listeners;
 
 import me.core.gui.mail.MailBoxGUI;
 import me.core.gui.mail.MailWriterGUI;
+import me.core.mail.MailManager;
 import me.core.mail.NewMail;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -35,7 +36,7 @@ public class ServerChatBarListener implements Listener {
     private void editTitle(@NotNull PlayerChatEvent e) {
         Player p = e.getPlayer();
         String s = e.getMessage();
-        NewMail mail = MailWriterGUI.NEW_MAP_MAP.get(p);
+        NewMail mail = MailManager.getNewMailMap().get(p.getUniqueId());
         MailWriterGUI mwg = new MailWriterGUI(p, mail);
         mwg.setLastInventory(new MailBoxGUI(p));
         mail.setTitle(s);
@@ -47,7 +48,7 @@ public class ServerChatBarListener implements Listener {
     private void editText(@NotNull PlayerChatEvent e) {
         Player p = e.getPlayer();
         String s = e.getMessage();
-        NewMail mail = MailWriterGUI.NEW_MAP_MAP.get(p);
+        NewMail mail = MailManager.getNewMailMap().get(p.getUniqueId());
         MailWriterGUI mwg = new MailWriterGUI(p, mail);
         mwg.setLastInventory(new MailBoxGUI(p));
         mail.setText(s);

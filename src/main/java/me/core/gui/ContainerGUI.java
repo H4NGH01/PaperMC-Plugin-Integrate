@@ -4,17 +4,18 @@ import me.core.ServerPlayer;
 import me.core.containers.Container;
 import me.core.containers.ContainerKey;
 import me.core.containers.ContainerManager;
-import me.core.items.*;
+import me.core.items.CaseItemRarity;
+import me.core.items.ContainerItemStack;
+import me.core.items.InventoryItem;
+import me.core.items.MCServerItems;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +34,10 @@ public class ContainerGUI extends GUIBase {
     public ContainerGUI(@NotNull Player player, ItemStack caseStackIn) {
         super(player, 45);
         this.caseStackIn = caseStackIn;
-        this.container = plugin.getContainerManager().getContainerByStack(caseStackIn);
+        this.container = ContainerManager.getContainerByStack(caseStackIn);
         this.matchKey = container.getKeyType();
         this.setDefault();
+        ContainerManager.d();
     }
 
     @Override
@@ -82,7 +84,7 @@ public class ContainerGUI extends GUIBase {
         this.player.getInventory().remove(this.caseStackIn);
         this.keyIn.setAmount(this.keyIn.getAmount() - 1);
         this.playOpenAnimation();
-        ServerPlayer op = new ServerPlayer(this.player);
+        ServerPlayer op = ServerPlayer.getServerPlayer(this.player);
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -144,7 +146,7 @@ public class ContainerGUI extends GUIBase {
                     for (int i = 0; i < 9; i++) {
                         inventory.setItem(i + 18, display[i]);
                     }
-                    player.playSound(player.getLocation(), Sound.BLOCK_CHAIN_PLACE, 0.7f, 1f);
+                    player.playSound(player.getLocation(), Sound.BLOCK_CHAIN_PLACE, 0.6f, 1f);
                 }
             }
         }.runTaskTimer(this.plugin, 0, 1);
@@ -204,15 +206,15 @@ public class ContainerGUI extends GUIBase {
         return colorPane(Material.GRAY_STAINED_GLASS_PANE);
     }
 
-    private @Nullable ItemStack dropDisplay() {
-        ContainerItemStack drop = new ContainerItemStack(this.container.getDrop().clone());
+    private @NotNull ItemStack dropDisplay() {
+        ContainerItemStack drop = new ContainerItemStack(this.container.getDrop());
         if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) return Container.superRarity();
         for (ContainerItemStack display : container.getDisplayDrops()) {
             if (drop.getType().equals(display.getType())) {
                 return display;
             }
         }
-        return null;
+        return drop;
     }
 
     private ContainerItemStack randomItemFromContainer(@NotNull Random random) {

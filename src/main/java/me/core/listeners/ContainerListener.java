@@ -34,7 +34,7 @@ public class ContainerListener implements Listener {
         ItemStack stack = player.getInventory().getItemInMainHand();
         if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return;
         e.setCancelled(true);
-        Container c = plugin.getContainerManager().getContainerByStack(stack);
+        Container c = ContainerManager.getContainerByStack(stack);
         if (!c.hasData()) {
             player.sendMessage(Component.translatable("chat.container.invalid_container_opened"));
             player.getInventory().remove(stack);
@@ -82,7 +82,7 @@ public class ContainerListener implements Listener {
         if (e.isCancelled()) return;
         ItemStack stack = e.getEntity().getItemStack();
         if (Container.isContainerStack(stack))
-            ContainerManager.unregisterContainerData(plugin.getContainerManager().getContainerByStack(stack));
+            ContainerManager.unregisterContainerData(ContainerManager.getContainerByStack(stack));
     }
 
     @EventHandler
@@ -90,6 +90,6 @@ public class ContainerListener implements Listener {
         if (e.isCancelled() || !(e.getEntity() instanceof Item)) return;
         ItemStack stack = ((Item) e.getEntity()).getItemStack();
         if (Container.isContainerStack(stack))
-            ContainerManager.unregisterContainerData(plugin.getContainerManager().getContainerByStack(stack));
+            ContainerManager.unregisterContainerData(ContainerManager.getContainerByStack(stack));
     }
 }

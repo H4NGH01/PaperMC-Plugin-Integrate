@@ -17,20 +17,22 @@ import java.util.UUID;
 public class ContainerManager {
 
     private static final NBTStorageFile file = new NBTStorageFile(new File("container-data.nbt"));
-    private static final List<ContainerData> containerDataList = new ArrayList<>();
+    private static final List<ContainerData> CONTAINER_DATA = new ArrayList<>();
+    private static boolean b = false;
 
     public ContainerManager() {
         file.read();
         for (String key : file.getKeys()) {
             NBTTagCompound containerTag = file.getTagCompound(key);
             ContainerItemStack stack = new ContainerItemStack(NBTHelper.asItemStack(containerTag.p("item")));
-            containerDataList.add(new ContainerData(UUID.fromString(key), ContainerType.valueOf(containerTag.l("type")), stack));
+            CONTAINER_DATA.add(new ContainerData(UUID.fromString(key), ContainerType.valueOf(containerTag.l("type")), stack));
         }
+        b = false;
     }
 
-    public static void save() {
+    public void save() {
         file.clear();
-        for (ContainerData data : containerDataList) {
+        for (ContainerData data : CONTAINER_DATA) {
             NBTTagCompound containerTag = new NBTTagCompound();
             NBTTagCompound itemTag = NBTHelper.asNBTTagCompound(data.getDrop());
             containerTag.a("type", data.getType().toString());
@@ -41,16 +43,16 @@ public class ContainerManager {
     }
 
     public static void registryContainerData(ContainerData containerData) {
-        containerDataList.add(containerData);
+        CONTAINER_DATA.add(containerData);
     }
 
-    public CaseStack generateRandomCaseStack() {
+    public static @NotNull CaseStack generateRandomCaseStack() {
         int i = (int) (new Random().nextFloat() * ContainerType.values().length);
         ContainerType type = ContainerType.values()[i];
         return new CaseStack(getContainerByType(type));
     }
 
-    public Container getContainerByType(@NotNull ContainerType type) {
+    public static @NotNull Container getContainerByType(@NotNull ContainerType type) {
         Container c;
         if (type.getContainer().isAssignableFrom(WeaponCase.class)) {
             c = new WeaponCase();
@@ -60,7 +62,7 @@ public class ContainerManager {
         return c;
     }
 
-    public Container getContainerByStack(ItemStack stack) {
+    public static @NotNull Container getContainerByStack(ItemStack stack) {
         Container c;
         UUID uuid = UUID.fromString(NBTHelper.getTag(stack).l("ContainerUUID"));
         if (ContainerType.byID(NBTHelper.getTag(stack).l("ContainerType")).getContainer().isAssignableFrom(WeaponCase.class)) {
@@ -72,15 +74,23 @@ public class ContainerManager {
     }
 
     public static List<ContainerData> getCaseDataList() {
-        return containerDataList;
+        return CONTAINER_DATA;
     }
 
     public static void unregisterContainerData(Container containerIn) {
-        for (ContainerData data : containerDataList) {
+        for (ContainerData data : CONTAINER_DATA) {
             if (containerIn.getUUID().equals(data.getUUID())) {
-                containerDataList.remove(data);
+                CONTAINER_DATA.remove(data);
                 break;
             }
         }
+    }
+
+    public static boolean c() {
+        return b;
+    }
+
+    public static void d() {
+        b = true;
     }
 }

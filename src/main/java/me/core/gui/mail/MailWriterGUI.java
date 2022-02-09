@@ -2,6 +2,7 @@ package me.core.gui.mail;
 
 import me.core.gui.GUIBase;
 import me.core.items.InventoryItem;
+import me.core.mail.MailManager;
 import me.core.mail.NewMail;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
@@ -22,14 +23,13 @@ import java.util.Objects;
 public class MailWriterGUI extends GUIBase {
 
     private static final HashMap<Player, MailWriterGUI> VIEW_MAP = new HashMap<>();
-    public static final HashMap<Player, NewMail> NEW_MAP_MAP = new HashMap<>();
     private final NewMail mail;
 
     public MailWriterGUI(@NotNull Player player, @NotNull NewMail mail) {
         super(player);
         this.mail = mail;
         this.setDefault();
-        NEW_MAP_MAP.put(player, this.mail);
+        MailManager.getNewMailMap().put(player.getUniqueId(), this.mail);
     }
 
     @Override

@@ -1,15 +1,12 @@
 package me.core.items;
 
-import me.core.MCServerPlugin;
 import me.core.utils.ComponentUtil;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +67,7 @@ public class StatTrak extends PluginItem {
             meta.lore(lore);
         }
         stack.setItemMeta(meta);
-        /*
+        /*a
         NBTTagCompound tag = NBTHelper.getTag(stack).p("plugin");
         tag.r("CustomName");
         NBTHelper.setTag(stack, "plugin", tag);*/

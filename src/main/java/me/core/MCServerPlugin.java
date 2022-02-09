@@ -14,11 +14,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-
 public class MCServerPlugin extends JavaPlugin {
 
-    private static HashMap<Player, ServerPlayer> serverPlayerHashMap;
     private ConfigurationManager configManager;
     private CommandManager commandManager;
     private MailManager mailManager;
@@ -32,38 +29,36 @@ public class MCServerPlugin extends JavaPlugin {
         this.commandManager = new CommandManager();
         this.commandManager.setup();
         PluginEnchantments.loadEnchantments();
-        serverPlayerHashMap = new HashMap<>();
         this.mailManager = new MailManager();
         this.containerManager = new ContainerManager();
         this.registerEvents();
         ServerGUIListener.getOpenedGUI().clear();
-        for (Player player : this.getServer().getOnlinePlayers()) {
-            serverPlayerHashMap.put(player, new ServerPlayer(player));
-        }
         this.log("Plugin Enable");
     }
 
     @Override
     public void onDisable() {
-        PluginEnchantments.unloadEnchantments();
-        if (ContainerGUI.getViews() != null && ContainerGUI.getViews().size() != 0) {
+        if (ContainerManager.c() && ContainerGUI.getViews() != null && ContainerGUI.getViews().size() != 0) {
             for (ContainerGUI gui : ContainerGUI.getViews().values()) {
                 if (gui.isOpening()) {
-                    ServerPlayer sp = serverPlayerHashMap.get(gui.getPlayer());
+                    ServerPlayer sp = ServerPlayer.getServerPlayer(gui.getPlayer());
                     sp.safeAddItem(gui.getContainer().getDrop());
-                    sp.getPlayer().sendMessage(Component.translatable("chat.container.opened_item").args(gui.getContainer().getDrop().getDisplayName()));
+                    Component component = gui.getContainer().getDrop().displayName();
+                    component.hoverEvent(gui.getContainer().getDrop().asHoverEvent());
+                    sp.getPlayer().sendMessage(Component.translatable("chat.container.opened_item").args(component));
                     ContainerManager.unregisterContainerData(gui.getContainer());
                 }
             }
         }
         for (Player p : this.getServer().getOnlinePlayers()) {
             p.closeInventory();
-            ServerPlayer sp = serverPlayerHashMap.get(p);
-            if (sp != null) sp.save();
+            ServerPlayer sp = ServerPlayer.getServerPlayer(p);
+            sp.save();
         }
-        MailManager.save();
-        ContainerManager.save();
+        mailManager.save();
+        containerManager.save();
         this.configManager.save("player.yml");
+        PluginEnchantments.unloadEnchantments();
         this.log("Plugin Disable");
     }
 
@@ -78,14 +73,6 @@ public class MCServerPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new ServerChatBarListener(), this);
         this.getServer().getPluginManager().registerEvents(new ContainerListener(), this);
         this.getServer().getPluginManager().registerEvents(new StatTrakListener(), this);
-    }
-
-    public static HashMap<Player, ServerPlayer> getServerPlayerHashMap() {
-        return serverPlayerHashMap;
-    }
-
-    public ServerPlayer getServerPlayer(Player player) {
-        return serverPlayerHashMap.get(player);
     }
 
     public ConfigurationManager getConfigManager() {

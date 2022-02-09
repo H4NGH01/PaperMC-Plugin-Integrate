@@ -3,6 +3,7 @@ package me.core.gui.mail;
 import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
 import me.core.items.InventoryItem;
+import me.core.mail.MailManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -60,7 +61,7 @@ public class MailPlayerSelectorGUI extends MultiplePageGUI {
 
     public @NotNull InventoryItem playerIcon(@NotNull OfflinePlayer p) {
         InventoryItem icon = new InventoryItem(Material.PLAYER_HEAD).setTag("ItemTag", "gui.mail.selector.player_icon");
-        boolean b = MailWriterGUI.NEW_MAP_MAP.get(this.getPlayer()).containAddressee(p);
+        boolean b = MailManager.getNewMailMap().get(this.getPlayer().getUniqueId()).containAddressee(p);
         icon.setDisplayName(Component.text((b ? ChatColor.YELLOW : ChatColor.GRAY) + p.getName()));
         icon.addLore(Component.text(ChatColor.GRAY + "UUID: " + p.getUniqueId()));
         SkullMeta ms = (SkullMeta) icon.getItemMeta();

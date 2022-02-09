@@ -26,7 +26,6 @@ public class ServerEventListener implements Listener {
     @EventHandler
     public void onJoin(@NotNull PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        MCServerPlugin.getServerPlayerHashMap().put(p, new ServerPlayer(p));
         if (!p.hasPlayedBefore()) {
             List<ItemStack> stacks = new ArrayList<>();
             ItemStack stack = new ItemStack(Material.ARROW);
@@ -38,7 +37,7 @@ public class ServerEventListener implements Listener {
             Mail mail = new Mail("server", p, "Welcome to " + plugin.getServer().getName() + "!", "Use this to become a stand user.", stacks);
             MailManager.sendMail(mail);
         }
-        ServerPlayer sp = MCServerPlugin.getServerPlayerHashMap().get(p);
+        ServerPlayer sp = ServerPlayer.getServerPlayer(p);
         if (sp.getStorage().size() != 0) {
             for (ItemStack stack : sp.getStorage()) {
                 sp.safeAddItem(stack);
@@ -54,9 +53,9 @@ public class ServerEventListener implements Listener {
     @EventHandler
     public void onLeave(@NotNull PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        ServerPlayer sp = plugin.getServerPlayer(p);
-        MCServerPlugin.getServerPlayerHashMap().remove(p);
+        ServerPlayer sp = ServerPlayer.getServerPlayer(p);
         sp.save();
+        ServerPlayer.getServerPlayerHashMap().remove(p.getUniqueId());
     }
 
     @EventHandler

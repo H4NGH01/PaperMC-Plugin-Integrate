@@ -1,10 +1,7 @@
 package me.core.commands.admin;
 
 import me.core.commands.PluginCommand;
-import me.core.containers.Container;
-import me.core.containers.ContainerData;
-import me.core.containers.ContainerKey;
-import me.core.containers.ContainerType;
+import me.core.containers.*;
 import me.core.items.*;
 import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
@@ -54,10 +51,10 @@ public class AdminContainerCommand extends PluginCommand {
                 return;
             }
             if (id.equalsIgnoreCase("random_case")) {
-                CaseStack stack = plugin.getContainerManager().generateRandomCaseStack();
+                CaseStack stack = ContainerManager.generateRandomCaseStack();
                 player.getInventory().addItem(stack);
                 player.sendMessage(Component.translatable("command.container.gave").args(Component.translatable(stack.getCaseType().getTranslationKey())));
-                ItemStack drop = plugin.getContainerManager().getContainerByStack(stack).getDrop();
+                ItemStack drop = ContainerManager.getContainerByStack(stack).getDrop();
                 Component item = drop.displayName();
                 item.hoverEvent(drop.asHoverEvent());
                 player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
@@ -65,10 +62,10 @@ public class AdminContainerCommand extends PluginCommand {
             }
             for (ContainerType type : ContainerType.values()) {
                 if (type.getID().equalsIgnoreCase(id)) {
-                    CaseStack stack = new CaseStack(plugin.getContainerManager().getContainerByType(type));
+                    CaseStack stack = new CaseStack(ContainerManager.getContainerByType(type));
                     player.getInventory().addItem(stack);
                     player.sendMessage(Component.translatable("command.container.gave").args(Component.translatable(stack.getCaseType().getTranslationKey())));
-                    ItemStack drop = plugin.getContainerManager().getContainerByStack(stack).getDrop();
+                    ItemStack drop = ContainerManager.getContainerByStack(stack).getDrop();
                     Component item = drop.displayName();
                     item.hoverEvent(drop.asHoverEvent());
                     player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
@@ -96,7 +93,7 @@ public class AdminContainerCommand extends PluginCommand {
                 player.sendMessage(Component.translatable("command.container.invalid_container"));
                 return;
             }
-            ItemStack drop = plugin.getContainerManager().getContainerByStack(stack).getDrop();
+            ItemStack drop = ContainerManager.getContainerByStack(stack).getDrop();
             Component item = drop.displayName();
             item.hoverEvent(drop.asHoverEvent());
             player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
@@ -112,7 +109,7 @@ public class AdminContainerCommand extends PluginCommand {
                 player.sendMessage(Component.translatable("command.container.invalid_container"));
                 return;
             }
-            Container container = plugin.getContainerManager().getContainerByStack(stack);
+            Container container = ContainerManager.getContainerByStack(stack);
             ContainerData data = container.getData();
             if (args.length <= 2) {
                 player.sendMessage(ComponentUtil.translate(NamedTextColor.RED, "command.unknown.argument"));
@@ -223,7 +220,7 @@ public class AdminContainerCommand extends PluginCommand {
                 if (!(sender instanceof Player player)) return list;
                 ItemStack stack = player.getInventory().getItemInMainHand();
                 if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return list;
-                Container container = plugin.getContainerManager().getContainerByStack(stack);
+                Container container = ContainerManager.getContainerByStack(stack);
                 ContainerItemStack[] drops = container.getContainerDrops();
                 for (ContainerItemStack item : drops) {
                     list.add(item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL) ? "RARE_" + item.getType().name() : item.getType().name());

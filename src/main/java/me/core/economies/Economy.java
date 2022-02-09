@@ -16,12 +16,12 @@ public class Economy {
     }
 
     public void deposit(Player player, BigDecimal bigDecimal) {
-        ServerPlayer sp = plugin.getServerPlayer(player);
+        ServerPlayer sp = ServerPlayer.getServerPlayer(player);
         sp.setMoney(sp.getMoney().add(bigDecimal));
     }
 
     public void withdraw(Player player, BigDecimal bigDecimal) {
-        ServerPlayer sp = plugin.getServerPlayer(player);
+        ServerPlayer sp = ServerPlayer.getServerPlayer(player);
         sp.setMoney(sp.getMoney().subtract(bigDecimal));
     }
 

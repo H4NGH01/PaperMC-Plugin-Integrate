@@ -59,7 +59,7 @@ public class MailGUIListener {
         Player p = (Player) e.getWhoClicked();
         MailBoxGUI gui = (MailBoxGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.write")) {
-            MailWriterGUI mwg = new MailWriterGUI(p, MailWriterGUI.NEW_MAP_MAP.containsKey(p) ? MailWriterGUI.NEW_MAP_MAP.get(p) : new NewMail(p));
+            MailWriterGUI mwg = new MailWriterGUI(p, MailManager.getNewMailMap().containsKey(p.getUniqueId()) ? MailManager.getNewMailMap().get(p.getUniqueId()) : new NewMail(p));
             mwg.setLastInventory(gui);
             mwg.openToPlayer();
             return;
@@ -119,7 +119,7 @@ public class MailGUIListener {
         ItemStack item = e.getCurrentItem();
         Player p = (Player) e.getWhoClicked();
         MailWriterGUI gui = (MailWriterGUI) e.getGUI();
-        NewMail mail = MailWriterGUI.NEW_MAP_MAP.get(p);
+        NewMail mail = MailManager.getNewMailMap().get(p.getUniqueId());
         if (Objects.equals(e.getClickedInventory(), p.getInventory())) {
             if (!mail.isItemStacksFull()) {
                 mail.addItemStack(item);
@@ -170,7 +170,7 @@ public class MailGUIListener {
                 if (op.isOnline()) {
                     Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail_received"));
                 } else {
-                    ServerPlayer sp = new ServerPlayer(op);
+                    ServerPlayer sp = ServerPlayer.getServerPlayer(op);
                     sp.setNewMail(sp.getNewMail() + 1);
                     sp.save();
                 }
@@ -189,7 +189,7 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.selector.player_icon")) {
             for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
                 if (Objects.equals(offlinePlayer.getName(), ComponentUtil.plainText(Objects.requireNonNull(Objects.requireNonNull(item).getItemMeta().displayName())).substring(2))) {
-                    NewMail mail = MailWriterGUI.NEW_MAP_MAP.get(p);
+                    NewMail mail = MailManager.getNewMailMap().get(p.getUniqueId());
                     if (mail.containAddressee(offlinePlayer)) {
                         mail.removeAddressee(offlinePlayer);
                         p.playSound(p.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_OFF, 0.7f, 1f);

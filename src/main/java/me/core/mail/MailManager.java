@@ -1,7 +1,6 @@
 package me.core.mail;
 
 import me.core.MCServerPlugin;
-import me.core.gui.mail.MailWriterGUI;
 import me.core.utils.nbt.NBTHelper;
 import me.core.utils.nbt.NBTStorageFile;
 import net.minecraft.nbt.NBTBase;
@@ -14,10 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class MailManager {
 
@@ -25,6 +21,7 @@ public class MailManager {
     private static final List<Mail> mailList = new ArrayList<>();
     private static final NBTStorageFile mailFile = new NBTStorageFile(new File("mails.nbt"));
     private static final NBTStorageFile newMailFile = new NBTStorageFile(new File("new-mails.nbt"));
+    private static final HashMap<UUID, NewMail> NEW_MAIL_MAP = new HashMap<>();
 
     public MailManager() {
         //read mail data
@@ -61,12 +58,11 @@ public class MailManager {
                 }
             }
             NewMail mail = new NewMail(key, mailTag.l("sender"), uuids, mailTag.l("title"), mailTag.l("text"), stacks);
-            Player p = plugin.getServer().getOfflinePlayer(mail.getSender()).getPlayer();
-            MailWriterGUI.NEW_MAP_MAP.put(p, mail);
+            getNewMailMap().put(mail.getSender(), mail);
         }
     }
 
-    public static void save() {
+    public void save() {
         //Save mail data
         mailFile.clear();
         for (Mail mail : mailList) {
@@ -87,7 +83,7 @@ public class MailManager {
         }
         mailFile.write();
         //Save new mail data
-        List<NewMail> newMailList = new ArrayList<>(MailWriterGUI.NEW_MAP_MAP.values());
+        List<NewMail> newMailList = new ArrayList<>(getNewMailMap().values());
         newMailFile.clear();
         for (NewMail mail : newMailList) {
             NBTTagCompound mailTag = new NBTTagCompound();
@@ -169,5 +165,9 @@ public class MailManager {
 
     public static List<Mail> getMailList() {
         return mailList;
+    }
+
+    public static HashMap<UUID, NewMail> getNewMailMap() {
+        return NEW_MAIL_MAP;
     }
 }
