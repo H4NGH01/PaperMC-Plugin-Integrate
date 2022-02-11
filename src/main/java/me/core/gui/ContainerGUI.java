@@ -1,7 +1,9 @@
 package me.core.gui;
 
+import me.core.PlayerSettings;
 import me.core.ServerPlayer;
 import me.core.containers.Container;
+import me.core.containers.ContainerData;
 import me.core.containers.ContainerKey;
 import me.core.containers.ContainerManager;
 import me.core.items.CaseItemRarity;
@@ -19,12 +21,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class ContainerGUI extends GUIBase {
 
     private static final HashMap<Player, ContainerGUI> VIEW_MAP = new HashMap<>();
     private final ItemStack caseStackIn;
+    private final ContainerData data;
     private final Container container;
     private final ContainerKey matchKey;
     private ItemStack keyIn;
@@ -34,7 +38,8 @@ public class ContainerGUI extends GUIBase {
     public ContainerGUI(@NotNull Player player, ItemStack caseStackIn) {
         super(player, 45);
         this.caseStackIn = caseStackIn;
-        this.container = ContainerManager.getContainerByStack(caseStackIn);
+        this.data = Objects.requireNonNull(ContainerManager.getContainerDataByStack(caseStackIn));
+        this.container = ContainerManager.getContainerByType(data.getType());
         this.matchKey = container.getKeyType();
         this.setDefault();
         ContainerManager.setClassNotNull();
@@ -67,8 +72,8 @@ public class ContainerGUI extends GUIBase {
 
     @Override
     public void openToPlayer() {
-        this.player.playSound(this.player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 0.7f, 1f);
         super.openToPlayer();
+        this.player.playSound(this.player.getLocation(), Sound.BLOCK_CHEST_LOCKED, 0.7f, 1f);
     }
 
     public void openContainer() {
@@ -90,19 +95,19 @@ public class ContainerGUI extends GUIBase {
             public void run() {
                 if (!player.isOnline()) {
                     this.cancel();
-                    op.getStorage().add(container.getDrop());
+                    op.getStorage().add(data.getDrop());
                     op.save();
-                    ContainerManager.unregisterContainerData(container);
+                    ContainerManager.unregisterContainerData(data);
                     return;
                 }
                 if (!animation) {
                     this.cancel();
                     playEndAnimation();
-                    op.safeAddItem(container.getDrop());
-                    Component component = container.getDrop().displayName();
-                    component.hoverEvent(container.getDrop().asHoverEvent());
+                    op.safeAddItem(data.getDrop());
+                    Component component = data.getDrop().displayName();
+                    component.hoverEvent(data.getDrop().asHoverEvent());
                     player.sendMessage(Component.translatable("chat.container.opened_item").args(component));
-                    ContainerManager.unregisterContainerData(container);
+                    ContainerManager.unregisterContainerData(data);
                 }
             }
         }.runTaskTimer(this.plugin, 0, 1);
@@ -120,6 +125,14 @@ public class ContainerGUI extends GUIBase {
         final Random random = new Random();
         for (int i = 0; i < display.length; i++) {
             display[i] = randomItemFromContainer(random);
+        }
+        if (!ServerPlayer.getServerPlayer(this.player).getSettings().get(PlayerSettings.CONTAINER_ANIMATION)) {
+            setAnimationEnd();
+            display[4] = dropDisplay();
+            for (int i = 0; i < display.length; i++) {
+                inventory.setItem(i + 18, display[i]);
+            }
+            return;
         }
         final int startSpeed = 140;
         final int acceleration = -1;
@@ -143,7 +156,7 @@ public class ContainerGUI extends GUIBase {
                     this.i = 0;
                     System.arraycopy(display, 1, display, 0, display.length - 1);
                     display[display.length - 1] = rollSpeed == endSpeed ? dropDisplay() : randomItemFromContainer(random);
-                    for (int i = 0; i < 9; i++) {
+                    for (int i = 0; i < display.length; i++) {
                         inventory.setItem(i + 18, display[i]);
                     }
                     player.playSound(player.getLocation(), Sound.BLOCK_CHAIN_PLACE, 0.6f, 1f);
@@ -169,12 +182,12 @@ public class ContainerGUI extends GUIBase {
     }
 
     private void playEndAnimation() {
-        switch (this.container.getDrop().getItemRarity()) {
+        switch (this.data.getDrop().getItemRarity()) {
             case MIL_SPEC -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
             case RESTRICTED -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1f, 1f);
             case CLASSIFIED -> this.player.playSound(this.player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1f, 1f);
             case COVERT -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1f, 1f);
-            case RARE_SPECIAL -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
+            case EXCEEDINGLY_RARE -> this.player.playSound(this.player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
             default -> {
             }
         }
@@ -186,7 +199,7 @@ public class ContainerGUI extends GUIBase {
     }
 
     private @NotNull ItemStack rarityColor() {
-        switch (this.container.getDrop().getItemRarity()) {
+        switch (this.data.getDrop().getItemRarity()) {
             case MIL_SPEC -> {
                 return colorPane(Material.BLUE_STAINED_GLASS_PANE);
             }
@@ -199,7 +212,7 @@ public class ContainerGUI extends GUIBase {
             case COVERT -> {
                 return colorPane(Material.RED_STAINED_GLASS_PANE);
             }
-            case RARE_SPECIAL -> {
+            case EXCEEDINGLY_RARE -> {
                 return colorPane(Material.ORANGE_STAINED_GLASS_PANE);
             }
         }
@@ -207,8 +220,8 @@ public class ContainerGUI extends GUIBase {
     }
 
     private @NotNull ItemStack dropDisplay() {
-        ContainerItemStack drop = new ContainerItemStack(this.container.getDrop());
-        if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) return Container.superRarity();
+        ContainerItemStack drop = new ContainerItemStack(this.data.getDrop());
+        if (drop.getItemRarity().equals(CaseItemRarity.EXCEEDINGLY_RARE)) return Container.superRarity();
         for (ContainerItemStack display : container.getDisplayDrops()) {
             if (drop.getType().equals(display.getType())) {
                 return display;
@@ -271,5 +284,9 @@ public class ContainerGUI extends GUIBase {
 
     public void setAnimationEnd() {
         this.animation = false;
+    }
+
+    public ContainerData getData() {
+        return this.data;
     }
 }

@@ -15,12 +15,17 @@ public class Economy {
         return instance;
     }
 
-    public void deposit(Player player, BigDecimal bigDecimal) {
+    public static void setMoney(Player player, BigDecimal bigDecimal) {
+        ServerPlayer sp = ServerPlayer.getServerPlayer(player);
+        sp.setMoney(bigDecimal);
+    }
+
+    public static void deposit(Player player, BigDecimal bigDecimal) {
         ServerPlayer sp = ServerPlayer.getServerPlayer(player);
         sp.setMoney(sp.getMoney().add(bigDecimal));
     }
 
-    public void withdraw(Player player, BigDecimal bigDecimal) {
+    public static void withdraw(Player player, BigDecimal bigDecimal) {
         ServerPlayer sp = ServerPlayer.getServerPlayer(player);
         sp.setMoney(sp.getMoney().subtract(bigDecimal));
     }

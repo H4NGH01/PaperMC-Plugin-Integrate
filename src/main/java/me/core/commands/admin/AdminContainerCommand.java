@@ -4,6 +4,7 @@ import me.core.commands.PluginCommand;
 import me.core.containers.*;
 import me.core.items.*;
 import me.core.utils.ComponentUtil;
+import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AdminContainerCommand extends PluginCommand {
 
@@ -54,7 +56,7 @@ public class AdminContainerCommand extends PluginCommand {
                 CaseStack stack = ContainerManager.generateRandomCaseStack();
                 player.getInventory().addItem(stack);
                 player.sendMessage(Component.translatable("command.container.gave").args(Component.translatable(stack.getCaseType().getTranslationKey())));
-                ItemStack drop = ContainerManager.getContainerByStack(stack).getDrop();
+                ItemStack drop = Objects.requireNonNull(ContainerManager.getContainerDataByStack(stack)).getDrop();
                 Component item = drop.displayName();
                 item.hoverEvent(drop.asHoverEvent());
                 player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
@@ -62,10 +64,12 @@ public class AdminContainerCommand extends PluginCommand {
             }
             for (ContainerType type : ContainerType.values()) {
                 if (type.getID().equalsIgnoreCase(id)) {
-                    CaseStack stack = new CaseStack(ContainerManager.getContainerByType(type));
+                    Container c = ContainerManager.getContainerByType(type);
+                    ContainerData data = new ContainerData(type, c.generateDrop());
+                    CaseStack stack = new CaseStack(c, data);
                     player.getInventory().addItem(stack);
                     player.sendMessage(Component.translatable("command.container.gave").args(Component.translatable(stack.getCaseType().getTranslationKey())));
-                    ItemStack drop = ContainerManager.getContainerByStack(stack).getDrop();
+                    ItemStack drop = data.getDrop();
                     Component item = drop.displayName();
                     item.hoverEvent(drop.asHoverEvent());
                     player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
@@ -93,7 +97,7 @@ public class AdminContainerCommand extends PluginCommand {
                 player.sendMessage(Component.translatable("command.container.invalid_container"));
                 return;
             }
-            ItemStack drop = ContainerManager.getContainerByStack(stack).getDrop();
+            ItemStack drop = ContainerManager.getContainerDataByStack(stack).getDrop();
             Component item = drop.displayName();
             item.hoverEvent(drop.asHoverEvent());
             player.sendMessage(Component.translatable("command.container.seek_drop").args(item));
@@ -109,20 +113,18 @@ public class AdminContainerCommand extends PluginCommand {
                 player.sendMessage(Component.translatable("command.container.invalid_container"));
                 return;
             }
-            Container container = ContainerManager.getContainerByStack(stack);
-            ContainerData data = container.getData();
+            ContainerData data = ContainerManager.getContainerDataByStack(stack);
             if (args.length <= 2) {
                 player.sendMessage(ComponentUtil.translate(NamedTextColor.RED, "command.unknown.argument"));
                 return;
             }
             if (args[1].equalsIgnoreCase("drop")) {
                 String id = args[2];
-                ContainerItemStack item = getItemFromString(container, id);
+                ContainerItemStack item = getItemFromString(ContainerManager.getContainerByType(data.getType()), id);
                 if (item == null) {
                     player.sendMessage(Component.translatable("argument.item.id.invalid").color(NamedTextColor.RED).args(Component.text(id).color(NamedTextColor.RED)));
                     return;
                 }
-                if (data == null) throw new IllegalArgumentException("Cannot get container's data because data is null");
                 data.setDrop(item);
                 Component component = item.displayName();
                 component.hoverEvent(item.asHoverEvent());
@@ -135,7 +137,7 @@ public class AdminContainerCommand extends PluginCommand {
                 if (b) {
                     if (!StatTrak.isStattrak(drop)) {
                         StatTrak.addStatTrak(drop);
-                        if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) {
+                        if (drop.getItemRarity().equals(CaseItemRarity.EXCEEDINGLY_RARE)) {
                             drop.setDisplayName(Component.text("§6StatTrak™ ").append(Component.translatable(drop.translationKey()).append(Component.text(" (★)"))));
                             StatTrak.setCustomName(drop, "\\t" + drop.translationKey() + " (★)");
                         }
@@ -143,7 +145,7 @@ public class AdminContainerCommand extends PluginCommand {
                 } else {
                     if (StatTrak.isStattrak(drop)) {
                         StatTrak.removeStatTrak(drop);
-                        if (drop.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) drop.setDisplayName(Component.translatable(drop.translationKey()).append(Component.text(" (★)")));
+                        if (drop.getItemRarity().equals(CaseItemRarity.EXCEEDINGLY_RARE)) drop.setDisplayName(Component.translatable(drop.translationKey()).append(Component.text(" (★)")));
                     }
                 }
                 player.sendMessage(Component.translatable("command.container.stattrak_set").args(Component.text(b)));
@@ -166,9 +168,9 @@ public class AdminContainerCommand extends PluginCommand {
             rare = true;
         }
         for (ContainerItemStack item : drops) {
-            if (rare && !item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) continue;
+            if (rare && !item.getItemRarity().equals(CaseItemRarity.EXCEEDINGLY_RARE)) continue;
             if (item.getType().name().equalsIgnoreCase(str)) {
-                if (item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL)) item.setDisplayName(Component.translatable(item.translationKey()).append(Component.text(" (★)")));
+                if (item.getItemRarity().equals(CaseItemRarity.EXCEEDINGLY_RARE)) item.setDisplayName(Component.translatable(item.translationKey()).append(Component.text(" (★)")));
                 return item;
             }
         }
@@ -220,10 +222,10 @@ public class AdminContainerCommand extends PluginCommand {
                 if (!(sender instanceof Player player)) return list;
                 ItemStack stack = player.getInventory().getItemInMainHand();
                 if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return list;
-                Container container = ContainerManager.getContainerByStack(stack);
+                Container container = ContainerManager.getContainerByType(ContainerType.byID(NBTHelper.getTag(stack).l("ContainerType")));
                 ContainerItemStack[] drops = container.getContainerDrops();
                 for (ContainerItemStack item : drops) {
-                    list.add(item.getItemRarity().equals(CaseItemRarity.RARE_SPECIAL) ? "RARE_" + item.getType().name() : item.getType().name());
+                    list.add(item.getItemRarity().equals(CaseItemRarity.EXCEEDINGLY_RARE) ? "RARE_" + item.getType().name() : item.getType().name());
                 }
                 return list;
             }

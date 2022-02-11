@@ -19,7 +19,6 @@ import java.util.*;
 
 public class ServerPlayer {
 
-    private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
     private final Player player;
     private final NBTStorageFile file;
     private final List<ItemStack> storage = new ArrayList<>();
@@ -31,18 +30,20 @@ public class ServerPlayer {
 
     private ServerPlayer(Player player) {
         this.player = player;
+        MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
         this.file = new NBTStorageFile(new File(plugin.getDataFolder() + "/playerdata/" + this.player.getUniqueId() + ".dat"));
         this.file.read();
         NBTTagList tagList = this.file.getList("storage", 10);
         for (NBTBase nbtBase : tagList) {
-            if (nbtBase instanceof NBTTagCompound) storage.add(NBTHelper.asItemStack((NBTTagCompound) nbtBase));
+            if (nbtBase instanceof NBTTagCompound tag) storage.add(NBTHelper.asItemStack(tag));
         }
-        this.settings.put(PlayerSettings.NEW_MAIL_HINT, true);
+        this.settings.put(PlayerSettings.NEW_MAIL_MESSAGE, true);
+        this.settings.put(PlayerSettings.CONTAINER_ANIMATION, true);
         NBTTagCompound settingsCompound = this.file.getTagCompound("settings");
         for (String key : settingsCompound.d()) {
-            this.settings.put(PlayerSettings.byKey(key), settingsCompound.q(key));
+            if (PlayerSettings.isRegistryKey(key)) this.settings.put(PlayerSettings.byKey(key), settingsCompound.q(key));
         }
-        this.money = this.file.hasKey("money") ? BigDecimal.valueOf(this.file.getDouble("money")) : new BigDecimal(0);
+        this.money = this.file.hasKey("money") ? new BigDecimal(this.file.getString("money")) : new BigDecimal(0);
         this.newMail = this.file.hasKey("NewMail") ? this.file.getInt("NewMail") : 0;
     }
 
@@ -57,7 +58,7 @@ public class ServerPlayer {
             settingsCompound.a(key.getKey(), this.settings.get(key));
         }
         this.file.setTagCompound("settings", settingsCompound);
-        this.file.setDouble("money", this.money.doubleValue());
+        this.file.setString("money", this.money.toPlainString());
         this.file.setInt("NewMail", this.newMail);
         this.file.write();
     }

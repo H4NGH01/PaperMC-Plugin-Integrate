@@ -55,8 +55,8 @@ public class MailPlayerSelectorGUI extends MultiplePageGUI implements MailGUIInt
 
     @Override
     public void openToPlayer() {
-        this.player.playSound(this.player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.7f, 1f);
         super.openToPlayer();
+        this.player.playSound(this.player.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 0.7f, 1f);
     }
 
     public @NotNull InventoryItem playerIcon(@NotNull OfflinePlayer p) {

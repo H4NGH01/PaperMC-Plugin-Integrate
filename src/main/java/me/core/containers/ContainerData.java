@@ -10,6 +10,13 @@ public class ContainerData {
     private final ContainerType type;
     private ContainerItemStack drop;
 
+    public ContainerData(ContainerType type, ContainerItemStack drop) {
+        this.uuid = UUID.randomUUID();
+        this.type = type;
+        this.drop = drop;
+        ContainerManager.registryContainerData(this);
+    }
+
     public ContainerData(UUID uuid, ContainerType type, ContainerItemStack drop) {
         this.uuid = uuid;
         this.type = type;

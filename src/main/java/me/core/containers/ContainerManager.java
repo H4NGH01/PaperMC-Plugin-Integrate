@@ -49,9 +49,15 @@ public class ContainerManager {
     public static @NotNull CaseStack generateRandomCaseStack() {
         int i = (int) (new Random().nextFloat() * ContainerType.values().length);
         ContainerType type = ContainerType.values()[i];
-        return new CaseStack(getContainerByType(type));
+        Container c = getContainerByType(type);
+        return new CaseStack(c, new ContainerData(type, c.generateDrop()));
     }
 
+    /**
+     * Get new container by type
+     * @param type type of container
+     * @return new container
+     */
     public static @NotNull Container getContainerByType(@NotNull ContainerType type) {
         Container c;
         if (type.getContainer().isAssignableFrom(WeaponCase.class)) {
@@ -62,28 +68,34 @@ public class ContainerManager {
         return c;
     }
 
-    public static @NotNull Container getContainerByStack(ItemStack stack) {
-        Container c;
+    /**
+     * Check is container valid
+     * @param stack Container item
+     * @return container has data
+     */
+    public static boolean hasContainerData(ItemStack stack) {
         UUID uuid = UUID.fromString(NBTHelper.getTag(stack).l("ContainerUUID"));
-        if (ContainerType.byID(NBTHelper.getTag(stack).l("ContainerType")).getContainer().isAssignableFrom(WeaponCase.class)) {
-            c = new WeaponCase(uuid);
-        } else {
-            throw new IllegalArgumentException("Unknown container type");
-        }
-        return c;
-    }
-
-    public static List<ContainerData> getCaseDataList() {
-        return CONTAINER_DATA;
-    }
-
-    public static void unregisterContainerData(Container containerIn) {
         for (ContainerData data : CONTAINER_DATA) {
-            if (containerIn.getUUID().equals(data.getUUID())) {
-                CONTAINER_DATA.remove(data);
-                break;
-            }
+            if (data.getUUID().equals(uuid)) return true;
         }
+        return false;
+    }
+
+    /**
+     * Get container data from a container item
+     * @param stack container item
+     * @return exist container
+     */
+    public static @NotNull ContainerData getContainerDataByStack(ItemStack stack) {
+        UUID uuid = UUID.fromString(NBTHelper.getTag(stack).l("ContainerUUID"));
+        for (ContainerData data : CONTAINER_DATA) {
+            if (data.getUUID().equals(uuid)) return data;
+        }
+        throw new IllegalArgumentException("Container data cannot be found");
+    }
+
+    public static void unregisterContainerData(ContainerData data) {
+        CONTAINER_DATA.remove(data);
     }
 
     public static boolean isClassNotNull() {

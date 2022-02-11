@@ -34,7 +34,7 @@ public class ContainerItemStack extends PluginItem {
     }
 
     public boolean isRareSpecial() {
-        return this.rarity.equals(CaseItemRarity.RARE_SPECIAL);
+        return this.rarity.equals(CaseItemRarity.EXCEEDINGLY_RARE);
     }
 
 }

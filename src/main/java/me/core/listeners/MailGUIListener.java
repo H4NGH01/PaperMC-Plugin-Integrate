@@ -171,7 +171,7 @@ public class MailGUIListener {
                 MailManager.sendMail(m);
                 sb.append(op.getName()).append(", ");
                 ServerPlayer sp = ServerPlayer.getServerPlayer(op);
-                if (op.isOnline() && sp.getSettings().get(PlayerSettings.NEW_MAIL_HINT)) {
+                if (op.isOnline() && sp.getSettings().get(PlayerSettings.NEW_MAIL_MESSAGE)) {
                     Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail_received"));
                 } else {
                     sp.setNewMail(sp.getNewMail() + 1);

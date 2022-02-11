@@ -7,17 +7,8 @@ import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.UUID;
 
 public class WeaponCase extends Container {
-
-    public WeaponCase() {
-        super();
-    }
-
-    public WeaponCase(UUID uuid) {
-        super(uuid);
-    }
 
     @Override
     public @NotNull ContainerType getContainerType() {
@@ -52,9 +43,9 @@ public class WeaponCase extends Container {
                 new ContainerItemStack(Material.TRIDENT, CaseItemRarity.CLASSIFIED),
                 new ContainerItemStack(Material.NETHERITE_SWORD, CaseItemRarity.COVERT),
                 new ContainerItemStack(Material.NETHERITE_AXE, CaseItemRarity.COVERT),
-                new ContainerItemStack(Material.NETHERITE_HOE, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.DAMAGE_ALL, 20)),
-                new ContainerItemStack(Material.BOW, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.ARROW_DAMAGE, 6, Enchantment.DAMAGE_ALL, 10)),
-                new ContainerItemStack(Material.TRIDENT, CaseItemRarity.RARE_SPECIAL, Map.of(Enchantment.IMPALING, 5, Enchantment.DAMAGE_ALL, 5)),
+                new ContainerItemStack(Material.NETHERITE_HOE, CaseItemRarity.EXCEEDINGLY_RARE, Map.of(Enchantment.DAMAGE_ALL, 20)),
+                new ContainerItemStack(Material.BOW, CaseItemRarity.EXCEEDINGLY_RARE, Map.of(Enchantment.ARROW_DAMAGE, 6, Enchantment.DAMAGE_ALL, 10)),
+                new ContainerItemStack(Material.TRIDENT, CaseItemRarity.EXCEEDINGLY_RARE, Map.of(Enchantment.IMPALING, 5, Enchantment.DAMAGE_ALL, 5)),
         };
     }
 }

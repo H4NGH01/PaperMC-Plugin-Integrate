@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class MenuGUIListener {
 
     public void onClick(@NotNull GUIClickEvent e) {
@@ -48,15 +50,20 @@ public class MenuGUIListener {
         if (item == null || item.getItemMeta() == null) return;
         Player p = (Player) e.getWhoClicked();
         MenuSettingsGUI gui = (MenuSettingsGUI) e.getGUI();
-        if (!NBTHelper.getTag(item).l("ItemTag").startsWith("gui.settings.toggle.")) return;
+        if (!NBTHelper.getTag(item).l("ItemTag").equals("gui.settings.toggle")) return;
+        ItemStack stack = Objects.requireNonNull(e.getClickedInventory()).getItem(e.getSlot() - 9);
         ServerPlayer sp = ServerPlayer.getServerPlayer(p);
         boolean b = false;
-        if (MCServerItems.equalWithTag(item, "ItemTag", "gui.settings.toggle.new_mail_hint")) {
-            b = !sp.getSettings().get(PlayerSettings.NEW_MAIL_HINT);
-            sp.getSettings().put(PlayerSettings.NEW_MAIL_HINT, b);
+        if (MCServerItems.equalWithTag(stack, "ItemTag", "gui.settings.new_mail_message")) {
+            b = !sp.getSettings().get(PlayerSettings.NEW_MAIL_MESSAGE);
+            sp.getSettings().put(PlayerSettings.NEW_MAIL_MESSAGE, b);
+        }
+        if (MCServerItems.equalWithTag(stack, "ItemTag", "gui.settings.container_animation")) {
+            b = !sp.getSettings().get(PlayerSettings.CONTAINER_ANIMATION);
+            sp.getSettings().put(PlayerSettings.CONTAINER_ANIMATION, b);
         }
         gui.setInventory();
-        p.playSound(p.getLocation(), Sound.UI_BUTTON_CLICK, 0.3f, b ? 0.6f : 0.5f);
+        p.playSound(p.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.7f, b ? 0.6f : 0.5f);
     }
 
 }

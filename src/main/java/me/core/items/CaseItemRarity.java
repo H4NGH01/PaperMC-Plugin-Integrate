@@ -8,7 +8,7 @@ public enum CaseItemRarity {
     RESTRICTED(125.0f / 782.0f, 0x7e54c7),
     CLASSIFIED(25.0f / 782.0f, 0xd629e5),
     COVERT(5.0f / 782.0f, 0xe94c4c),
-    RARE_SPECIAL(2.0f / 782.0f, NamedTextColor.GOLD.value());
+    EXCEEDINGLY_RARE(2.0f / 782.0f, NamedTextColor.GOLD.value());
 
     private final float dropRate;
     private final int color;

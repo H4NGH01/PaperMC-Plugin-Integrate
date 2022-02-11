@@ -1,13 +1,11 @@
 package me.core;
 
 import me.core.commands.CommandManager;
+import me.core.containers.ContainerData;
 import me.core.containers.ContainerManager;
 import me.core.enchantments.PluginEnchantments;
 import me.core.gui.ContainerGUI;
-import me.core.listeners.ContainerListener;
-import me.core.listeners.ServerChatBarListener;
-import me.core.listeners.ServerGUIListener;
-import me.core.listeners.StatTrakListener;
+import me.core.listeners.*;
 import me.core.mail.MailManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
@@ -45,11 +43,12 @@ public class MCServerPlugin extends JavaPlugin {
             for (ContainerGUI gui : ContainerGUI.getViews().values()) {
                 if (gui.isOpening()) {
                     ServerPlayer sp = ServerPlayer.getServerPlayer(gui.getPlayer());
-                    sp.safeAddItem(gui.getContainer().getDrop());
-                    Component component = gui.getContainer().getDrop().displayName();
-                    component.hoverEvent(gui.getContainer().getDrop().asHoverEvent());
+                    ContainerData data = gui.getData();
+                    sp.safeAddItem(data.getDrop());
+                    Component component = data.getDrop().displayName();
+                    component.hoverEvent(data.getDrop().asHoverEvent());
                     sp.getPlayer().sendMessage(Component.translatable("chat.container.opened_item").args(component));
-                    ContainerManager.unregisterContainerData(gui.getContainer());
+                    ContainerManager.unregisterContainerData(data);
                 }
             }
         }
@@ -58,8 +57,8 @@ public class MCServerPlugin extends JavaPlugin {
             ServerPlayer sp = ServerPlayer.getServerPlayer(p);
             sp.save();
         }
-        mailManager.save();
-        containerManager.save();
+        this.mailManager.save();
+        this.containerManager.save();
         this.configManager.save("player.yml");
         PluginEnchantments.unloadEnchantments();
         this.log("Plugin Disable");

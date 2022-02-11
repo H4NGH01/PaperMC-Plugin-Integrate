@@ -32,7 +32,7 @@ public class MailManager {
             NBTTagList itemTagList = mailTag.c("ItemList", 10);
             List<ItemStack> stacks = new ArrayList<>();
             for (NBTBase b : itemTagList) {
-                if (b instanceof NBTTagCompound) stacks.add(NBTHelper.asItemStack((NBTTagCompound) b));
+                if (b instanceof NBTTagCompound tag) stacks.add(NBTHelper.asItemStack(tag));
             }
             Mail mail = new Mail(key, mailTag.l("sender"), mailTag.l("addressee"), mailTag.l("title"), mailTag.l("text"), stacks, mailTag.l("date"), mailTag.q("received"), mailTag.q("deleted"));
             mailList.add(mail);
@@ -45,8 +45,8 @@ public class MailManager {
             UUID[] uuids = new UUID[addresseeTagList.size()];
             for (int i = 0; i < addresseeTagList.size(); i++) {
                 NBTBase b = addresseeTagList.get(i);
-                if (b instanceof NBTTagCompound) {
-                    uuids[i] = UUID.fromString(((NBTTagCompound) b).l("uuid"));
+                if (b instanceof NBTTagCompound tag) {
+                    uuids[i] = UUID.fromString((tag).l("uuid"));
                 }
             }
             NBTTagList itemTagList = mailTag.c("ItemList", 10);

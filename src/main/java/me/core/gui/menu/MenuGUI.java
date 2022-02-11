@@ -6,6 +6,7 @@ import me.core.utils.ComponentUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +44,18 @@ public class MenuGUI extends GUIBase implements MenuGUIInterface {
         return VIEW_MAP;
     }
 
+    @Override
+    public void openToPlayer() {
+        super.openToPlayer();
+        this.player.playSound(this.player.getLocation(), Sound.BLOCK_WOODEN_BUTTON_CLICK_ON, 0.7f, 1f);
+    }
+
     private @NotNull InventoryItem icon() {
         InventoryItem item = new InventoryItem(Material.PLAYER_HEAD).setTag("ItemTag", "gui.menu.icon");
-        item.setDisplayName(Component.text("君の名は: ").append(this.player.displayName()));
-        item.setLore(ComponentUtil.text(NamedTextColor.GRAY, "UUID: ", this.player.getUniqueId().toString()));
+        item.setDisplayName(Component.translatable("gui.menu.info"));
+        item.addLore(ComponentUtil.text(NamedTextColor.GRAY, "UUID: ", this.player.getUniqueId().toString()));
+        item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.menu.level").args(Component.text(this.player.getLevel()).color(NamedTextColor.YELLOW)));
+        item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.menu.exp").args(Component.text((int) (this.player.getExp() * this.player.getExpToLevel()) + "/" + this.player.getExpToLevel()).color(NamedTextColor.YELLOW)));
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.setOwningPlayer(this.player);
         item.setItemMeta(meta);

@@ -25,8 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class ContainerListener implements Listener {
 
-    private final MCServerPlugin plugin = MCServerPlugin.getPlugin(MCServerPlugin.class);
-
     @EventHandler
     public void onPlayerOpenCase(@NotNull PlayerInteractEvent e) {
         Player player = e.getPlayer();
@@ -34,8 +32,7 @@ public class ContainerListener implements Listener {
         ItemStack stack = player.getInventory().getItemInMainHand();
         if (stack.getType().equals(Material.AIR) || !Container.isContainerStack(stack)) return;
         e.setCancelled(true);
-        Container c = ContainerManager.getContainerByStack(stack);
-        if (!c.hasData()) {
+        if (!ContainerManager.hasContainerData(stack)) {
             player.sendMessage(Component.translatable("chat.container.invalid_container_opened"));
             player.getInventory().remove(stack);
             return;
@@ -82,7 +79,7 @@ public class ContainerListener implements Listener {
         if (e.isCancelled()) return;
         ItemStack stack = e.getEntity().getItemStack();
         if (Container.isContainerStack(stack))
-            ContainerManager.unregisterContainerData(ContainerManager.getContainerByStack(stack));
+            ContainerManager.unregisterContainerData(ContainerManager.getContainerDataByStack(stack));
     }
 
     @EventHandler
@@ -90,6 +87,6 @@ public class ContainerListener implements Listener {
         if (e.isCancelled() || !(e.getEntity() instanceof Item)) return;
         ItemStack stack = ((Item) e.getEntity()).getItemStack();
         if (Container.isContainerStack(stack))
-            ContainerManager.unregisterContainerData(ContainerManager.getContainerByStack(stack));
+            ContainerManager.unregisterContainerData(ContainerManager.getContainerDataByStack(stack));
     }
 }

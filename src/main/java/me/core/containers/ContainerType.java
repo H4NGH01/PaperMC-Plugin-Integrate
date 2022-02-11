@@ -34,6 +34,6 @@ public enum ContainerType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("container id cannot be found.");
+        throw new IllegalArgumentException("Container id cannot be found.");
     }
 }

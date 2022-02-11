@@ -2,6 +2,7 @@ package me.core.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -46,16 +47,12 @@ public class ComponentUtil {
         return component(color, text(i));
     }
 
-    public static @NotNull Component translate(String @NotNull ... keys) {
-        Component[] components = new Component[keys.length];
-        for (int i = 0; i < keys.length; i++) {
-            components[i] = Component.translatable(keys[i]);
-        }
-        return component(components);
+    public static @NotNull TranslatableComponent translate(String key) {
+        return Component.translatable(key).decoration(TextDecoration.ITALIC, false);
     }
 
-    public static @NotNull Component translate(TextColor color, String... keys) {
-        return translate(keys).color(color);
+    public static @NotNull TranslatableComponent translate(TextColor color, String key) {
+        return translate(key).color(color);
     }
 
     @Contract(pure = true)

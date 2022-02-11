@@ -8,11 +8,20 @@ commands:
   menu:
     description: "Open menu"
     usage: "/menu"
+  money:
+    description: "Query money"
+    usage: "/money"
   mail:
     description: "Open your mailbox"
     usage: "/mail"
     aliases:
       - mailbox
+  admin-money:
+    description: "Admin money commands"
+    usage: "/admin-money"
+    aliases:
+      - a-money
+    permission: admin.money
   admin-mail:
     description: "Manage mail commands"
     usage: '/admin-mail'
