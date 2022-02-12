@@ -40,7 +40,7 @@ public class ServerEventListener implements Listener {
             sp.getStorage().clear();
         }
         if (sp.getSettings().get(PlayerSettings.NEW_MAIL_MESSAGE) && sp.getNewMail() != 0) {
-            p.sendMessage(Component.translatable("chat.mail_received_offline").args(Component.text(sp.getNewMail()).color(NamedTextColor.YELLOW)));
+            p.sendMessage(Component.translatable("chat.mail.received_offline").args(Component.text(sp.getNewMail()).color(NamedTextColor.YELLOW)));
             sp.setNewMail(0);
         }
     }

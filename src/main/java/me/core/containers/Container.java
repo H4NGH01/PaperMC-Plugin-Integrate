@@ -83,8 +83,8 @@ public abstract class Container {
     public abstract Material getContainerTexture();
 
     public static @NotNull ContainerItemStack superRarity() {
-        ContainerItemStack item = (ContainerItemStack) new ContainerItemStack(Material.NETHER_STAR, CaseItemRarity.EXCEEDINGLY_RARE).setTag("ItemTag", "rare_special_item");
-        item.setDisplayName(Component.translatable("container.rare_special_item"));
+        ContainerItemStack item = new ContainerItemStack(Material.NETHER_STAR, CaseItemRarity.EXCEEDINGLY_RARE);
+        item.setDisplayName(Component.translatable("container.exceedingly_rare"));
         return item;
     }
 

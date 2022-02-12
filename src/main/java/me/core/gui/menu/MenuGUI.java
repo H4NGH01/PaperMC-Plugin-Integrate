@@ -1,5 +1,6 @@
 package me.core.gui.menu;
 
+import me.core.ServerPlayer;
 import me.core.gui.GUIBase;
 import me.core.items.InventoryItem;
 import me.core.utils.ComponentUtil;
@@ -56,6 +57,7 @@ public class MenuGUI extends GUIBase implements MenuGUIInterface {
         item.addLore(ComponentUtil.text(NamedTextColor.GRAY, "UUID: ", this.player.getUniqueId().toString()));
         item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.menu.level").args(Component.text(this.player.getLevel()).color(NamedTextColor.YELLOW)));
         item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.menu.exp").args(Component.text((int) (this.player.getExp() * this.player.getExpToLevel()) + "/" + this.player.getExpToLevel()).color(NamedTextColor.YELLOW)));
+        item.addLore(ComponentUtil.translate(NamedTextColor.GRAY, "gui.menu.balance").args(ComponentUtil.text(NamedTextColor.YELLOW, "$" + ServerPlayer.getServerPlayer(this.player).getMoney())));
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.setOwningPlayer(this.player);
         item.setItemMeta(meta);

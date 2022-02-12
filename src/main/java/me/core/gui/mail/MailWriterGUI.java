@@ -1,6 +1,7 @@
 package me.core.gui.mail;
 
 import me.core.gui.GUIBase;
+import me.core.gui.Updatable;
 import me.core.items.InventoryItem;
 import me.core.mail.MailManager;
 import me.core.mail.NewMail;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class MailWriterGUI extends GUIBase implements MailGUIInterface {
+public class MailWriterGUI extends GUIBase implements MailGUIInterface, Updatable {
 
     private static final HashMap<Player, MailWriterGUI> VIEW_MAP = new HashMap<>();
     private final NewMail mail;
@@ -130,6 +131,7 @@ public class MailWriterGUI extends GUIBase implements MailGUIInterface {
         return this.mail;
     }
 
+    @Override
     public void update() {
         for (int i = 0; i < 8; i++) {
             this.inventory.setItem(i + 37, this.mail.getItemStacks()[i]);

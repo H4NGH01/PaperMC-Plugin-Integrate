@@ -12,6 +12,7 @@ import me.core.items.InventoryItem;
 import me.core.items.MCServerItems;
 import me.core.utils.nbt.NBTHelper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -51,8 +52,8 @@ public class ContainerGUI extends GUIBase {
             if (i >= 36) break;
             this.inventory.setItem(i + 9, this.container.getDisplayDrops().get(i));
         }
-        this.inventory.setItem(0, requireKey());
-        if (this.playerContainsKeys()) this.inventory.setItem(40, unlock());
+        this.inventory.setItem(0, contains());
+        this.inventory.setItem(40, playerContainsKeys() ? unlock() : requireKey());
     }
 
     @Override
@@ -236,9 +237,15 @@ public class ContainerGUI extends GUIBase {
         return displayDrops.get(i);
     }
 
+    private @NotNull InventoryItem contains() {
+        InventoryItem item = new InventoryItem(this.container.getContainerTexture());
+        item.setDisplayName(Component.translatable("gui.container.contains"));
+        return item;
+    }
+
     private @NotNull InventoryItem requireKey() {
-        InventoryItem item = new InventoryItem(Material.TRIPWIRE_HOOK);
-        item.setDisplayName(Component.translatable("gui.container.require_key").args(Component.translatable(container.getKeyType().getTranslationKey())));
+        InventoryItem item = new InventoryItem(Material.RED_CONCRETE);
+        item.setDisplayName(Component.translatable("gui.container.require_key").args(Component.translatable(container.getKeyType().getTranslationKey())).color(NamedTextColor.RED));
         return item;
     }
 
@@ -264,11 +271,9 @@ public class ContainerGUI extends GUIBase {
 
     private boolean playerContainsKeys() {
         for (ItemStack stack : this.player.getInventory()) {
-            if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && NBTHelper.hasTag(stack, "ContainerKey")) {
-                if (matchKey.getID().equals(NBTHelper.getTag(stack).l("ContainerKey"))) {
-                    this.keyIn = stack;
-                    return true;
-                }
+            if (stack != null && !stack.getType().equals(Material.AIR) && stack.hasItemMeta() && NBTHelper.hasTag(stack, "ContainerKey") && matchKey.getID().equals(NBTHelper.getTag(stack).l("ContainerKey"))) {
+                this.keyIn = stack;
+                return true;
             }
         }
         return false;

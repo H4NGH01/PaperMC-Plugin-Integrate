@@ -2,6 +2,7 @@ package me.core.gui.mail;
 
 import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
+import me.core.gui.Updatable;
 import me.core.items.InventoryItem;
 import me.core.mail.Mail;
 import me.core.mail.MailManager;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class MailBinGUI extends MultiplePageGUI implements MailGUIInterface {
+public class MailBinGUI extends MultiplePageGUI implements MailGUIInterface, Updatable {
 
     private static final HashMap<Player, MailBinGUI> VIEW_MAP = new HashMap<>();
 
@@ -95,9 +96,12 @@ public class MailBinGUI extends MultiplePageGUI implements MailGUIInterface {
         return item;
     }
 
+    @Override
     public void update() {
         List<ItemStack> stacks = new ArrayList<>();
-        for (Mail mail : MailManager.getDeletedMail(this.getPlayer())) stacks.add(mailStack(mail));
+        for (Mail mail : MailManager.getDeletedMail(this.getPlayer())) {
+            stacks.add(mailStack(mail));
+        }
         this.setContents(stacks);
         this.toArray(VIEW_MAP.containsKey(this.getPlayer()) ? VIEW_MAP.get(this.getPlayer()).getPage() : 1);
         this.inventory.setItem(0, info(this.getPlayer()));

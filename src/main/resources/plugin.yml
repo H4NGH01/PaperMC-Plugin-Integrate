@@ -8,18 +8,26 @@ commands:
   menu:
     description: "Open menu"
     usage: "/menu"
-  money:
-    description: "Query money"
-    usage: "/money"
+  balance:
+    description: "Query balance"
+    usage: "/balance"
+    aliases:
+      - bal
+      - money
+  market:
+    description: "Open market GUI"
+    usage: "/market"
   mail:
     description: "Open your mailbox"
     usage: "/mail"
     aliases:
       - mailbox
-  admin-money:
-    description: "Admin money commands"
-    usage: "/admin-money"
+  admin-economy:
+    description: "Admin economy commands"
+    usage: "/admin-economy"
     aliases:
+      - admin-money
+      - a-economy
       - a-money
     permission: admin.money
   admin-mail:

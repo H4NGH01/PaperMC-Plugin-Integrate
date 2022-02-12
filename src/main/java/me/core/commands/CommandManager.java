@@ -2,7 +2,7 @@ package me.core.commands;
 
 import me.core.commands.admin.AdminContainerCommand;
 import me.core.commands.admin.AdminMailCommand;
-import me.core.commands.admin.AdminMoneyCommand;
+import me.core.commands.admin.AdminEconomyCommand;
 import me.core.commands.admin.AdminStatTrakCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,9 +20,10 @@ public class CommandManager implements CommandExecutor {
 
     public void setup() {
         this.addCommand(new MenuCommand());
-        this.addCommand(new MoneyCommand());
+        this.addCommand(new BalanceCommand());
+        this.addCommand(new MarketCommand());
         this.addCommand(new MailCommand());
-        this.addCommand(new AdminMoneyCommand());
+        this.addCommand(new AdminEconomyCommand());
         this.addCommand(new AdminMailCommand());
         this.addCommand(new AdminContainerCommand());
         this.addCommand(new AdminStatTrakCommand());

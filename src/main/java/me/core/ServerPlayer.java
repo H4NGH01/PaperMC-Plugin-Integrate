@@ -1,5 +1,6 @@
 package me.core;
 
+import me.core.gui.GUIBase;
 import me.core.utils.nbt.NBTHelper;
 import me.core.utils.nbt.NBTStorageFile;
 import net.minecraft.nbt.NBTBase;
@@ -25,6 +26,8 @@ public class ServerPlayer {
     private final HashMap<PlayerSettings, Boolean> settings = new HashMap<>();
     private BigDecimal money;
     private int newMail;
+
+    private GUIBase gui = null;
 
     private static final HashMap<UUID, ServerPlayer> SERVER_PLAYER_HASH_MAP = new HashMap<>();
 
@@ -115,5 +118,13 @@ public class ServerPlayer {
 
     public void setNewMail(int newMail) {
         this.newMail = newMail;
+    }
+
+    public GUIBase getHoldingGUI() {
+        return this.gui;
+    }
+
+    public void setHoldingGUI(GUIBase gui) {
+        this.gui = gui;
     }
 }

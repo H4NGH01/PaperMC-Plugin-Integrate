@@ -1,15 +1,13 @@
 package me.core.listeners;
 
-import me.core.events.GUIClickEvent;
-import me.core.events.GUICloseEvent;
-import me.core.events.GUIOpenEvent;
+import me.core.events.*;
 import me.core.gui.GUIBase;
 import me.core.gui.MultiplePageGUI;
 import me.core.gui.mail.MailGUIInterface;
 import me.core.gui.mail.MailViewerGUI;
+import me.core.gui.market.MarketGUIInterface;
 import me.core.gui.menu.MenuGUIInterface;
 import me.core.items.MCServerItems;
-import me.core.utils.ComponentUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -28,6 +26,7 @@ public class ServerGUIListener implements Listener {
 
     private static final HashMap<Player, GUIBase> OPENED_GUI = new HashMap<>();
     private final MenuGUIListener menuGUIListener = new MenuGUIListener();
+    private final MarketGUIListener marketGUIListener = new MarketGUIListener();
     private final MailGUIListener mailGUIListener = new MailGUIListener();
 
     public static HashMap<Player, GUIBase> getOpenedGUI() {
@@ -43,8 +42,6 @@ public class ServerGUIListener implements Listener {
     @EventHandler
     public void onClose(@NotNull InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (ComponentUtil.plainText(e.getView().title()).startsWith("gui.mail.viewer"))
-            MailViewerGUI.getViews().remove(p);
         if (OPENED_GUI.containsKey(p)) Bukkit.getPluginManager().callEvent(new GUICloseEvent(p, OPENED_GUI.get(p)));
     }
 
@@ -68,8 +65,10 @@ public class ServerGUIListener implements Listener {
 
     @EventHandler
     public void onClose(@NotNull GUICloseEvent e) {
-        OPENED_GUI.remove(e.getPlayer());
-        e.getGUI().getViewMap().remove(e.getPlayer());
+        Player p = e.getPlayer();
+        OPENED_GUI.remove(p);
+        if (e.getGUI() instanceof MailViewerGUI) MailViewerGUI.getViews().remove(p);
+        e.getGUI().getViewMap().remove(p);
     }
 
     @EventHandler
@@ -79,13 +78,13 @@ public class ServerGUIListener implements Listener {
         ItemStack item = e.getCurrentItem();
         if (item == null) return;
         if (MCServerItems.isInventoryItem(item)) e.setCancelled(true);
-        if (gui instanceof MultiplePageGUI) {
+        if (gui instanceof MultiplePageGUI mpGUI) {
             if (MCServerItems.equalWithKey(item, MCServerItems.prev, "ItemTag")) {
-                ((MultiplePageGUI) gui).prev();
+                mpGUI.prev();
                 return;
             }
             if (MCServerItems.equalWithKey(item, MCServerItems.next, "ItemTag")) {
-                ((MultiplePageGUI) gui).next();
+                mpGUI.next();
                 return;
             }
         }
@@ -101,6 +100,10 @@ public class ServerGUIListener implements Listener {
         }
         if (e.getGUI() instanceof MenuGUIInterface) {
             menuGUIListener.onClick(e);
+            return;
+        }
+        if (e.getGUI() instanceof MarketGUIInterface) {
+            marketGUIListener.onClick(e);
             return;
         }
         if (e.getGUI() instanceof MailGUIInterface) {

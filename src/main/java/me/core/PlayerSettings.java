@@ -9,8 +9,8 @@ public enum PlayerSettings {
 
     private final String s;
 
-    PlayerSettings(String s) {
-        this.s = s;
+    PlayerSettings(String key) {
+        this.s = key;
     }
 
     public String getKey() {

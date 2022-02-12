@@ -62,7 +62,7 @@ public class MenuGUIListener {
             b = !sp.getSettings().get(PlayerSettings.CONTAINER_ANIMATION);
             sp.getSettings().put(PlayerSettings.CONTAINER_ANIMATION, b);
         }
-        gui.setInventory();
+        gui.update();
         p.playSound(p.getLocation(), Sound.BLOCK_LEVER_CLICK, 0.7f, b ? 0.6f : 0.5f);
     }
 

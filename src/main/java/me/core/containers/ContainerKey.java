@@ -1,5 +1,7 @@
 package me.core.containers;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum ContainerKey {
 
     KEY_WEAPON_CASE("key_weapon_case", "container.key.weapon_case.name", ContainerType.WEAPON_CASE);
@@ -24,5 +26,14 @@ public enum ContainerKey {
 
     public ContainerType canOpen() {
         return this.canOpen;
+    }
+
+    public static @NotNull ContainerKey getByID(String id) {
+        for (ContainerKey k : values()) {
+            if (k.getID().equals(id)) {
+                return k;
+            }
+        }
+        throw new IllegalArgumentException("Unknown container key ID");
     }
 }

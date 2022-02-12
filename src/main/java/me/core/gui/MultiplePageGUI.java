@@ -51,6 +51,9 @@ public abstract class MultiplePageGUI extends GUIBase {
         }
     }
 
+    /**
+     * Go to next page
+     */
     public void next() {
         if (this.page < this.maxPage) {
             this.page++;
@@ -61,6 +64,9 @@ public abstract class MultiplePageGUI extends GUIBase {
         }
     }
 
+    /**
+     * Go to previous page
+     */
     public void prev() {
         if (this.page > 1) {
             this.page--;

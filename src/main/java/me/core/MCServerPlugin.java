@@ -77,6 +77,7 @@ public class MCServerPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new StatTrakListener(), this);
     }
 
+    @SuppressWarnings("unused")
     public ConfigurationManager getConfigManager() {
         return this.configManager;
     }
@@ -87,10 +88,6 @@ public class MCServerPlugin extends JavaPlugin {
 
     public MailManager getMailManager() {
         return this.mailManager;
-    }
-
-    public ContainerManager getContainerManager() {
-        return this.containerManager;
     }
 
     public void log(String s) {

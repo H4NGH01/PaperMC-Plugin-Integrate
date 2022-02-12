@@ -1,6 +1,5 @@
 package me.core.listeners;
 
-import me.core.MCServerPlugin;
 import me.core.containers.Container;
 import me.core.containers.ContainerManager;
 import me.core.events.GUIClickEvent;

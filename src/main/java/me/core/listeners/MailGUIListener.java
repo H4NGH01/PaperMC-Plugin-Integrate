@@ -29,7 +29,7 @@ public class MailGUIListener {
 
     public void onClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        if (item == null || item.getItemMeta() == null) return;
+        if (item == null || !item.hasItemMeta()) return;
         if (e.getGUI() instanceof MailBoxGUI) {
             this.onMailGUIClick(e);
             return;
@@ -56,7 +56,7 @@ public class MailGUIListener {
 
     private void onMailGUIClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
+        Player p = e.getPlayer();
         MailBoxGUI gui = (MailBoxGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.box.write")) {
             MailWriterGUI mwg = new MailWriterGUI(p, MailManager.getNewMailMap().containsKey(p.getUniqueId()) ? MailManager.getNewMailMap().get(p.getUniqueId()) : new NewMail(p));
@@ -120,7 +120,7 @@ public class MailGUIListener {
     private void onMailWriterGUIClick(@NotNull GUIClickEvent e) {
         e.setCancelled(true);
         ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
+        Player p = e.getPlayer();
         MailWriterGUI gui = (MailWriterGUI) e.getGUI();
         NewMail mail = MailManager.getNewMailMap().get(p.getUniqueId());
         if (Objects.equals(e.getClickedInventory(), p.getInventory())) {
@@ -138,7 +138,7 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.writer.title")) {
             p.closeInventory();
             ServerChatBarListener.CHAT_MAP.put(p, "chat.mail.edit.title");
-            p.sendMessage(Component.translatable("chat.mail_title_type"));
+            p.sendMessage(Component.translatable("chat.mail.title_type"));
             return;
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.writer.to")) {
@@ -151,13 +151,13 @@ public class MailGUIListener {
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.writer.text")) {
             p.closeInventory();
             ServerChatBarListener.CHAT_MAP.put(p, "chat.mail.edit.text");
-            p.sendMessage(Component.translatable("chat.mail_text_type"));
+            p.sendMessage(Component.translatable("chat.mail.text_type"));
             return;
         }
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.writer.send")) {
             if (mail.getAddressee().length == 0) {
                 p.closeInventory();
-                p.sendMessage(Component.translatable("chat.mail_send_failure.no_player_selected"));
+                p.sendMessage(Component.translatable("chat.mail.send_failure.no_player_selected"));
                 p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.7f, 0f);
                 return;
             }
@@ -172,7 +172,7 @@ public class MailGUIListener {
                 sb.append(op.getName()).append(", ");
                 ServerPlayer sp = ServerPlayer.getServerPlayer(op);
                 if (op.isOnline() && sp.getSettings().get(PlayerSettings.NEW_MAIL_MESSAGE)) {
-                    Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail_received"));
+                    Objects.requireNonNull(op.getPlayer()).sendMessage(Component.translatable("chat.mail.received"));
                 } else {
                     sp.setNewMail(sp.getNewMail() + 1);
                     sp.save();
@@ -181,13 +181,13 @@ public class MailGUIListener {
             sb.deleteCharAt(sb.length() - 2);
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.7f, 1f);
-            p.sendMessage(Component.translatable("chat.mail_send_success").args(ComponentUtil.text(NamedTextColor.YELLOW, sb.toString())));
+            p.sendMessage(Component.translatable("chat.mail.send_success").args(ComponentUtil.text(NamedTextColor.YELLOW, sb.toString())));
         }
     }
 
     private void onMailSelectorGUIClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
+        Player p = e.getPlayer();
         MailPlayerSelectorGUI gui = (MailPlayerSelectorGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.selector.player_icon")) {
             for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
@@ -209,7 +209,7 @@ public class MailGUIListener {
 
     private void onSentMailGUIClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
+        Player p = e.getPlayer();
         MailSentGUI gui = (MailSentGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.sent.mail")) {
             Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
@@ -224,7 +224,7 @@ public class MailGUIListener {
 
     private void onMailBinGUIClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
+        Player p = e.getPlayer();
         MailBinGUI gui = (MailBinGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.bin.mail")) {
             Mail mail = MailManager.getMailByID(NBTHelper.getTag(item).l("MailID"));
@@ -237,7 +237,7 @@ public class MailGUIListener {
 
     private void onMailViewerClick(@NotNull GUIClickEvent e) {
         ItemStack item = e.getCurrentItem();
-        Player p = (Player) e.getWhoClicked();
+        Player p = e.getPlayer();
         MailViewerGUI gui = (MailViewerGUI) e.getGUI();
         if (MCServerItems.equalWithTag(item, "ItemTag", "gui.mail.viewer.delete")) {
             gui.getMail().setDeleted();
